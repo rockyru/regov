@@ -42,9 +42,13 @@ export default async function JobStatus({ params }: { params: Promise<{ jobId: s
   let status: Status | null = null;
   try { status = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "status.json"), "utf8")); } catch { /* not yet */ }
   const site = status?.done ? await loadSite(jobId) : null;
+  let procLog = "";
+  if (!status?.done && (status?.error || (status?.events.length ?? 0) === 0)) {
+    try { procLog = (await readFile(join(JOBS_ROOT, jobId, "pipeline.log"), "utf8")).split("\n").filter(Boolean).slice(-15).join("\n"); } catch { /* none */ }
+  }
   const archived = status?.events.some((e) => e.type === "archive");
   const steps = STEPS.filter((s) => s.key !== "archive" || archived || status?.phase === "archive");
-  const idx = Math.max(0, steps.findIndex((s) => s.key === (status?.done ? "write" : status?.phase ?? "crawl")));
+  const idx = Math.max(0, steps.findIndex((s) => s.key === (status?.done ? "write" : status?.phase === "queued" ? "crawl" : status?.phase ?? "crawl")));
   const host = status?.url ? new URL(status.url).host : jobId;
   const v = site ? encodeURIComponent(site.generated_at) : "";
   const live = !status?.done && !status?.error;
@@ -116,7 +120,8 @@ export default async function JobStatus({ params }: { params: Promise<{ jobId: s
                 </li>
               );
             })}
-            {!status && <li className="px-5 py-6 text-sm text-neutral-400">Starting…</li>}
+            {(!status || status.events.length === 0) && !procLog && <li className="px-5 py-6 text-sm text-neutral-400">Starting the agent… {status?.phase === "queued" && live ? `(${elapsed}s)` : ""}</li>}
+            {procLog && <li className="px-5 py-4"><div className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-2">Process output</div><pre className="whitespace-pre-wrap break-words font-mono text-xs text-neutral-600">{procLog}</pre></li>}
           </ol>
         </section>
       </div>
