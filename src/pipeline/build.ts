@@ -29,7 +29,8 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
   onEvent({ type: "phase", phase: "understand", detail: `${crawl.pages.length} pages` });
   // (protected pages are skipped below)
   const usable = crawl.pages.filter((p) => !/^(Protected|Private):/i.test(p.title) && !/This content is password protected/i.test(p.text.slice(0, 2000)));
-  const pages: SitePage[] = await pmap(usable, 4, async (p, i) => {
+  const concurrency = Number(process.env.UNDERSTAND_CONCURRENCY ?? 3);
+  const pages: SitePage[] = await pmap(usable, concurrency, async (p, i) => {
     const t = Date.now();
     const { model, usage } = await understandPage(jobDir, p, crawl.archive?.note ?? "");
     tokens += usage;

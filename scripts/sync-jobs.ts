@@ -29,6 +29,14 @@ export async function pushJob(jobId: string) {
   for (const f of files) await s3.send(new PutObjectCommand({ Bucket: R2_BUCKET, Key: `${jobId}/${relative(dir, f)}`, Body: await readFile(f) }));
   console.log(`[sync] pushed ${files.length} files for ${jobId}`);
 }
+export async function pushFile(key: string, body: string | Buffer) {
+  const s3 = client(); if (!s3) return;
+  await s3.send(new PutObjectCommand({ Bucket: R2_BUCKET, Key: key, Body: body }));
+}
+export async function getFile(key: string): Promise<string | null> {
+  const s3 = client(); if (!s3) return null;
+  try { const g = await s3.send(new GetObjectCommand({ Bucket: R2_BUCKET, Key: key })); return await g.Body!.transformToString(); } catch { return null; }
+}
 export async function pullAll() {
   const s3 = client(); if (!s3) { console.log("[sync] R2 not configured, skipping"); return; }
   let token: string | undefined, n = 0;

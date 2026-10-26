@@ -40,7 +40,19 @@ const CARD = "rounded-3xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32p
 export default async function JobStatus({ params }: { params: Promise<{ jobId: string }> }) {
   const { jobId } = await params;
   let status: Status | null = null;
-  try { status = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "status.json"), "utf8")); } catch { /* not yet */ }
+  let fromMirror = false;
+  try { status = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "status.json"), "utf8")); } catch { /* not local */ }
+  if (!status && /^[\w.-]+$/.test(jobId)) {
+    try {
+      const { getFile } = await import("../../../../scripts/sync-jobs");
+      const mirrored = await getFile(`${jobId}/status.json`);
+      if (mirrored) { status = JSON.parse(mirrored); fromMirror = true; }
+    } catch { /* no mirror */ }
+    if (status && fromMirror && !status.done && !status.error) {
+      status.error = "The agent's container restarted while this run was in progress, so the run was lost. Please start it again.";
+      status.phase = "error";
+    }
+  }
   const site = status?.done ? await loadSite(jobId) : null;
   let procLog = "";
   if (!status?.done && (status?.error || (status?.events.length ?? 0) === 0)) {

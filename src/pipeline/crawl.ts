@@ -155,7 +155,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
   onEvent({ type: "start", origin, archive: archiveTimestamp });
   const wpPromise = archiveTimestamp ? Promise.resolve(undefined) : fetchWpRest(origin);
 
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ args: ["--disable-dev-shm-usage", "--disable-gpu", "--no-zygote"] });
   const ctx = await browser.newContext({ viewport, userAgent: UA, ignoreHTTPSErrors: true });
   const page = await ctx.newPage();
   await page.route("**/*", (route) => {

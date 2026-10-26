@@ -4,7 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { crawl, BlockedError } from "../src/pipeline/crawl";
 import { findSnapshot } from "../src/pipeline/archive";
-import { pushJob } from "./sync-jobs";
+import { pushJob, pushFile } from "./sync-jobs";
 import { buildSite } from "../src/pipeline/build";
 
 const [url, jobId, max = "20"] = process.argv.slice(2);
@@ -12,7 +12,15 @@ if (!url || !jobId) { console.error("usage: pipeline.ts <url> <jobId> [maxPages]
 const dir = join("jobs", jobId);
 const status = { url, jobId, startedAt: new Date().toISOString(), phase: "crawl", events: [] as unknown[], done: false, error: "" };
 let flushing: Promise<void> = Promise.resolve();
-const flush = () => (flushing = flushing.then(() => writeFile(join(dir, "status.json"), JSON.stringify(status))));
+let lastMirror = 0;
+const flush = () => (flushing = flushing.then(async () => {
+  const body = JSON.stringify(status);
+  await writeFile(join(dir, "status.json"), body);
+  if (Date.now() - lastMirror > 5000 || status.done || status.error) {
+    lastMirror = Date.now();
+    await pushFile(`${jobId}/status.json`, body).catch(() => {});
+  }
+}));
 const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as object) }); console.log(JSON.stringify(e)); flush(); };
 
 (async () => {
