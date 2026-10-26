@@ -58,8 +58,8 @@ export function Header({ site }: { site: SiteModel }) {
         {band && (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={band} alt="" aria-hidden className="absolute inset-y-0 right-0 h-full w-[70%] object-cover object-center" />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,white_0%,white_34%,rgba(255,255,255,0.92)_46%,rgba(255,255,255,0.55)_62%,rgba(255,255,255,0.1)_85%,rgba(255,255,255,0)_100%)]" aria-hidden />
+            <img src={band} alt="" aria-hidden className="absolute inset-y-0 right-0 h-full w-[72%] object-cover object-center [mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.35)_30%,black_60%)] [-webkit-mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.35)_30%,black_60%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,white_0%,white_30%,rgba(255,255,255,0.7)_48%,rgba(255,255,255,0.15)_72%,rgba(255,255,255,0)_100%)]" aria-hidden />
           </>
         )}
         <div className="container-gov relative h-24 flex items-center">
