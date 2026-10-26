@@ -19,7 +19,7 @@ export default async function Home() {
         </svg>
       </div>
 
-      <header className="mx-auto w-full max-w-6xl px-5 pt-6 flex items-center justify-between">
+      <header className="container-gov pt-6 flex items-center justify-between">
         <Link href="/" className="text-2xl font-black tracking-tight leading-none"><span className="text-kapwa-brand-900">RE</span><span className="text-kapwa-red-600">:</span>GOV</Link>
         <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-kapwa-brand-700">Autonomous civic technology</p>
       </header>
@@ -35,13 +35,13 @@ export default async function Home() {
 
       {jobs.length > 0 && (
         <section className="border-t border-neutral-100/80">
-          <div className="mx-auto max-w-6xl px-5 py-6">
+          <div className="container-gov py-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">Recently reimagined</h2>
-              {jobs.length > 3 && <Link href="/jobs" className="text-sm font-semibold text-kapwa-brand-800 hover:underline">View all {jobs.length} →</Link>}
+              {jobs.length > 4 && <Link href="/jobs" className="text-sm font-semibold text-kapwa-brand-800 hover:underline">View all {jobs.length} →</Link>}
             </div>
-            <ul className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {jobs.slice(0, 3).map((j) => <JobCard key={j.id} id={j.id} site={j.site!} crawl={j.crawl!} compact />)}
+            <ul className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+              {jobs.slice(0, 4).map((j) => <JobCard key={j.id} id={j.id} site={j.site!} crawl={j.crawl!} compact />)}
             </ul>
           </div>
         </section>
