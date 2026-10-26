@@ -6,6 +6,8 @@ import { slugOf } from "@/pipeline/slug";
 
 export const JOBS_ROOT = resolve(process.cwd(), "jobs");
 
+export interface JobStatus { url: string; phase: string; done: boolean; error: string; startedAt: string; events: { t: number; type: string }[] }
+
 // Restore jobs from R2 once per process if the local jobs dir is empty (container cold start).
 let restoring: Promise<void> | null = null;
 async function ensureRestored() {
@@ -31,13 +33,14 @@ export async function listJobs() {
   const jobs = await Promise.all(ids.map(async (id) => {
     const dir = join(JOBS_ROOT, id);
     const has = async (f: string) => stat(join(dir, f)).then(() => true).catch(() => false);
-    const [hasCrawl, hasSite] = await Promise.all([has("crawl.json"), has("site.json")]);
-    let crawl: CrawlResult | null = null, site: SiteModel | null = null;
+    const [hasCrawl, hasSite, hasStatus] = await Promise.all([has("crawl.json"), has("site.json"), has("status.json")]);
+    let crawl: CrawlResult | null = null, site: SiteModel | null = null, status: JobStatus | null = null;
     if (hasCrawl) crawl = JSON.parse(await readFile(join(dir, "crawl.json"), "utf8"));
     if (hasSite) site = JSON.parse(await readFile(join(dir, "site.json"), "utf8"));
-    return { id, crawl, site, mtime: (await stat(dir)).mtimeMs };
+    if (hasStatus) try { status = JSON.parse(await readFile(join(dir, "status.json"), "utf8")); } catch { /* mid-write */ }
+    return { id, crawl, site, status, mtime: (await stat(dir)).mtimeMs };
   }));
-  return jobs.filter((j) => j.crawl).sort((a, b) => b.mtime - a.mtime);
+  return jobs.filter((j) => j.crawl || j.status).sort((a, b) => b.mtime - a.mtime);
 }
 
 export async function loadSite(jobId: string): Promise<SiteModel | null> {

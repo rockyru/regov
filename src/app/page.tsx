@@ -7,7 +7,10 @@ export const dynamic = "force-dynamic";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ error?: string; url?: string }> }) {
   const { error = "", url = "" } = await searchParams;
-  const jobs = (await listJobs()).filter((j) => j.site);
+  const all = await listJobs();
+  const jobs = all.filter((j) => j.site);
+  const active = all.filter((j) => !j.site && j.status && !j.status.error && Date.now() - new Date(j.status.startedAt).getTime() < 60 * 60 * 1000);
+  const failed = all.filter((j) => !j.site && j.status?.error && Date.now() - new Date(j.status.startedAt).getTime() < 6 * 60 * 60 * 1000);
   return (
     <main className="relative min-h-dvh flex flex-col overflow-hidden">
       {/* Soft civic glow rising from the bottom: Kapwa blue with a touch of sun yellow and red */}
@@ -33,6 +36,17 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
           <p className="mt-4 text-sm text-neutral-500">Government domains only: agencies, LGUs, state universities, hospitals. Sites behind bot protection are rebuilt from their Wayback Machine archive.</p>
         </div>
       </section>
+
+      {(active.length > 0 || failed.length > 0) && (
+        <section className="border-t border-neutral-100/80">
+          <div className="container-gov py-5">
+            <ul className="flex flex-wrap justify-center gap-3">
+              {active.map((j) => <li key={j.id}><Link href={`/jobs/${j.id}`} className="inline-flex items-center gap-2 rounded-full bg-kapwa-brand-50 px-4 py-2 text-sm font-medium text-kapwa-brand-900 ring-1 ring-kapwa-brand-100 hover:bg-kapwa-brand-100"><span className="size-2 rounded-full bg-kapwa-brand-600 animate-pulse" />Reimagining {new URL(j.status!.url).host} · {j.status!.phase} →</Link></li>)}
+              {failed.map((j) => <li key={j.id}><Link href={`/jobs/${j.id}`} className="inline-flex items-center gap-2 rounded-full bg-kapwa-red-50 px-4 py-2 text-sm font-medium text-kapwa-red-800 ring-1 ring-kapwa-red-100 hover:bg-kapwa-red-100"><span className="size-2 rounded-full bg-kapwa-red-500" />{new URL(j.status!.url).host} stopped →</Link></li>)}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {jobs.length > 0 && (
         <section className="border-t border-neutral-100/80">
