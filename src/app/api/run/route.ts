@@ -8,8 +8,10 @@ export async function POST(req: Request) {
   const raw = String(form.get("url") ?? "");
   const max = String(form.get("max") ?? "20");
   const parsed = normalizeSiteUrl(raw);
-  if (!parsed) return Response.redirect(new URL(`/?error=invalid&url=${encodeURIComponent(raw)}`, req.url), 303);
-  if (!isGovernmentHost(parsed.hostname)) return Response.redirect(new URL(`/?error=notgov&url=${encodeURIComponent(parsed.hostname)}`, req.url), 303);
+  // Relative redirects: behind the Worker the container sees 0.0.0.0:3000 as its own host.
+  const go = (path: string) => new Response(null, { status: 303, headers: { Location: path } });
+  if (!parsed) return go(`/?error=invalid&url=${encodeURIComponent(raw)}`);
+  if (!isGovernmentHost(parsed.hostname)) return go(`/?error=notgov&url=${encodeURIComponent(parsed.hostname)}`);
   const url = parsed.toString();
   const host = parsed.hostname;
   const jobId = `${host.replace(/[^a-z0-9]+/gi, "-")}-${Date.now().toString(36)}`;
@@ -20,5 +22,5 @@ export async function POST(req: Request) {
     cwd: root, detached: true, stdio: "ignore", env: { ...process.env },
   });
   child.unref();
-  return Response.redirect(new URL(`/jobs/${jobId}`, req.url), 303);
+  return go(`/jobs/${jobId}`);
 }
