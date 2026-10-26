@@ -25,13 +25,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
 
       <header className="container-gov pt-6 flex items-center justify-between">
         <Link href="/" className="text-2xl font-black tracking-tight leading-none"><span className="text-kapwa-brand-900">RE</span><span className="text-kapwa-red-600">:</span>GOV</Link>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-kapwa-brand-700">Autonomous civic technology</p>
+        <p className="hidden sm:block text-[11px] font-semibold uppercase tracking-[0.3em] text-kapwa-brand-700">Autonomous civic technology</p>
       </header>
 
       <section className="flex-1 flex items-center justify-center px-5 py-6">
         <div className="w-full max-w-2xl text-center">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tight leading-[1.02] text-neutral-900">Reimagine <span className="text-kapwa-brand-900">Government</span>.</h1>
-          <p className="mt-4 text-xl text-neutral-600">Public websites deserve a second life.</p>
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.02] text-neutral-900">Reimagine <span className="text-kapwa-brand-900">Government</span>.</h1>
+          <p className="mt-4 text-lg sm:text-xl text-neutral-600">Public websites deserve a second life.</p>
           <div className="mt-7"><ReimagineBox done={jobs.map((j) => new URL(j.crawl!.origin).host.replace(/^www\./, ""))} initialError={error} initialUrl={url} /></div>
           <p className="mt-4 text-sm text-neutral-500">Government domains only: agencies, LGUs, state universities, hospitals. Sites behind bot protection are rebuilt from their Wayback Machine archive.</p>
         </div>

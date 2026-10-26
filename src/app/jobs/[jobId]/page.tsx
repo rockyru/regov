@@ -55,23 +55,23 @@ export default async function JobStatus({ params }: { params: Promise<{ jobId: s
       {live && <meta httpEquiv="refresh" content="2" />}
       <header className="flex items-center justify-between pt-6 pb-10">
         <Link href="/" className="text-2xl font-black tracking-tight leading-none"><span className="text-kapwa-brand-900">RE</span><span className="text-kapwa-red-600">:</span>GOV</Link>
-        <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">← Back to home</Link>
+        <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">← Home</Link>
       </header>
 
       <div className="mx-auto max-w-5xl">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-kapwa-brand-700">{live ? "Reimagining" : status?.error ? "Stopped" : "Reimagined"}</p>
-        <h1 className="mt-2 text-4xl sm:text-5xl font-black tracking-tight text-neutral-900">{site?.agency.name ?? host}</h1>
-        <p className="mt-2 text-neutral-500">{status?.url}{live && ` · ${elapsed}s`}</p>
+        <h1 className="mt-2 text-3xl sm:text-5xl font-black tracking-tight text-neutral-900 break-words">{site?.agency.name ?? host}</h1>
+        <p className="mt-2 text-neutral-500 break-all">{status?.url}{live && ` · ${elapsed}s`}</p>
 
         {/* Stepper */}
-        <ol className={`mt-8 ${CARD} p-5 grid gap-3`} style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
+        <ol className={`mt-8 ${CARD} p-4 sm:p-5 flex flex-wrap justify-center gap-x-2 gap-y-5`}>
           {steps.map((s, i) => {
             const state = status?.error && i === idx ? "error" : i < idx || status?.done ? "done" : i === idx ? "active" : "todo";
             return (
-              <li key={s.key} className="flex flex-col items-center text-center gap-2">
-                <span className={`grid size-9 place-items-center rounded-full text-sm font-bold ${state === "done" ? "bg-kapwa-green-600 text-white" : state === "active" ? "bg-kapwa-brand-800 text-white ring-4 ring-kapwa-brand-100 animate-pulse" : state === "error" ? "bg-kapwa-red-600 text-white" : "bg-neutral-100 text-neutral-400"}`}>{state === "done" ? "✓" : i + 1}</span>
-                <span className={`text-sm font-semibold ${state === "todo" ? "text-neutral-400" : "text-neutral-900"}`}>{s.label}</span>
-                <span className="text-[11px] text-neutral-400">{s.tool}</span>
+              <li key={s.key} className="flex w-[84px] sm:w-[112px] lg:w-[136px] flex-col items-center text-center gap-1.5">
+                <span className={`grid size-8 sm:size-9 place-items-center rounded-full text-sm font-bold ${state === "done" ? "bg-kapwa-green-600 text-white" : state === "active" ? "bg-kapwa-brand-800 text-white ring-4 ring-kapwa-brand-100 animate-pulse" : state === "error" ? "bg-kapwa-red-600 text-white" : "bg-neutral-100 text-neutral-400"}`}>{state === "done" ? "✓" : i + 1}</span>
+                <span className={`text-xs sm:text-sm font-semibold leading-tight ${state === "todo" ? "text-neutral-400" : "text-neutral-900"}`}>{s.label}</span>
+                <span className="text-[10px] sm:text-[11px] leading-tight text-neutral-400">{s.tool}</span>
               </li>
             );
           })}
@@ -109,10 +109,10 @@ export default async function JobStatus({ params }: { params: Promise<{ jobId: s
             {(status?.events ?? []).slice().reverse().map((e, i) => {
               const d = describe(e);
               return (
-                <li key={i} className="flex items-start gap-3 px-5 py-2.5 text-[14px]">
-                  <time className="w-16 shrink-0 pt-0.5 font-mono text-xs text-neutral-400">{new Date(e.t).toLocaleTimeString("en-PH", { hour12: false })}</time>
+                <li key={i} className="flex items-start gap-2 sm:gap-3 px-4 sm:px-5 py-2.5 text-[14px]">
+                  <time className="hidden sm:block w-16 shrink-0 pt-0.5 font-mono text-xs text-neutral-400">{new Date(e.t).toLocaleTimeString("en-PH", { hour12: false, timeZone: "Asia/Manila" })}</time>
                   {d.tag && <span className={`mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${TAG[d.tag]}`}>{d.tag}</span>}
-                  <span className="text-neutral-800">{d.text}</span>
+                  <span className="text-neutral-800 break-words min-w-0">{d.text}</span>
                 </li>
               );
             })}

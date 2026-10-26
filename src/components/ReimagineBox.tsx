@@ -24,8 +24,8 @@ export function ReimagineBox({ done = [], initialError = "", initialUrl = "" }: 
           </span>
           <input
             name="url" value={url} onChange={(e) => { setUrl(e.target.value); if (error) setError(""); }} required autoFocus aria-invalid={!!error} aria-describedby={error ? "url-error" : undefined}
-            placeholder="Paste a government website address…"
-            className="flex-1 bg-transparent py-4 text-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
+            placeholder="Paste a government website…"
+            className="min-w-0 flex-1 bg-transparent py-4 text-base sm:text-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
           />
           <button type="submit" disabled={busy || !url.trim()} aria-label="Reimagine this site" className="grid size-12 place-items-center rounded-2xl bg-kapwa-brand-800 text-white hover:bg-kapwa-brand-900 disabled:opacity-40 transition">
             {busy ? <span className="size-5 animate-spin rounded-full border-2 border-white/40 border-t-white" /> : <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 19V5M5 12l7-7 7 7" /></svg>}
