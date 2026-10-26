@@ -6,7 +6,26 @@ import { slugOf } from "@/pipeline/slug";
 
 export const JOBS_ROOT = resolve(process.cwd(), "jobs");
 
+// Restore jobs from R2 once per process if the local jobs dir is empty (container cold start).
+let restoring: Promise<void> | null = null;
+async function ensureRestored() {
+  if (restoring) return restoring;
+  restoring = (async () => {
+    try {
+      const ids = (await readdir(JOBS_ROOT).catch(() => [] as string[])).filter((d) => !d.startsWith("."));
+      if (ids.length > 0) return;
+      if (!(process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY)) return;
+      const { pullAll } = await import("../../scripts/sync-jobs");
+      await pullAll();
+    } catch (e) {
+      console.warn("[jobs] restore skipped:", (e as Error).message);
+    }
+  })();
+  return restoring;
+}
+
 export async function listJobs() {
+  await ensureRestored();
   let ids: string[] = [];
   try { ids = (await readdir(JOBS_ROOT)).filter((d) => !d.startsWith(".")); } catch { return []; }
   const jobs = await Promise.all(ids.map(async (id) => {
@@ -23,6 +42,7 @@ export async function listJobs() {
 
 export async function loadSite(jobId: string): Promise<SiteModel | null> {
   if (!/^[\w.-]+$/.test(jobId)) return null;
+  await ensureRestored();
   try { return JSON.parse(await readFile(join(JOBS_ROOT, jobId, "site.json"), "utf8")); } catch { return null; }
 }
 
