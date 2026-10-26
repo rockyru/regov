@@ -16,13 +16,8 @@ export type BuildEvent =
   | { type: "band"; brief: string }
   | { type: "built"; pages: number; tokens: number; ms: number };
 
-export const slugOf = (url: string) => {
-  const u = new URL(url);
-  const p = u.pathname.replace(/^\/|\/$/g, "").replace(/\.(php|html?|aspx?)$/i, "");
-  const q = [...u.searchParams.entries()].filter(([k]) => !/^(utm_|fbclid|gclid)/.test(k)).map(([k, v]) => `${k}-${v}`).join("-");
-  const slug = [p, q].filter(Boolean).join("/").toLowerCase().replace(/[^a-z0-9/]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
-  return slug === "" ? "home" : slug;
-};
+export { slugOf } from "./slug";
+import { slugOf } from "./slug";
 
 export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void = () => {}, jobsRoot = "jobs"): Promise<SiteModel> {
   const jobDir = join(jobsRoot, jobId);

@@ -1,5 +1,5 @@
 # RE:GOV — Next.js app + pipeline (Playwright Chromium, sharp). linux/amd64 for Cloudflare Containers.
-FROM --platform=linux/amd64 mcr.microsoft.com/playwright:v1.64.1-noble
+FROM mcr.microsoft.com/playwright:v1.64.1-noble
 ENV NODE_ENV=production PLAYWRIGHT_BROWSERS_PATH=/ms-playwright NEXT_TELEMETRY_DISABLED=1 PORT=3000
 WORKDIR /app
 COPY package.json package-lock.json ./

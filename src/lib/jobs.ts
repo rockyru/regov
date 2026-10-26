@@ -2,7 +2,7 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import type { SiteModel, SitePage } from "@/pipeline/schema";
 import type { CrawlResult } from "@/pipeline/types";
-import { slugOf } from "@/pipeline/build";
+import { slugOf } from "@/pipeline/slug";
 
 export const JOBS_ROOT = resolve(process.cwd(), "jobs");
 
