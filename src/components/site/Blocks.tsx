@@ -17,7 +17,7 @@ function A({ href, jobId, origin, className, children }: { href: string; jobId: 
 export function Block({ block, jobId, origin }: { block: Block; jobId: string; origin: string }) {
   const H = ({ children }: { children: React.ReactNode }) => children ? <h2 className="text-2xl font-semibold tracking-tight text-neutral-900 mb-4">{children}</h2> : null;
   const md = <Markdown text={block.body_markdown} jobId={jobId} origin={origin} />;
-  const items: Item[] = block.items ?? [];
+  const items: Item[] = (block.items ?? []).filter((it) => !/^(Protected|Private):/i.test(it.title));
 
   switch (block.type) {
     case "cards":

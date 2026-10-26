@@ -123,43 +123,97 @@ export function Header({ site }: { site: SiteModel }) {
   );
 }
 
+const Icon = {
+  facebook: <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.6 1.6-1.6h1.7V4.3c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.4H7.4V14h2.8v8h3.3z"/></svg>,
+  youtube: <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12 31 31 0 0 0 1 16.8a3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 23.5 12 31 31 0 0 0 23 7.2zM9.7 15.1V8.9l6 3.1-6 3.1z"/></svg>,
+  mail: <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>,
+  github: <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden><path d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2.2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>,
+  flag: <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M4 22V4m0 0h12l-2 4 2 4H4"/></svg>,
+};
+
+const RESOURCES = [
+  { label: "Open Data Philippines", href: "https://data.gov.ph" },
+  { label: "Freedom of Information", href: "https://www.foi.gov.ph" },
+  { label: "Official Gazette", href: "https://www.officialgazette.gov.ph" },
+  { label: "GOV.PH", href: "https://www.gov.ph" },
+  { label: "Office of the President", href: "https://op-proper.gov.ph" },
+  { label: "Senate of the Philippines", href: "https://legacy.senate.gov.ph" },
+  { label: "House of Representatives", href: "https://www.congress.gov.ph" },
+];
+
 export function Footer({ site }: { site: SiteModel }) {
   const { jobId, footer, agency } = site;
+  const logo = site.assets.logo ? `/api/jobs/${jobId}/${site.assets.logo}` : null;
+  const host = new URL(site.origin).host;
+  const findSlug = (re: RegExp) => site.pages.find((p) => re.test(p.slug) || re.test(p.title))?.slug;
+  const quick = footer.quick_links.length ? footer.quick_links : site.nav.filter((n) => n.slug && n.slug !== "home").map((n) => ({ label: n.label, slug: n.slug }));
+  const extras = [
+    { label: "Citizen's Charter", slug: findSlug(/citizen/i) },
+    { label: "Transparency Seal", slug: findSlug(/transparency/i) },
+    { label: "Privacy Policy", slug: findSlug(/privacy/i) },
+    { label: "FAQ", slug: findSlug(/faq|frequently/i) },
+    { label: "Contact Us", slug: findSlug(/contact/i) },
+  ].filter((x): x is { label: string; slug: string } => !!x.slug && !quick.some((q) => q.slug === x.slug));
+  const quickLinks = [...quick, ...extras].slice(0, 8);
+  const pill = "inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2.5 text-sm font-medium text-neutral-100 ring-1 ring-white/10 hover:bg-white/15";
+
   return (
     <footer className="mt-20 bg-neutral-950 text-neutral-300">
-      <div className="container-gov py-14 grid gap-10 md:grid-cols-4">
-        <div className="md:col-span-1">
-          <div className="text-white font-bold text-lg">{agency.name}</div>
-          <p className="mt-2 text-sm text-neutral-400">{agency.description}</p>
+      <div className="container-gov py-16">
+        <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1.1fr]">
+          {/* Brand */}
+          <div>
+            <div className="flex items-center gap-4">
+              {logo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={logo} alt="" className="size-14 object-contain" />
+              ) : null}
+              <div className="text-white font-extrabold text-2xl leading-[1.05] tracking-tight">{agency.name.split(" ").length > 3 ? <>{agency.short_name}<span className="block text-base font-semibold text-neutral-400">{agency.name}</span></> : agency.name}</div>
+            </div>
+            <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-neutral-400">{agency.tagline || agency.description}</p>
+            <ul className="mt-6 flex gap-3">
+              <li><a href={site.origin} target="_blank" rel="noreferrer" aria-label="Facebook page" className="grid size-11 place-items-center rounded-lg bg-white/10 text-neutral-200 hover:bg-white/20">{Icon.facebook}</a></li>
+              <li><a href={site.origin} target="_blank" rel="noreferrer" aria-label="YouTube channel" className="grid size-11 place-items-center rounded-lg bg-white/10 text-neutral-200 hover:bg-white/20">{Icon.youtube}</a></li>
+              {footer.email && <li><a href={`mailto:${footer.email}`} aria-label="Email" className="grid size-11 place-items-center rounded-lg bg-white/10 text-neutral-200 hover:bg-white/20">{Icon.mail}</a></li>}
+            </ul>
+          </div>
+
+          {/* Quick links */}
+          <div>
+            <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-neutral-500">Quick links</h2>
+            <ul className="mt-5 space-y-3 text-[15px]">
+              {quickLinks.map((l) => <li key={l.label}><Link className="text-neutral-200 hover:text-white" href={navHref(jobId, l.slug)}>{l.label}</Link></li>)}
+            </ul>
+          </div>
+
+          {/* Resources */}
+          <div>
+            <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-neutral-500">Resources</h2>
+            <ul className="mt-5 space-y-3 text-[15px]">
+              {RESOURCES.map((l) => <li key={l.label}><a className="text-neutral-200 hover:text-white" href={l.href} target="_blank" rel="noreferrer">{l.label}</a></li>)}
+            </ul>
+          </div>
+
+          {/* Pills */}
+          <div className="flex flex-col items-start gap-3">
+            <div className="inline-flex items-center gap-2 rounded-lg bg-kapwa-green-950/60 px-4 py-2 text-sm text-neutral-100 ring-1 ring-kapwa-green-700/50">Pages migrated by the agent = <span className="font-mono font-bold text-kapwa-green-400">{site.pages.length}</span></div>
+            <a href={`mailto:${footer.email || "helpdesk@" + host}`} className={pill}>{Icon.flag} Report an issue</a>
+            <a href="https://github.com/rockyru/meta-hackaton" target="_blank" rel="noreferrer" className={pill}>{Icon.github} Contribute code with us</a>
+            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
+              <span>Kapwa · BetterGov.ph</span><span>Muse Spark 1.3</span><span>SAM 3.1</span>
+            </div>
+            {(footer.address || footer.phone) && (
+              <address className="mt-4 not-italic text-sm text-neutral-400 space-y-1">
+                {footer.address && <p>{footer.address}</p>}
+                {footer.phone && <p><a className="hover:text-white" href={`tel:${footer.phone.replace(/[^+\d]/g, "")}`}>{footer.phone}</a></p>}
+              </address>
+            )}
+          </div>
         </div>
-        <div>
-          <h2 className="text-white font-semibold text-sm uppercase tracking-wider">Quick links</h2>
-          <ul className="mt-3 space-y-2 text-sm">
-            {footer.quick_links.map((l) => <li key={l.label}><Link className="hover:text-white" href={navHref(jobId, l.slug)}>{l.label}</Link></li>)}
-          </ul>
-        </div>
-        <div>
-          <h2 className="text-white font-semibold text-sm uppercase tracking-wider">Contact</h2>
-          <address className="mt-3 not-italic text-sm space-y-1.5">
-            {footer.address && <p>{footer.address}</p>}
-            {footer.phone && <p><a className="hover:text-white" href={`tel:${footer.phone.replace(/[^+\d]/g, "")}`}>{footer.phone}</a></p>}
-            {footer.email && <p><a className="hover:text-white" href={`mailto:${footer.email}`}>{footer.email}</a></p>}
-            {footer.hours && <p className="text-neutral-500">{footer.hours}</p>}
-          </address>
-        </div>
-        <div>
-          <h2 className="text-white font-semibold text-sm uppercase tracking-wider">Republic of the Philippines</h2>
-          <p className="mt-3 text-sm text-neutral-400">All content is in the public domain unless otherwise stated.</p>
-          <ul className="mt-3 space-y-2 text-sm">
-            {GOV_LINKS.map((l) => <li key={l.label}><a className="hover:text-white" href={l.href}>{l.label}</a></li>)}
-            <li><a className="hover:text-white" href="https://www.gov.ph">GOV.PH</a></li>
-          </ul>
-        </div>
-      </div>
-      <div className="border-t border-neutral-800">
-        <div className="container-gov py-4 text-xs text-neutral-500 flex flex-wrap gap-x-6 gap-y-1 justify-between">
-          <span>© {new Date().getFullYear()} {agency.name}</span>
-          <span>Built on the BetterGov.ph Kapwa standard · migrated from <a className="underline hover:text-neutral-300" href={site.origin}>{new URL(site.origin).host}</a></span>
+
+        <div className="mt-14 border-t border-white/10 pt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-sm text-neutral-500">
+          <p>© {new Date().getFullYear()} {agency.name} <span className="mx-2 text-neutral-700">|</span> Public domain <span className="mx-2 text-neutral-700">|</span> Content sourced from <a className="underline hover:text-neutral-300" href={site.origin}>{host}</a></p>
+          <p className="flex items-center gap-2"><span className="inline-block size-2 rounded-full bg-kapwa-green-500" /> Resurrected {new Date(site.generated_at).toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" })}</p>
         </div>
       </div>
     </footer>

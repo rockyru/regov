@@ -25,7 +25,7 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
               <input aria-label="Search services and information" placeholder="Search services, forms, offices…" className="flex-1 bg-transparent px-4 text-neutral-900 placeholder:text-neutral-400 focus:outline-none" />
               <button type="submit" className="rounded-full bg-kapwa-brand-700 px-6 py-2.5 font-semibold text-white hover:bg-kapwa-brand-800">Search</button>
             </form>
-            {hero.heading && (
+            {hero.heading && hero.heading.trim().toLowerCase() !== agency.name.trim().toLowerCase() && (
               <a href={hero.primary_cta_href || "#"} className="mt-6 inline-flex items-center gap-3 rounded-xl bg-white/10 ring-1 ring-white/20 px-4 py-3 hover:bg-white/15 backdrop-blur">
                 <span className="rounded-md bg-kapwa-yellow-400 px-2 py-0.5 text-xs font-bold text-kapwa-brand-950">Featured</span>
                 <span className="text-sm sm:text-base"><span className="font-semibold">{hero.heading}</span>{hero.primary_cta_label && <span className="text-white/70"> · {hero.primary_cta_label} →</span>}</span>

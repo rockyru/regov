@@ -26,7 +26,9 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
   let tokens = 0;
 
   onEvent({ type: "phase", phase: "understand", detail: `${crawl.pages.length} pages` });
-  const pages: SitePage[] = await pmap(crawl.pages, 4, async (p, i) => {
+  // (protected pages are skipped below)
+  const usable = crawl.pages.filter((p) => !/^(Protected|Private):/i.test(p.title) && !/This content is password protected/i.test(p.text.slice(0, 2000)));
+  const pages: SitePage[] = await pmap(usable, 4, async (p, i) => {
     const t = Date.now();
     const { model, usage } = await understandPage(jobDir, p);
     tokens += usage;
@@ -49,7 +51,7 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
   const news = (crawl.wp?.posts ?? []).map((p) => {
     const x = p as { title?: { rendered?: string }; date?: string; excerpt?: { rendered?: string }; link?: string };
     return { title: x.title?.rendered ?? "", date: x.date ?? "", excerpt: (x.excerpt?.rendered ?? "").replace(/<[^>]+>/g, "").trim(), href: x.link ?? "" };
-  });
+  }).filter((n) => n.title && !/^(Protected|Private):/i.test(n.title.replace(/<[^>]+>/g, "")));
 
   onEvent({ type: "phase", phase: "write" });
   const site: SiteModel = { ...plan, jobId, origin: crawl.origin, generated_at: new Date().toISOString(), pages: unique, news, assets: { logo: seg.logo, logo_box: seg.logo_box }, tokens };
