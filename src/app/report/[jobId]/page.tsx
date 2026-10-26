@@ -59,7 +59,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
   const Stat = ({ v, l }: { v: string | number; l: string }) => <div className="rounded-3xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-16px_rgba(0,56,168,0.25)] ring-1 ring-neutral-200/80 p-5"><div className="text-3xl font-black tracking-tight text-kapwa-brand-900">{v}</div><div className="mt-1 text-sm text-neutral-500">{l}</div></div>;
 
   return (
-    <main className="container-gov max-w-6xl pb-16 flex-1">
+    <main className="container-gov pb-16 flex-1">
       <header className="flex items-center justify-between pt-6 pb-10">
         <Link href="/" className="text-2xl font-black tracking-tight leading-none"><span className="text-kapwa-brand-900">RE</span><span className="text-kapwa-red-600">:</span>GOV</Link>
         <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">← Back to home</Link>
@@ -69,11 +69,11 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
         <div className="flex gap-3"><Link href={`/preview/${jobId}`} className="rounded-full bg-kapwa-brand-800 px-5 py-2.5 font-semibold text-white hover:bg-kapwa-brand-900">View site →</Link><a href={site.origin} target="_blank" rel="noreferrer" className="rounded-full ring-1 ring-neutral-200 px-5 py-2.5 font-semibold text-neutral-700 hover:bg-neutral-50">Original ↗</a></div>
       </div>
 
-      <div className="mt-10 grid grid-cols-2 md:grid-cols-6 gap-4">
+      <div className="mt-10 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
         <Stat v={crawl.pages.length} l="pages crawled" /><Stat v={site.pages.length} l="pages rebuilt" /><Stat v={blocks} l="content blocks" /><Stat v={a11y.length} l="accessibility issues found" /><Stat v={imageOnly} l="image-only sections transcribed" /><Stat v={((site.tokens ?? 0) / 1000).toFixed(0) + "k"} l="Muse Spark tokens" />
       </div>
 
-      <section className="mt-14 grid gap-8 lg:grid-cols-[1fr_320px]">
+      <section className="mt-14 grid gap-8 lg:grid-cols-[1fr_360px]">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">What SAM 3.1 saw on the old homepage</h2>
           <p className="mt-1 text-neutral-600">Noun-phrase prompts (logo, search box, map, infographic, photograph) on the original screenshot. The seal was cut out and reused as the new site's brand mark.</p>

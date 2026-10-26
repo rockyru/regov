@@ -37,7 +37,6 @@ body { @apply bg-white text-neutral-900; }
 @utility container-gov {
   margin-inline: auto;
   width: 100%;
-  max-width: 1600px;
   padding-inline: 1.25rem;
   @media (width >= 40rem) { padding-inline: 2rem; }
   @media (width >= 64rem) { padding-inline: 3rem; }
