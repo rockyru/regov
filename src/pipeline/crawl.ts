@@ -112,6 +112,21 @@ async function extract(page: Page, origin: string): Promise<Extracted> {
   return page.evaluate(`(${EXTRACT_SRC})(${JSON.stringify(origin)})`) as Promise<Extracted>;
 }
 
+/** Round-robin links across their first path segment. */
+export function diverse(links: string[]): string[] {
+  const groups = new Map<string, string[]>();
+  for (const l of links) {
+    // region_11, office-3 … collapse to one group; category/tag/news archives go last
+    const segs = new URL(l).pathname.split("/").filter(Boolean);
+    const seg = (segs[0] ?? "").replace(/[-_]?\d+$/, "") + (/^(category|tag|news|author|date)$/i.test(segs[1] ?? "") ? "#archive" : "");
+    (groups.get(seg) ?? groups.set(seg, []).get(seg)!).push(l);
+  }
+  const out: string[] = [];
+  const lists = [...groups.entries()].sort(([a], [b]) => Number(a.endsWith("#archive")) - Number(b.endsWith("#archive"))).map(([, v]) => v);
+  for (let i = 0; lists.some((g) => g.length > i); i++) for (const g of lists) if (g[i]) out.push(g[i]);
+  return out;
+}
+
 export async function crawl(startUrl: string, opts: CrawlOptions): Promise<CrawlResult> {
   const {
     jobId, jobsRoot = "jobs", maxPages = 20, maxDepth = 3, delayMs = 1000,
@@ -181,10 +196,10 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
       onEvent({ type: "page", url, index: idx, title: ex.title, status });
 
       if (depth < maxDepth) {
-        // nav links first so the important pages land inside the cap
-        for (const l of [...navLinks, ...pageLinks]) {
-          if (!seen.has(l)) { seen.add(l); queue.push({ url: l, depth: depth + 1 }); }
-        }
+        // nav links first, interleaved across top-level sections, so a small page cap
+        // still samples every part of the site instead of one dropdown's children.
+        const fresh = [...navLinks, ...pageLinks].filter((l) => !seen.has(l));
+        for (const l of diverse([...new Set(fresh)])) { seen.add(l); queue.push({ url: l, depth: depth + 1 }); }
       }
     } catch (e) {
       const reason = (e as Error).message.split("\n")[0].slice(0, 120);

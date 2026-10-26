@@ -1,69 +1,44 @@
-import Image from "next/image";
+import Link from "next/link";
+import { listJobs } from "@/lib/jobs";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Dashboard() {
+  const jobs = await listJobs();
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="container-gov py-14 flex-1">
+      <p className="text-sm font-semibold uppercase tracking-wider text-kapwa-brand-700">Site Resurrection Agent</p>
+      <h1 className="mt-2 text-4xl font-extrabold tracking-tight">Legacy government site in. BetterGov-standard site out.</h1>
+      <p className="mt-3 max-w-2xl text-lg text-neutral-600">Crawl → SAM 3.1 segmentation → Muse Spark page understanding → site plan → Kapwa render → migration report.</p>
+
+      <form action="/api/run" method="post" className="mt-8 flex max-w-xl gap-2">
+        <input name="url" required placeholder="https://agency.gov.ph" className="flex-1 rounded-lg border border-neutral-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-kapwa-brand-500" />
+        <button className="rounded-lg bg-kapwa-brand-800 px-5 py-3 font-semibold text-white hover:bg-kapwa-brand-900">Resurrect</button>
+      </form>
+
+      <h2 className="mt-14 text-xl font-semibold">Jobs</h2>
+      <ul className="mt-4 grid gap-6 md:grid-cols-2">
+        {jobs.map((j) => (
+          <li key={j.id} className="rounded-2xl ring-1 ring-neutral-200 overflow-hidden">
+            <div className="grid grid-cols-2 bg-neutral-100">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/api/jobs/${j.id}/shots/000.viewport.png`} alt="Original homepage" className="aspect-[4/3] w-full object-cover object-top opacity-80" />
+              <div className="aspect-[4/3] grid place-items-center bg-[radial-gradient(ellipse_at_top_left,var(--color-kapwa-brand-700),var(--color-kapwa-brand-950))] text-white text-center p-4">
+                {j.site ? <span><span className="block text-xs uppercase tracking-wider text-kapwa-yellow-300">Resurrected</span><span className="block font-bold">{j.site.agency.short_name}</span></span> : <span className="text-sm text-white/70">crawled, not yet built</span>}
+              </div>
+            </div>
+            <div className="p-5">
+              <div className="font-semibold">{j.site?.agency.name ?? j.crawl?.origin}</div>
+              <div className="text-sm text-neutral-500">{j.crawl?.origin} · {j.crawl?.pages.length} pages crawled{j.crawl?.wp ? ` · WP REST: ${j.crawl.wp.pages.length} pages` : ""}</div>
+              <div className="mt-4 flex gap-3 text-sm font-semibold">
+                {j.site && <Link href={`/preview/${j.id}`} className="rounded-md bg-kapwa-brand-800 px-3 py-1.5 text-white hover:bg-kapwa-brand-900">Open new site</Link>}
+                {j.site && <Link href={`/report/${j.id}`} className="rounded-md ring-1 ring-neutral-300 px-3 py-1.5 hover:bg-neutral-50">Migration report</Link>}
+                <a href={j.crawl?.origin} target="_blank" rel="noreferrer" className="rounded-md px-3 py-1.5 text-neutral-600 hover:bg-neutral-50">Original ↗</a>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </main>
   );
 }

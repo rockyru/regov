@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Site Resurrection Agent
 
-## Getting Started
+**Legacy government website in. BetterGov-standard website out.**
 
-First, run the development server:
+Paste the URL of an old Philippine government WordPress site. The agent crawls it, uses
+**SAM 3.1** and **Muse Spark 1.3** (Meta Model API) to understand every page, rebuilds the
+site on the **BetterGov.ph Kapwa** design system with all content migrated, and hands back a
+migration report: what moved, what was image-only, what needs a human, which accessibility
+problems were fixed.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Built solo for the Meta Global AI Developer Hackathon 2026 (Indie track).
+
+## Why
+
+Thousands of `.gov.ph` and `.edu.ph` sites run on abandoned WordPress installs from the
+2010s Government Web Template era. I migrated one by hand (UP Manila RGAO, WordPress →
+Payload). It took weeks. This does the first 80% in minutes, on the design standard the
+BetterGov.ph volunteers already defined for the whole government.
+
+## How it works
+
+```
+URL ─▶ crawl.ts ─▶ segment.ts ─▶ understand.ts ─▶ plan.ts ─▶ site.json ─▶ Next.js + Kapwa
+       Playwright    SAM 3.1       Muse Spark 1.3    Muse Spark 1.3            live preview
+       + WP REST     logo/seal     vision + strict   information               + migration
+                     cut-out       JSON per page     architecture              report
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Step | Meta tool | What it does |
+|---|---|---|
+| Crawl | — | Polite same-origin crawl (robots.txt, 1 req/s). Full-page screenshots, HTML, visible text, link graph, WordPress REST when exposed. |
+| Segment | **SAM 3.1** | Noun-phrase prompts on the homepage screenshot. Finds the agency seal, cuts it out with the mask as alpha, reuses it as the new brand mark. |
+| Understand | **Muse Spark 1.3** | Screenshot + text → strict-schema `PageModel`: typed content blocks (people, steps, FAQ, tables, timelines, contact…), accessibility issues, migration notes. Image-only content is transcribed. |
+| Plan | **Muse Spark 1.3** | All page models → citizen-first `SitePlan`: nav, popular services, homepage sections, footer, redirects. |
+| Render | — | Next.js renders `site.json` live on Kapwa tokens/components. No per-job build. |
+| Report | — | Coverage, SAM overlay, accessibility findings, "needs a human" list, page-by-page mapping. |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Every model response is cached on disk under `jobs/<id>/models`, so reruns are free and demos are deterministic.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Run it
 
-## Learn More
+```bash
+npm install
+npx playwright install chromium
+cp .env.example .env            # add MODEL_API_KEY from dev.meta.ai
+npx tsx --env-file=.env scripts/smoke.ts          # proves Spark text, Spark vision+JSON, SAM 3.1 work
 
-To learn more about Next.js, take a look at the following resources:
+# one shot: crawl + build
+node --env-file=.env node_modules/tsx/dist/cli.mjs scripts/pipeline.ts https://cda.gov.ph cda 30
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+npm run dev                      # http://localhost:3000  → dashboard, /preview/<job>, /report/<job>
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Or use the dashboard: paste a URL, press **Resurrect**, watch the job page stream progress.
 
-## Deploy on Vercel
+## Layout
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/pipeline/   crawl · segment · understand · plan · build · schema (zod → strict JSON schema)
+src/lib/        meta.ts (one OpenAI-compatible client for api.meta.ai) · jobs.ts
+src/components/site/  Shell (GOVPH strip, header, footer) · Pages (home, content) · Blocks
+src/app/        / dashboard · /jobs/[id] progress · /preview/[id]/[...slug] · /report/[id] · /api/run
+scripts/        smoke · crawl · run · pipeline · sam-probe
+jobs/           per-job artifacts (gitignored)
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Design baseline
+
+[Kapwa](https://github.com/bettergovph/kapwa) is the design system BetterGov.ph built for
+Philippine government portals. Generated sites import its tokens and components and layer on
+a stronger hero, service-first navigation, sticky header with search, WCAG AA contrast and
+semantic structure.
+
+## Status
+
+See `PLAN.md` for the schedule and what is left before the Nov 4 deadline.
