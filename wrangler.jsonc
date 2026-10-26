@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "regov",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "routes": [
+    { "pattern": "regov.app", "custom_domain": true },
+    { "pattern": "www.regov.app", "custom_domain": true }
+  ],
+  "containers": [
+    { "class_name": "RegovContainer", "image": "./Dockerfile", "max_instances": 1, "instance_type": "standard-2" }
+  ],
+  "durable_objects": { "bindings": [{ "name": "REGOV", "class_name": "RegovContainer" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["RegovContainer"] }],
+  "vars": { "R2_BUCKET": "regov-jobs" }
+}

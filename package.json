@@ -9,7 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1157.0",
     "@bettergov/kapwa": "^1.4.1",
+    "@cloudflare/containers": "^0.3.7",
     "@meta-sam/parser": "^0.1.0",
     "cheerio": "^1.2.0",
     "next": "16.4.3",
@@ -23,6 +25,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261026.1",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -31,6 +34,7 @@
     "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.153.0"
   }
 }

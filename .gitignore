@@ -45,4 +45,4 @@ next-env.d.ts
 .env.local
 
 # pipeline artifacts
-jobs/
+/jobs/

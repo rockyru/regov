@@ -4,6 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { crawl, BlockedError } from "../src/pipeline/crawl";
 import { findSnapshot } from "../src/pipeline/archive";
+import { pushJob } from "./sync-jobs";
 import { buildSite } from "../src/pipeline/build";
 
 const [url, jobId, max = "20"] = process.argv.slice(2);
@@ -32,6 +33,8 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
     status.phase = "build";
     await buildSite(jobId, (e) => { if (e.type === "phase") status.phase = e.phase; log(e); });
     status.phase = "done"; status.done = true;
+    await flush();
+    await pushJob(jobId).catch((e) => console.warn("[sync]", (e as Error).message));
   } catch (e) {
     status.error = (e as Error).message; status.phase = "error";
     console.error(e);
