@@ -8,8 +8,11 @@ export async function POST(req: Request) {
   const raw = String(form.get("url") ?? "");
   const max = String(form.get("max") ?? "20");
   const parsed = normalizeSiteUrl(raw);
-  // Relative redirects: behind the Worker the container sees 0.0.0.0:3000 as its own host.
-  const go = (path: string) => new Response(null, { status: 303, headers: { Location: path } });
+  // Behind the Worker the container sees 0.0.0.0:3000 as its own host, so build redirects from the public origin.
+  const fwdHost = req.headers.get("x-forwarded-host");
+  const fwdProto = req.headers.get("x-forwarded-proto") ?? "https";
+  const origin = process.env.PUBLIC_ORIGIN || (fwdHost ? `${fwdProto}://${fwdHost}` : new URL(req.url).origin);
+  const go = (path: string) => new Response(null, { status: 303, headers: { Location: new URL(path, origin).toString() } });
   if (!parsed) return go(`/?error=invalid&url=${encodeURIComponent(raw)}`);
   if (!isGovernmentHost(parsed.hostname)) return go(`/?error=notgov&url=${encodeURIComponent(parsed.hostname)}`);
   const url = parsed.toString();
