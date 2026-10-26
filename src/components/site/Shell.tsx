@@ -92,15 +92,15 @@ export function Header({ site }: { site: SiteModel }) {
                   {item.children.length > 0 && (
                     <div className="absolute inset-x-0 top-full hidden group-hover:block group-focus-within:block">
                       <div className="bg-white text-neutral-900 shadow-2xl border-t-4 border-kapwa-yellow-400">
-                        <div className="container-gov py-8 grid gap-10 lg:grid-cols-[280px_1fr]">
+                        <div className="container-gov py-8 grid gap-10 lg:grid-cols-[280px_1fr] lg:border-l-0">
                           <div>
                             <div className="text-xl font-bold">{item.label}</div>
                             {item.description && <p className="mt-2 text-[15px] text-neutral-600">{item.description}</p>}
                             {item.slug && <Link href={navHref(jobId, item.slug)} className="mt-4 inline-block font-semibold text-kapwa-brand-800 hover:underline">Overview →</Link>}
                           </div>
-                          <div className={`grid gap-8 ${cols.length >= 3 ? "lg:grid-cols-3" : cols.length === 2 ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}>
+                          <div className="flex flex-wrap gap-x-12 gap-y-8">
                             {cols.map((col, i) => (
-                              <div key={i}>
+                              <div key={i} className="w-64 shrink-0 lg:border-l lg:border-neutral-200 lg:pl-8 first:border-0 first:pl-0">
                                 {col.heading && <div className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-3">{col.heading}</div>}
                                 <ul className="space-y-1">
                                   {col.links.map((c) => <li key={c.slug + c.label}><Link href={navHref(jobId, c.slug)} className="block rounded-md px-3 py-2 -mx-3 text-[15px] font-medium text-neutral-800 hover:bg-kapwa-brand-50 hover:text-kapwa-brand-900">{c.label}</Link></li>)}
