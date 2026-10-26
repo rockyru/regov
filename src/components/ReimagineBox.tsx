@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
 
-const EXAMPLES = ["cda.gov.ph", "neust.edu.ph", "lupao.gov.ph", "region10.dilg.gov.ph"];
+const EXAMPLES = ["region10.dilg.gov.ph", "isu.edu.ph", "bulacan.gov.ph", "nrcp.dost.gov.ph", "philsa.gov.ph", "launion.gov.ph", "pchrd.dost.gov.ph", "region5.dilg.gov.ph"];
 
-export function ReimagineBox() {
+export function ReimagineBox({ done = [] }: { done?: string[] }) {
+  const examples = EXAMPLES.filter((e) => !done.includes(e)).slice(0, 4);
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState(false);
   return (
@@ -26,7 +27,7 @@ export function ReimagineBox() {
       </div>
       <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
         <span className="text-neutral-400">Try</span>
-        {EXAMPLES.map((e) => (
+        {examples.map((e) => (
           <button key={e} type="button" onClick={() => setUrl(`https://${e}`)} className="rounded-full bg-neutral-100 px-3 py-1.5 text-neutral-700 hover:bg-kapwa-brand-50 hover:text-kapwa-brand-900">{e}</button>
         ))}
       </div>

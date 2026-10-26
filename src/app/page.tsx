@@ -28,7 +28,7 @@ export default async function Home() {
         <div className="w-full max-w-2xl text-center">
           <h1 className="text-5xl sm:text-6xl font-black tracking-tight leading-[1.02] text-neutral-900">Reimagine <span className="text-kapwa-brand-900">Government</span>.</h1>
           <p className="mt-4 text-xl text-neutral-600">Public websites deserve a second life.</p>
-          <div className="mt-7"><ReimagineBox /></div>
+          <div className="mt-7"><ReimagineBox done={jobs.map((j) => new URL(j.crawl!.origin).host.replace(/^www\./, ""))} /></div>
           <p className="mt-4 text-sm text-neutral-500">Agencies, LGUs, universities, hospitals. Sites behind bot protection are rebuilt from their Wayback Machine archive.</p>
         </div>
       </section>
