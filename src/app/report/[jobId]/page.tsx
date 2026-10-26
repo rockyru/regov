@@ -8,6 +8,39 @@ import type { Box } from "@/pipeline/segment";
 
 export const dynamic = "force-dynamic";
 
+type Finding = { page: string; slug: string; text: string };
+function groupBy(items: Finding[]) {
+  const m = new Map<string, { page: string; slug: string; items: string[] }>();
+  for (const it of items) (m.get(it.slug) ?? m.set(it.slug, { page: it.page, slug: it.slug, items: [] }).get(it.slug)!).items.push(it.text);
+  return [...m.values()];
+}
+
+function Findings({ title, subtitle, tone, groups, jobId }: { title: string; subtitle: string; tone: "red" | "amber"; groups: { page: string; slug: string; items: string[] }[]; jobId: string }) {
+  const total = groups.reduce((n, g) => n + g.items.length, 0);
+  const dot = tone === "red" ? "bg-kapwa-red-500" : "bg-kapwa-yellow-400";
+  const badge = tone === "red" ? "bg-kapwa-red-50 text-kapwa-red-700" : "bg-kapwa-yellow-50 text-kapwa-orange-700";
+  return (
+    <div>
+      <div className="flex items-baseline gap-3"><h2 className="text-2xl font-bold tracking-tight">{title}</h2><span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${badge}`}>{total}</span></div>
+      <p className="mt-1 text-sm text-neutral-500">{subtitle}</p>
+      <div className="mt-5 overflow-hidden rounded-2xl bg-white ring-1 ring-neutral-200 divide-y divide-neutral-100">
+        {groups.map((g) => (
+          <details key={g.slug} open={g.items.length <= 4} className="group">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-3.5 hover:bg-neutral-50">
+              <span className="flex items-center gap-3 min-w-0"><span className={`size-2 shrink-0 rounded-full ${dot}`} /><Link href={g.slug === "home" ? `/preview/${jobId}` : `/preview/${jobId}/${g.slug}`} className="truncate font-semibold text-neutral-900 hover:text-kapwa-brand-900">{g.page}</Link></span>
+              <span className="flex items-center gap-3 text-xs text-neutral-500"><span>{g.items.length}</span><span className="text-neutral-400 transition group-open:rotate-180">▾</span></span>
+            </summary>
+            <ul className="px-5 pb-4 pl-10 space-y-2 text-[15px] leading-relaxed text-neutral-700">
+              {g.items.map((t, i) => <li key={i} className="relative before:absolute before:-left-4 before:top-[0.7em] before:size-1 before:rounded-full before:bg-neutral-300">{t}</li>)}
+            </ul>
+          </details>
+        ))}
+        {groups.length === 0 && <p className="px-5 py-6 text-sm text-neutral-500">Nothing found.</p>}
+      </div>
+    </div>
+  );
+}
+
 const COLORS: Record<string, string> = { logo: "#fcd116", "navigation menu": "#35b0ff", banner: "#ff6878", sidebar: "#3deb8e", footer: "#fdad3a" };
 
 export default async function Report({ params }: { params: Promise<{ jobId: string }> }) {
@@ -87,17 +120,21 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
         </div>
       </section>
 
-      <section className="mt-14 grid gap-10 md:grid-cols-2">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Accessibility issues fixed</h2>
-          <p className="mt-1 text-sm text-neutral-500">Found by Muse Spark on the old pages. The new site uses semantic headings, real text, labelled controls and WCAG AA contrast.</p>
-          <ul className="mt-4 space-y-3">{a11y.map((x, i) => <li key={i} className="rounded-lg border-l-4 border-kapwa-red-400 bg-kapwa-red-50/50 px-4 py-2.5 text-sm"><span className="font-semibold text-neutral-900">{x.page}:</span> <span className="text-neutral-700">{x.issue}</span></li>)}</ul>
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Needs a human</h2>
-          <p className="mt-1 text-sm text-neutral-500">Content the agent could not migrate with confidence.</p>
-          <ul className="mt-4 space-y-3">{notes.map((x, i) => <li key={i} className="rounded-lg border-l-4 border-kapwa-yellow-400 bg-kapwa-yellow-50/60 px-4 py-2.5 text-sm"><span className="font-semibold text-neutral-900">{x.page}:</span> <span className="text-neutral-700">{x.note}</span></li>)}</ul>
-        </div>
+      <section className="mt-14 grid gap-10 lg:grid-cols-2">
+        <Findings
+          title="Accessibility issues fixed"
+          subtitle="Found by Muse Spark on the old pages. The new site uses semantic headings, real text, labelled controls and WCAG AA contrast."
+          tone="red"
+          groups={groupBy(a11y.map((x) => ({ page: x.page, slug: x.slug, text: x.issue })))}
+          jobId={jobId}
+        />
+        <Findings
+          title="Needs a human"
+          subtitle="Content the agent migrated but could not verify, and gaps it could not fill."
+          tone="amber"
+          groups={groupBy(notes.map((x) => ({ page: x.page, slug: x.slug, text: x.note })))}
+          jobId={jobId}
+        />
       </section>
 
       {crawl.skipped.length > 0 && <section className="mt-14"><h2 className="text-xl font-bold">Skipped during crawl</h2><ul className="mt-2 text-sm text-neutral-600 space-y-1">{crawl.skipped.map((s, i) => <li key={i}>{s.url} — {s.reason}</li>)}</ul></section>}

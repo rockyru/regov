@@ -101,10 +101,11 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
             <div className="max-w-2xl"><h2 className="text-3xl font-bold tracking-tight text-neutral-900">{sec.heading}</h2>{sec.description && <p className="mt-2 text-neutral-600 text-lg">{sec.description}</p>}</div>
             <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {sec.slugs.map((slug) => (
-                <Link key={slug} href={navHref(jobId, slug)} className="group rounded-2xl border-t-4 border-kapwa-brand-600 bg-white p-6 shadow-sm ring-1 ring-neutral-200 hover:shadow-lg hover:-translate-y-0.5 transition">
-                  <h3 className="text-lg font-semibold text-neutral-900 group-hover:text-kapwa-brand-900">{slugTitle(site, slug)}</h3>
+                <Link key={slug} href={navHref(jobId, slug)} className="group relative flex flex-col rounded-3xl bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_10px_30px_-16px_rgba(0,56,168,0.25)] ring-1 ring-neutral-200/80 transition hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_22px_44px_-20px_rgba(0,56,168,0.4)]">
+                  <span className="mb-4 grid size-10 place-items-center rounded-xl bg-kapwa-brand-50 text-kapwa-brand-800 font-bold">{slugTitle(site, slug).slice(0, 1)}</span>
+                  <h3 className="text-lg font-semibold leading-snug text-neutral-900 group-hover:text-kapwa-brand-900">{slugTitle(site, slug)}</h3>
                   <p className="mt-2 text-sm text-neutral-600 line-clamp-3">{slugSummary(site, slug)}</p>
-                  <span className="mt-4 inline-block text-sm font-semibold text-kapwa-brand-700">Read more →</span>
+                  <span className="mt-auto pt-5 inline-flex items-center gap-1 text-sm font-semibold text-kapwa-brand-700">Read more <span aria-hidden className="transition group-hover:translate-x-0.5">→</span></span>
                 </Link>
               ))}
             </div>
