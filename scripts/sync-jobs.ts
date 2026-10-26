@@ -5,7 +5,8 @@ import { S3Client, PutObjectCommand, ListObjectsV2Command, GetObjectCommand } fr
 import { readdir, readFile, writeFile, mkdir, stat } from "node:fs/promises";
 import { join, relative, dirname } from "node:path";
 
-const { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET = "regov-jobs" } = process.env;
+const { R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET = "regov-jobs" } = process.env;
+const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID ?? process.env.CLOUDFLARE_ACCOUNT_ID;
 const ROOT = "jobs";
 const SKIP = /^(html|models)\//; // regenerable, keeps uploads small
 
