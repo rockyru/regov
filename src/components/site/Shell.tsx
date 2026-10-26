@@ -198,7 +198,7 @@ export function Footer({ site }: { site: SiteModel }) {
           <div className="flex flex-col items-start gap-3">
             <div className="inline-flex items-center gap-2 rounded-lg bg-kapwa-green-950/60 px-4 py-2 text-sm text-neutral-100 ring-1 ring-kapwa-green-700/50">Pages migrated by the agent = <span className="font-mono font-bold text-kapwa-green-400">{site.pages.length}</span></div>
             <a href={`mailto:${footer.email || "helpdesk@" + host}`} className={pill}>{Icon.flag} Report an issue</a>
-            <a href="https://github.com/rockyru/meta-hackaton" target="_blank" rel="noreferrer" className={pill}>{Icon.github} Contribute code on RE:GOV</a>
+            <a href="https://github.com/rockyru/regov" target="_blank" rel="noreferrer" className={pill}>{Icon.github} Contribute code on RE:GOV</a>
             <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
               <span>RE:GOV</span><span>Kapwa · BetterGov.ph</span><span>Muse Spark 1.3</span><span>SAM 3.1</span><span>Muse Image</span>
             </div>
