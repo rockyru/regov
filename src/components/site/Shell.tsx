@@ -49,29 +49,33 @@ function columns(children: NavChild[]): { heading: string; links: NavChild[] }[]
 export function Header({ site }: { site: SiteModel }) {
   const { jobId } = site;
   const logo = site.assets.logo ? `/api/jobs/${jobId}/${site.assets.logo}?v=${encodeURIComponent(site.generated_at)}` : null;
-  const items = site.nav.filter((n) => n.slug !== "home");
+  const items = site.nav.filter((n) => n.slug !== "home" && (n.slug || n.children.length > 0));
+  const band = site.assets.band ? `/api/jobs/${jobId}/${site.assets.band}?v=${encodeURIComponent(site.generated_at)}` : null;
   return (
     <header>
-      {/* Row 1: identity + search */}
-      <div className="bg-white border-b border-neutral-200">
-        <div className="container-gov h-20 flex items-center gap-6">
+      {/* Row 1: identity, with the Muse Image band fading in behind it */}
+      <div className="relative overflow-hidden bg-white border-b border-neutral-200">
+        {band && (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={band} alt="" aria-hidden className="absolute inset-y-0 right-0 h-full w-[70%] object-cover object-center" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,white_0%,white_34%,rgba(255,255,255,0.92)_46%,rgba(255,255,255,0.55)_62%,rgba(255,255,255,0.1)_85%,rgba(255,255,255,0)_100%)]" aria-hidden />
+          </>
+        )}
+        <div className="container-gov relative h-24 flex items-center">
           <Link href={navHref(jobId, "home")} className="flex items-center gap-4 min-w-0">
             {logo ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={logo} alt={`${site.agency.short_name} seal`} className="size-14 object-contain shrink-0" />
+              <img src={logo} alt={`${site.agency.short_name} seal`} className="size-16 object-contain shrink-0 drop-shadow-sm" />
             ) : (
-              <span className="size-14 rounded-full bg-kapwa-brand-900 text-white grid place-items-center font-bold shrink-0">{site.agency.short_name.slice(0, 3)}</span>
+              <span className="size-16 rounded-full bg-kapwa-brand-900 text-white grid place-items-center font-bold shrink-0">{site.agency.short_name.slice(0, 3)}</span>
             )}
             <span className="leading-tight min-w-0">
               <span className="block text-[11px] uppercase tracking-[0.14em] text-neutral-500">{site.agency.parent}</span>
-              <span className="block font-bold text-neutral-900 text-base sm:text-xl leading-tight line-clamp-2">{site.agency.name}</span>
+              <span className="block font-bold text-neutral-900 text-lg sm:text-2xl leading-tight line-clamp-2">{site.agency.name}</span>
+              {site.agency.tagline && <span className="hidden sm:block text-sm text-neutral-600 mt-0.5">{site.agency.tagline}</span>}
             </span>
           </Link>
-          <form role="search" className="ml-auto hidden md:flex items-center">
-            <label className="sr-only" htmlFor="site-search">Search this site</label>
-            <input id="site-search" placeholder="Search services, forms, offices…" className="h-11 w-72 xl:w-96 rounded-l-md border border-neutral-300 bg-neutral-50 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-kapwa-brand-500" />
-            <button type="submit" className="h-11 rounded-r-md bg-kapwa-brand-800 px-4 text-sm font-semibold text-white hover:bg-kapwa-brand-900">Search</button>
-          </form>
         </div>
       </div>
 
@@ -116,7 +120,12 @@ export function Header({ site }: { site: SiteModel }) {
               );
             })}
           </div>
-          <div className="flex items-center ml-auto lg:ml-0 py-1.5"><MobileNav nav={site.nav} jobId={jobId} /></div>
+          <form role="search" className="hidden md:flex items-center ml-auto py-2">
+            <label className="sr-only" htmlFor="site-search">Search this site</label>
+            <input id="site-search" placeholder="Search services, forms, offices…" className="h-10 w-60 xl:w-80 rounded-l-md border-0 bg-white/95 px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-kapwa-yellow-400" />
+            <button type="submit" className="h-10 rounded-r-md bg-kapwa-yellow-400 px-4 text-sm font-bold text-kapwa-brand-950 hover:bg-kapwa-yellow-300">Search</button>
+          </form>
+          <div className="flex items-center ml-auto md:ml-3 py-1.5"><MobileNav nav={site.nav} jobId={jobId} /></div>
         </div>
       </nav>
     </header>

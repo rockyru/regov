@@ -13,7 +13,7 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
       </button>
       {open && (
         <div id="mobile-nav" className="absolute inset-x-0 top-full z-50 max-h-[80vh] overflow-y-auto bg-white text-neutral-900 shadow-2xl border-t border-neutral-200">
-          {nav.map((item) => (
+          {nav.filter((n) => n.slug || n.children.length > 0).map((item) => (
             <details key={item.label} className="border-b border-neutral-100 group">
               <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 font-semibold">
                 {item.slug ? <Link href={href(item.slug)} onClick={() => setOpen(false)}>{item.label}</Link> : item.label}

@@ -16,7 +16,7 @@ export async function makeBand(jobDir: string, plan: SitePlan, pageSummaries: st
     const r = await meta.responses.create({
       model: MUSE,
       instructions: "You write one-paragraph art briefs for illustrators. Be concrete and visual: people, places, objects, time of day. Never include text, logos or names in the picture. 60-90 words. Output only the brief.",
-      input: `Government body: ${plan.agency.name} (${plan.site_kind.replace(/_/g, " ")}${plan.lgu?.province ? `, ${plan.lgu.province}` : ""}${plan.lgu?.region ? `, ${plan.lgu.region}` : ""}).\nMandate: ${plan.agency.description}\nTagline: ${plan.agency.tagline}\nWhat the site is about: ${pageSummaries.slice(0, 12).join(" | ").slice(0, 1500)}\n\nDescribe a header illustration that captures this body's identity and the people it serves. For a town or province, show its landscape, livelihood and landmarks; for an agency, the people and work of its mandate.`,
+      input: `Government body: ${plan.agency.name} (${plan.site_kind.replace(/_/g, " ")}${plan.locality?.city ? `, ${plan.locality.city}` : ""}${plan.locality?.province ? `, ${plan.locality.province}` : ""}${plan.locality?.region ? `, ${plan.locality.region}` : ""}).\nMandate: ${plan.agency.description}\nTagline: ${plan.agency.tagline}\nWhat the site is about: ${pageSummaries.slice(0, 12).join(" | ").slice(0, 1500)}\n\nDescribe a header illustration that captures this body's identity and the people it serves. For a town or province, show its landscape, livelihood and landmarks; for a university or school, students, campus life and learning; for a hospital, care and healing; for an agency, the people and work of its mandate.`,
       reasoning: { effort: "low" } as never,
     });
     return r.output_text.trim();

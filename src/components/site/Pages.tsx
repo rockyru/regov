@@ -5,14 +5,20 @@ import { Markdown } from "./Markdown";
 import { navHref } from "./Shell";
 
 const slugTitle = (site: SiteModel, slug: string) => site.pages.find((p) => p.slug === slug)?.title ?? slug;
+const initialsOf = (n: string) => n.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 2).map((w) => w[0]).join("") || "•";
 const slugSummary = (site: SiteModel, slug: string) => site.pages.find((p) => p.slug === slug)?.summary ?? "";
 
 export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
   const { jobId, agency } = site;
   const band = site.assets.band ? `/api/jobs/${jobId}/${site.assets.band}?v=${encodeURIComponent(site.generated_at)}` : null;
   const hero = page.hero;
-  const lgu = site.lgu ?? { province: "", region: "", officials: [], barangays: [], hotlines: [], tourism_slugs: [] };
-  const isLgu = ["province", "city_municipality", "barangay"].includes(site.site_kind ?? "");
+  const kind = site.site_kind ?? "national_agency";
+  const isLgu = ["province", "city_municipality", "barangay"].includes(kind);
+  const locality = site.locality ?? { province: "", region: "", city: "" };
+  const ents = site.entities ?? [];
+  const of = (t: string) => ents.filter((e) => e.type === t && e.name);
+  const officials = of("official"), hotlines = of("hotline"), barangays = of("barangay"), programs = of("program"), campuses = of("campus"), units = of("unit");
+  const servicesLabel = isLgu ? "Services for residents" : kind === "university" || kind === "school" ? "For students and applicants" : kind === "hospital" ? "For patients and visitors" : kind === "embassy" ? "Consular services" : kind === "goc_corporation" ? "For members and customers" : "Popular services";
   const mainBlocks = page.blocks.filter((b) => b.type !== "contact");
   const contact = page.blocks.find((b) => b.type === "contact");
   return (
@@ -29,7 +35,7 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
         )}
         <div className="relative container-gov py-16 lg:py-24 grid gap-12 lg:grid-cols-[1.1fr_.9fr] items-center">
           <div>
-            <p className="text-kapwa-yellow-300 font-semibold tracking-wide text-sm uppercase">{isLgu && lgu.province ? `${agency.parent} · ${lgu.province}` : agency.parent}</p>
+            <p className="text-kapwa-yellow-300 font-semibold tracking-wide text-sm uppercase">{locality.province && kind !== "province" && !agency.parent.toLowerCase().includes(locality.province.toLowerCase()) ? `${agency.parent} · ${locality.province}` : agency.parent}</p>
             <h1 className="mt-3 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05]">{agency.name}</h1>
             <p className="mt-5 text-lg sm:text-xl text-white/85 max-w-xl">{agency.tagline}</p>
             <form role="search" className="mt-8 flex max-w-xl rounded-full bg-white p-1.5 shadow-xl">
@@ -44,7 +50,7 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
             )}
           </div>
           <div className="rounded-2xl bg-kapwa-brand-950/55 ring-1 ring-white/15 backdrop-blur-md p-6 shadow-2xl">
-            <h2 className="text-lg font-semibold">{isLgu ? "Services for residents" : "Popular services"}</h2>
+            <h2 className="text-lg font-semibold">{servicesLabel}</h2>
             <ul className="mt-4 grid grid-cols-2 gap-3">
               {site.popular_services.slice(0, 6).map((s) => (
                 <li key={s.slug + s.title}>
@@ -59,24 +65,42 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
         </div>
       </section>
 
-      {isLgu && lgu.hotlines.length > 0 && (
-        <section aria-label="Emergency hotlines" className="bg-kapwa-red-700 text-white">
+      {hotlines.length > 0 && (
+        <section aria-label="Hotlines" className="bg-kapwa-red-700 text-white">
           <div className="container-gov py-3 flex flex-wrap items-center gap-x-8 gap-y-2 text-sm">
-            <span className="font-bold uppercase tracking-wider text-xs">Emergency hotlines</span>
-            {lgu.hotlines.slice(0, 6).map((h) => <a key={h.label + h.number} href={`tel:${h.number.replace(/[^+\d]/g, "")}`} className="hover:underline"><span className="text-white/80">{h.label}:</span> <span className="font-semibold">{h.number}</span></a>)}
+            <span className="font-bold uppercase tracking-wider text-xs">{isLgu ? "Emergency hotlines" : "Hotlines"}</span>
+            {hotlines.slice(0, 6).map((h) => <a key={h.name + h.detail} href={`tel:${h.detail.replace(/[^+\d]/g, "")}`} className="hover:underline"><span className="text-white/80">{h.name}:</span> <span className="font-semibold">{h.detail}</span></a>)}
           </div>
         </section>
       )}
 
       <div className="container-gov">
-        {isLgu && lgu.officials.length > 0 && (
+        {officials.length > 0 && (
           <section className="py-14 border-b border-neutral-100">
-            <div className="max-w-2xl"><h2 className="text-3xl font-bold tracking-tight text-neutral-900">Your local officials</h2><p className="mt-2 text-neutral-600 text-lg">The people elected and appointed to serve {agency.short_name || agency.name}.</p></div>
+            <div className="max-w-2xl"><h2 className="text-3xl font-bold tracking-tight text-neutral-900">{isLgu ? "Your local officials" : "Leadership"}</h2><p className="mt-2 text-neutral-600 text-lg">{isLgu ? `The people elected and appointed to serve ${agency.short_name || agency.name}.` : `The people who lead ${agency.short_name || agency.name}.`}</p></div>
             <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {lgu.officials.slice(0, 8).map((o) => {
-                const inner = (<><span className="size-14 shrink-0 rounded-full bg-kapwa-brand-100 text-kapwa-brand-900 grid place-items-center font-bold text-lg">{o.name.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 2).map((w) => w[0]).join("")}</span><span className="min-w-0"><span className="block font-semibold text-neutral-900 leading-tight">{o.name}</span><span className="block text-sm text-kapwa-brand-800 font-medium">{o.position}</span></span></>);
-                return <li key={o.name + o.position}>{o.slug ? <Link href={navHref(jobId, o.slug)} className="flex items-center gap-4 rounded-2xl ring-1 ring-neutral-200 p-4 hover:ring-kapwa-brand-400 h-full">{inner}</Link> : <div className="flex items-center gap-4 rounded-2xl ring-1 ring-neutral-200 p-4 h-full">{inner}</div>}</li>;
+              {officials.slice(0, 8).map((o) => {
+                const inner = (<><span className="size-14 shrink-0 rounded-full bg-kapwa-brand-100 text-kapwa-brand-900 grid place-items-center font-bold text-lg">{initialsOf(o.name)}</span><span className="min-w-0"><span className="block font-semibold text-neutral-900 leading-tight">{o.name}</span><span className="block text-sm text-kapwa-brand-800 font-medium">{o.detail}</span></span></>);
+                return <li key={o.name + o.detail}>{o.slug ? <Link href={navHref(jobId, o.slug)} className="flex items-center gap-4 rounded-2xl ring-1 ring-neutral-200 p-4 hover:ring-kapwa-brand-400 h-full">{inner}</Link> : <div className="flex items-center gap-4 rounded-2xl ring-1 ring-neutral-200 p-4 h-full">{inner}</div>}</li>;
               })}
+            </ul>
+          </section>
+        )}
+
+        {programs.length > 0 && (
+          <section className="py-14 border-b border-neutral-100">
+            <div className="max-w-2xl"><h2 className="text-3xl font-bold tracking-tight text-neutral-900">Programs offered</h2><p className="mt-2 text-neutral-600 text-lg">{programs.length} programs across {units.length || "our"} colleges and units.</p></div>
+            <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {programs.slice(0, 18).map((p) => <li key={p.name + p.detail}>{p.slug ? <Link href={navHref(jobId, p.slug)} className="block rounded-xl ring-1 ring-neutral-200 px-4 py-3 hover:ring-kapwa-brand-400"><span className="block font-medium text-neutral-900">{p.name}</span>{p.detail && <span className="block text-sm text-neutral-500">{p.detail}</span>}</Link> : <div className="rounded-xl ring-1 ring-neutral-200 px-4 py-3"><span className="block font-medium text-neutral-900">{p.name}</span>{p.detail && <span className="block text-sm text-neutral-500">{p.detail}</span>}</div>}</li>)}
+            </ul>
+          </section>
+        )}
+
+        {units.length > 0 && !isLgu && (
+          <section className="py-14 border-b border-neutral-100">
+            <h2 className="text-3xl font-bold tracking-tight text-neutral-900">{site.site_kind === "university" || site.site_kind === "school" ? "Colleges and units" : site.site_kind === "hospital" ? "Departments and services" : "Offices and units"}</h2>
+            <ul className="mt-6 flex flex-wrap gap-2">
+              {units.map((u) => <li key={u.name}>{u.slug ? <Link href={navHref(jobId, u.slug)} className="inline-block rounded-full bg-kapwa-brand-50 text-kapwa-brand-900 ring-1 ring-kapwa-brand-100 px-3.5 py-1.5 text-sm font-medium hover:bg-kapwa-brand-100">{u.name}</Link> : <span className="inline-block rounded-full bg-kapwa-brand-50 text-kapwa-brand-900 ring-1 ring-kapwa-brand-100 px-3.5 py-1.5 text-sm font-medium">{u.name}</span>}</li>)}
             </ul>
           </section>
         )}
@@ -96,11 +120,11 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
           </section>
         ))}
 
-        {isLgu && lgu.barangays.length > 0 && (
+        {(barangays.length > 0 || campuses.length > 0) && (
           <section className="py-14 border-b border-neutral-100">
-            <div className="flex flex-wrap items-end justify-between gap-4"><div><h2 className="text-3xl font-bold tracking-tight text-neutral-900">Our barangays</h2><p className="mt-2 text-neutral-600 text-lg">{lgu.barangays.length} barangays{lgu.province ? ` in ${agency.short_name || agency.name}, ${lgu.province}` : ""}.</p></div></div>
+            <div><h2 className="text-3xl font-bold tracking-tight text-neutral-900">{barangays.length ? "Our barangays" : "Our campuses"}</h2><p className="mt-2 text-neutral-600 text-lg">{barangays.length ? `${barangays.length} barangays${locality.province ? ` in ${agency.short_name || agency.name}, ${locality.province}` : ""}.` : `${campuses.length} campuses.`}</p></div>
             <ul className="mt-6 flex flex-wrap gap-2">
-              {lgu.barangays.map((b) => <li key={b} className="rounded-full bg-kapwa-brand-50 text-kapwa-brand-900 ring-1 ring-kapwa-brand-100 px-3.5 py-1.5 text-sm font-medium">{b}</li>)}
+              {(barangays.length ? barangays : campuses).map((b) => <li key={b.name} className="rounded-full bg-kapwa-brand-50 text-kapwa-brand-900 ring-1 ring-kapwa-brand-100 px-3.5 py-1.5 text-sm font-medium" title={b.detail}>{b.name}</li>)}
             </ul>
           </section>
         )}
@@ -133,7 +157,6 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
 
 export function ContentPage({ site, page }: { site: SiteModel; page: SitePage }) {
   const { jobId } = site;
-  const band = site.assets.band ? `/api/jobs/${jobId}/${site.assets.band}?v=${encodeURIComponent(site.generated_at)}` : null;
   const parent = site.nav.find((n) => n.slug === page.slug || n.children.some((c) => c.slug === page.slug));
   const siblings = parent ? [parent, ...parent.children].filter((x) => x.slug) : [];
   const headings = page.blocks.map((b) => b.heading).filter(Boolean);
@@ -142,13 +165,6 @@ export function ContentPage({ site, page }: { site: SiteModel; page: SitePage })
   return (
     <>
       <div className="relative overflow-hidden bg-kapwa-brand-50/60 border-b border-kapwa-brand-100">
-        {band && (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={band} alt="" aria-hidden className="absolute inset-y-0 right-0 h-full w-[55%] object-cover object-right opacity-90" />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--color-kapwa-brand-50)_45%,color-mix(in_oklab,var(--color-kapwa-brand-50)_70%,transparent)_65%,transparent_100%)]" aria-hidden />
-          </>
-        )}
         <div className="container-gov py-10 relative">
           <nav aria-label="Breadcrumb" className="text-sm text-neutral-500 flex gap-2">
             <Link href={navHref(jobId, "home")} className="hover:text-kapwa-brand-900">Home</Link>

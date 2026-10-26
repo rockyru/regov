@@ -38,19 +38,21 @@ export const NavItem = z.object({
   slug: z.string().describe("page slug; empty only for a heading-only group"),
   group: z.string().describe("column heading inside the dropdown this link sits under, e.g. 'Register', 'Comply', 'Learn'; empty if the dropdown has no columns"),
 });
-export const Official = z.object({ name: z.string(), position: z.string(), slug: z.string().describe("page slug of their profile if one exists, else empty") });
-export const Hotline = z.object({ label: z.string(), number: z.string() });
+export const Entity = z.object({
+  type: z.enum(["official", "hotline", "barangay", "program", "campus", "unit", "service_window", "facility"]).describe("official = elected officials first (mayor/governor/captain, vice, council members), then heads of office; detail is the exact position; hotline = emergency/office number; barangay = component barangay or LGU; program = degree/course/training program; campus = campus or branch; unit = college, department, division, office; service_window = frontline service with requirements/fees; facility = hospital ward, lab, library, museum"),
+  name: z.string(),
+  detail: z.string().describe("position for an official; number for a hotline; level/unit for a program; address for a campus; one line otherwise"),
+  slug: z.string().describe("page slug with more about it, or empty"),
+});
 
 export const SitePlan = z.object({
-  site_kind: z.enum(["national_agency", "regional_office", "province", "city_municipality", "barangay", "university", "hospital", "goc_corporation", "other"]).describe("what kind of government body this site belongs to"),
-  lgu: z.object({
-    province: z.string().describe("province name for a city/municipality/barangay; empty otherwise"),
-    region: z.string(),
-    officials: z.array(Official).describe("mayor/governor/captain, vice, council members found on the pages; empty if none"),
-    barangays: z.array(z.string()).describe("barangay (or component LGU) names found on the pages; empty if none"),
-    hotlines: z.array(Hotline).describe("emergency and office hotlines found on the pages; empty if none"),
-    tourism_slugs: z.array(z.string()).describe("slugs of tourism, festivals, heritage, investment pages"),
-  }).describe("filled for provinces, cities, municipalities and barangays; empty strings/arrays otherwise"),
+  site_kind: z.enum([
+    "national_agency", "regional_office", "attached_agency", "goc_corporation", "constitutional_body", "legislature", "judiciary", "embassy",
+    "province", "city_municipality", "barangay",
+    "university", "school", "hospital", "research_institute", "other",
+  ]).describe("what kind of government body this site belongs to"),
+  locality: z.object({ province: z.string(), region: z.string(), city: z.string() }).describe("where it is; empty strings if unknown or national"),
+  entities: z.array(Entity).describe("every official, hotline, barangay, program, campus, unit, service window and facility found on the pages; nothing invented"),
   agency: z.object({
     name: z.string(),
     short_name: z.string(),

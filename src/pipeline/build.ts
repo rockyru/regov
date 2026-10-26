@@ -43,7 +43,8 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
   });
   // de-duplicate slugs (http/https or trailing variants)
   const seen = new Set<string>();
-  const unique = pages.filter((p) => (seen.has(p.slug) ? false : (seen.add(p.slug), true)));
+  const canon = (slug: string) => (/^(page-)?(home|index|main|default)$/.test(slug) ? "home" : slug);
+  const unique = pages.map((p) => ({ ...p, slug: canon(p.slug) })).filter((p) => (seen.has(p.slug) ? false : (seen.add(p.slug), true)));
 
   onEvent({ type: "phase", phase: "plan" });
   const { plan, usage } = await planSite(jobDir, crawl, unique);
