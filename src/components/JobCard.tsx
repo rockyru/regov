@@ -2,13 +2,13 @@ import Link from "next/link";
 import type { SiteModel } from "@/pipeline/schema";
 import type { CrawlResult } from "@/pipeline/types";
 
-export function JobCard({ id, site, crawl, compact = false }: { id: string; site: SiteModel; crawl: CrawlResult; compact?: boolean }) {
+export function JobCard({ id, site, crawl, compact = false, className = "" }: { id: string; site: SiteModel; crawl: CrawlResult; compact?: boolean; className?: string }) {
   const kind = (site.site_kind ?? "").replace(/_/g, " ");
   const v = encodeURIComponent(site.generated_at);
   const cover = site.assets.cover ? `/api/jobs/${id}/${site.assets.cover}?v=${v}` : null;
   const logo = site.assets.logo ? `/api/jobs/${id}/${site.assets.logo}?v=${v}` : null;
   return (
-    <li className="group relative flex flex-col overflow-hidden rounded-3xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-16px_rgba(0,56,168,0.25)] ring-1 ring-neutral-200/80 transition hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_48px_-20px_rgba(0,56,168,0.4)]">
+    <li className={`${className} group relative flex flex-col overflow-hidden rounded-3xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-16px_rgba(0,56,168,0.25)] ring-1 ring-neutral-200/80 transition hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_48px_-20px_rgba(0,56,168,0.4)]`}>
       <div className={`relative overflow-hidden bg-kapwa-brand-900 ${compact ? "aspect-[21/9]" : "aspect-[16/9]"}`}>
         {cover && (
           // eslint-disable-next-line @next/next/no-img-element

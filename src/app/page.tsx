@@ -36,12 +36,12 @@ export default async function Home() {
       {jobs.length > 0 && (
         <section className="border-t border-neutral-100/80">
           <div className="container-gov py-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center gap-4">
               <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">Recently reimagined</h2>
               {jobs.length > 4 && <Link href="/jobs" className="text-sm font-semibold text-kapwa-brand-800 hover:underline">View all {jobs.length} →</Link>}
             </div>
-            <ul className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-              {jobs.slice(0, 4).map((j) => <JobCard key={j.id} id={j.id} site={j.site!} crawl={j.crawl!} compact />)}
+            <ul className="mt-4 flex flex-wrap justify-center gap-5">
+              {jobs.slice(0, 4).map((j) => <JobCard key={j.id} id={j.id} site={j.site!} crawl={j.crawl!} compact className="w-full sm:w-[calc(50%-0.625rem)] lg:w-[400px]" />)}
             </ul>
           </div>
         </section>
