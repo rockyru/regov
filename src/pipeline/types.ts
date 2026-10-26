@@ -32,10 +32,13 @@ export interface CrawlResult {
   pages: CrawledPage[];
   skipped: { url: string; reason: string }[];
   wp?: WpRest;
+  /** Set when the live site was blocked and the Wayback Machine copy was crawled instead. */
+  archive?: { timestamp: string; date: string; note: string };
 }
 
 export type CrawlEvent =
-  | { type: "start"; origin: string }
+  | { type: "start"; origin: string; archive?: string }
+  | { type: "blocked"; url: string; reason: string }
   | { type: "page"; url: string; index: number; title: string; status: number }
   | { type: "skip"; url: string; reason: string }
   | { type: "wp-rest"; pages: number; posts: number }

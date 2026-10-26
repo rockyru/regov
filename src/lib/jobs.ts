@@ -2,6 +2,7 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import type { SiteModel, SitePage } from "@/pipeline/schema";
 import type { CrawlResult } from "@/pipeline/types";
+import { slugOf } from "@/pipeline/build";
 
 export const JOBS_ROOT = resolve(process.cwd(), "jobs");
 
@@ -34,10 +35,10 @@ export function findPage(site: SiteModel, slug: string): SitePage | undefined {
 export function previewHref(jobId: string, origin: string, href: string): string {
   if (!href) return "#";
   if (href.startsWith(origin)) href = href.slice(origin.length) || "/";
-  if (href.startsWith("/") && !href.startsWith("//")) {
-    if (/\.(pdf|docx?|xlsx?|pptx?|zip|jpe?g|png|gif)$/i.test(href)) return origin + href; // files stay on the source
-    const path = href.replace(/\/+$/, "");
-    return `/preview/${jobId}${path === "" ? "" : path}`;
+  if ((href.startsWith("/") && !href.startsWith("//")) || href.startsWith("?")) {
+    if (/\.(pdf|docx?|xlsx?|pptx?|zip|jpe?g|png|gif)(\?|$)/i.test(href)) return origin + href; // files stay on the source
+    const slug = slugOf(origin + (href.startsWith("?") ? "/" + href : href));
+    return slug === "home" ? `/preview/${jobId}` : `/preview/${jobId}/${slug}`;
   }
   return href;
 }

@@ -1,4 +1,5 @@
-# Site Resurrection Agent — Hackathon Plan
+# RE:GOV (Reimagine Government) — Hackathon Plan
+Domain: regov.app (Cloudflare). Working name was "Site Resurrection Agent".
 
 Meta Global AI Developer Hackathon 2026 · Indie track · solo
 Deadline: **Nov 4, 9:00 PM ET = Nov 5, 10:00 AM PHT**. Judging Nov 4–8, winners Nov 9.

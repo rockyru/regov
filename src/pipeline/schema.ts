@@ -38,7 +38,19 @@ export const NavItem = z.object({
   slug: z.string().describe("page slug; empty only for a heading-only group"),
   group: z.string().describe("column heading inside the dropdown this link sits under, e.g. 'Register', 'Comply', 'Learn'; empty if the dropdown has no columns"),
 });
+export const Official = z.object({ name: z.string(), position: z.string(), slug: z.string().describe("page slug of their profile if one exists, else empty") });
+export const Hotline = z.object({ label: z.string(), number: z.string() });
+
 export const SitePlan = z.object({
+  site_kind: z.enum(["national_agency", "regional_office", "province", "city_municipality", "barangay", "university", "hospital", "goc_corporation", "other"]).describe("what kind of government body this site belongs to"),
+  lgu: z.object({
+    province: z.string().describe("province name for a city/municipality/barangay; empty otherwise"),
+    region: z.string(),
+    officials: z.array(Official).describe("mayor/governor/captain, vice, council members found on the pages; empty if none"),
+    barangays: z.array(z.string()).describe("barangay (or component LGU) names found on the pages; empty if none"),
+    hotlines: z.array(Hotline).describe("emergency and office hotlines found on the pages; empty if none"),
+    tourism_slugs: z.array(z.string()).describe("slugs of tourism, festivals, heritage, investment pages"),
+  }).describe("filled for provinces, cities, municipalities and barangays; empty strings/arrays otherwise"),
   agency: z.object({
     name: z.string(),
     short_name: z.string(),
@@ -78,7 +90,7 @@ export interface SiteModel extends SitePlan {
   generated_at: string;
   pages: SitePage[];
   news: { title: string; date: string; excerpt: string; href: string }[];
-  assets: { logo: string; logo_box: number[] };
+  assets: { logo: string; logo_box: number[]; band?: string; band_brief?: string };
   tokens?: number;
 }
 

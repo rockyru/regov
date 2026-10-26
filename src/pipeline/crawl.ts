@@ -6,6 +6,9 @@ import { chromium, type Page } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { CrawlResult, CrawledPage, CrawlEvent, WpRest } from "./types";
+import { BLOCKED_TITLE, PARKED_TITLE, fromArchive, toArchive, hostKey } from "./archive";
+
+export class BlockedError extends Error { constructor(public url: string, public reason: string) { super(`Blocked by bot protection: ${reason}`); } }
 
 export interface CrawlOptions {
   jobId: string;
@@ -16,6 +19,8 @@ export interface CrawlOptions {
   viewport?: { width: number; height: number };
   maxFullPageHeight?: number;
   onEvent?: (e: CrawlEvent) => void;
+  /** Crawl the Wayback Machine copy at this timestamp instead of the live site. */
+  archiveTimestamp?: string;
 }
 
 const UA = "Mozilla/5.0 (compatible; SiteResurrectionBot/0.1; +https://github.com/rockyru) Chrome/120";
@@ -129,21 +134,26 @@ export function diverse(links: string[]): string[] {
 
 export async function crawl(startUrl: string, opts: CrawlOptions): Promise<CrawlResult> {
   const {
-    jobId, jobsRoot = "jobs", maxPages = 20, maxDepth = 3, delayMs = 1000,
-    viewport = { width: 1280, height: 900 }, maxFullPageHeight = 6000, onEvent = () => {},
+    jobId, jobsRoot = "jobs", maxPages = 20, maxDepth = 3, viewport = { width: 1280, height: 900 },
+    maxFullPageHeight = 6000, onEvent = () => {}, archiveTimestamp,
   } = opts;
+  const delayMs = opts.delayMs ?? (archiveTimestamp ? 2500 : 1000);
   const start = normalizeUrl(startUrl, startUrl);
   if (!start) throw new Error(`Bad start URL: ${startUrl}`);
   const origin = new URL(start).origin;
+  const site = hostKey(start);
+  // In archive mode every fetch goes to web.archive.org; keys/paths stay in terms of the original site.
+  const fetchUrl = (orig: string) => (archiveTimestamp ? toArchive(orig, archiveTimestamp) : orig);
+  const sameSite = (u: string) => hostKey(u) === site;
   const dir = join(jobsRoot, jobId);
   await mkdir(join(dir, "html"), { recursive: true });
   await mkdir(join(dir, "shots"), { recursive: true });
 
-  const disallow = await robotsDisallows(origin);
+  const disallow = archiveTimestamp ? [] : await robotsDisallows(origin);
   const blocked = (u: string) => disallow.some((re) => re.test(new URL(u).pathname));
 
-  onEvent({ type: "start", origin });
-  const wpPromise = fetchWpRest(origin);
+  onEvent({ type: "start", origin, archive: archiveTimestamp });
+  const wpPromise = archiveTimestamp ? Promise.resolve(undefined) : fetchWpRest(origin);
 
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport, userAgent: UA, ignoreHTTPSErrors: true });
@@ -166,13 +176,30 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     const key = String(idx).padStart(3, "0");
     let status = 0;
     try {
-      const res = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30_000 });
+      const res = await page.goto(fetchUrl(url), { waitUntil: "domcontentloaded", timeout: 45_000 });
       status = res?.status() ?? 0;
       await page.waitForLoadState("networkidle", { timeout: 8_000 }).catch(() => {});
       const ct = res?.headers()["content-type"] || "";
       if (!ct.includes("html")) { skipped.push({ url, reason: `content-type ${ct}` }); continue; }
 
-      const ex = await extract(page, origin);
+      const title = await page.title();
+      if (!archiveTimestamp && (BLOCKED_TITLE.test(title) || ((status === 403 || status === 503) && /cloudflare|captcha|challenge/i.test(await page.content())))) {
+        const reason = `${status} "${title.slice(0, 60)}"`;
+        onEvent({ type: "blocked", url, reason });
+        if (pages.length === 0) { await browser.close(); throw new BlockedError(url, reason); }
+        skipped.push({ url, reason: `blocked ${reason}` });
+        continue;
+      }
+
+      if (PARKED_TITLE.test(title)) { skipped.push({ url, reason: `parked/suspended page "${title.slice(0, 40)}"` }); continue; }
+
+      const ex = await extract(page, archiveTimestamp ? "https://web.archive.org" : origin);
+      if (archiveTimestamp) {
+        // translate archive links back to the original site
+        ex.all = ex.all.map(fromArchive).filter(sameSite);
+        ex.navLinks = ex.navLinks.map(fromArchive).filter(sameSite);
+        ex.imgs = ex.imgs.map(fromArchive).filter(sameSite);
+      }
       const html = await page.content();
       const fullH = Math.min(await page.evaluate("document.documentElement.scrollHeight") as number, maxFullPageHeight);
       const shot = `shots/${key}.png`;
@@ -202,6 +229,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
         for (const l of diverse([...new Set(fresh)])) { seen.add(l); queue.push({ url: l, depth: depth + 1 }); }
       }
     } catch (e) {
+      if (e instanceof BlockedError) throw e;
       const reason = (e as Error).message.split("\n")[0].slice(0, 120);
       skipped.push({ url, reason });
       onEvent({ type: "skip", url, reason });
@@ -214,6 +242,10 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
   if (wp) onEvent({ type: "wp-rest", pages: wp.pages.length, posts: wp.posts.length });
 
   const result: CrawlResult = { jobId, startUrl: start, origin, startedAt, finishedAt: new Date().toISOString(), pages, skipped, wp };
+  if (archiveTimestamp) {
+    const d = `${archiveTimestamp.slice(0, 4)}-${archiveTimestamp.slice(4, 6)}-${archiveTimestamp.slice(6, 8)}`;
+    result.archive = { timestamp: archiveTimestamp, date: d, note: `Live site is behind bot protection; content comes from the Wayback Machine capture of ${d}.` };
+  }
   await writeFile(join(dir, "crawl.json"), JSON.stringify(result, null, 2));
   onEvent({ type: "done", count: pages.length });
   return result;

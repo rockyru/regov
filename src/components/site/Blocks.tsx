@@ -126,16 +126,40 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
           </ol>
         </section>
       );
-    case "contact":
+    case "contact": {
+      const LABEL = /^(address|office address|email|e-mail|phone|telephone|tel|fax|mobile|hotline|trunkline|hours|office hours|website|web|contact|contact number|location|facebook|twitter|viber)\b/i;
+      const rows = items.map((it) => {
+        const fields = [it.title, it.description, it.meta].map((f) => (f ?? "").trim()).filter(Boolean);
+        const uniq = [...new Set(fields)];
+        const label = uniq.find((f) => LABEL.test(f) && f.length <= 28) ?? uniq.find((f) => f.length <= 20 && !/[\d@]/.test(f)) ?? "";
+        const values = uniq.filter((f) => f !== label);
+        const value = values.sort((a, b) => b.length - a.length)[0] ?? "";
+        const extra = values.filter((v) => v !== value && !value.includes(v));
+        return { label, value, extra };
+      }).filter((r) => r.value);
+      const Val = ({ v }: { v: string }) => {
+        if (/^[\w.+-]+@[\w-]+\.[\w.-]+$/.test(v)) return <a className="text-kapwa-brand-800 hover:underline break-all" href={`mailto:${v}`}>{v}</a>;
+        if (/^(\+?\d[\d\s().-]{6,})$/.test(v)) return <a className="text-kapwa-brand-800 hover:underline" href={`tel:${v.replace(/[^+\d]/g, "")}`}>{v}</a>;
+        if (/^(https?:\/\/|www\.)/i.test(v)) return <a className="text-kapwa-brand-800 hover:underline break-all" href={v.startsWith("http") ? v : `https://${v}`} target="_blank" rel="noreferrer">{v.replace(/^https?:\/\//, "")}</a>;
+        return <>{v}</>;
+      };
       return (
-        <section className="rounded-2xl bg-kapwa-brand-50 border border-kapwa-brand-100 p-6"><H>{block.heading || "Contact"}</H>{md}
-          {items.length > 0 && (
-            <dl className="mt-3 grid gap-3 sm:grid-cols-2">
-              {items.map((it, i) => (<div key={i}><dt className="text-xs uppercase tracking-wider text-kapwa-brand-800 font-semibold">{it.title}</dt><dd className="text-neutral-800">{it.description}{it.meta && <span className="block text-sm text-neutral-600">{it.meta}</span>}</dd></div>))}
+        <section className="rounded-2xl bg-kapwa-brand-50 border border-kapwa-brand-100 p-6">
+          {block.heading && <h2 className="text-xl font-semibold tracking-tight text-neutral-900 mb-3">{block.heading}</h2>}
+          {md}
+          {rows.length > 0 && (
+            <dl className="mt-3 space-y-4">
+              {rows.map((r, i) => (
+                <div key={i}>
+                  {r.label && <dt className="text-[11px] font-semibold uppercase tracking-wider text-kapwa-brand-800">{r.label}</dt>}
+                  <dd className="text-[15px] leading-snug text-neutral-800"><Val v={r.value} />{r.extra.map((e, j) => <span key={j} className="block text-sm text-neutral-600"><Val v={e} /></span>)}</dd>
+                </div>
+              ))}
             </dl>
           )}
         </section>
       );
+    }
     case "callout":
       return (
         <section className="rounded-xl border-l-4 border-kapwa-yellow-400 bg-kapwa-yellow-50 p-5">{block.heading && <h2 className="font-semibold text-neutral-900 mb-1">{block.heading}</h2>}{md}

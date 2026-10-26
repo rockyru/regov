@@ -29,7 +29,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
     <main className="container-gov py-14 flex-1">
       <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">← All jobs</Link>
       <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
-        <div><p className="text-sm font-semibold uppercase tracking-wider text-kapwa-brand-700">Migration report</p><h1 className="text-4xl font-extrabold tracking-tight">{site.agency.name}</h1><p className="text-neutral-500">{site.origin} → BetterGov Kapwa standard · {new Date(site.generated_at).toLocaleString()}</p></div>
+        <div><p className="text-sm font-semibold uppercase tracking-wider text-kapwa-brand-700">RE:GOV migration report</p><h1 className="text-4xl font-extrabold tracking-tight">{site.agency.name}</h1><p className="text-neutral-500">{site.origin} → BetterGov Kapwa standard · {new Date(site.generated_at).toLocaleString()}</p></div>
         <div className="flex gap-3"><Link href={`/preview/${jobId}`} className="rounded-md bg-kapwa-brand-800 px-4 py-2 font-semibold text-white">Open new site</Link><a href={site.origin} target="_blank" rel="noreferrer" className="rounded-md ring-1 ring-neutral-300 px-4 py-2 font-semibold">Original ↗</a></div>
       </div>
 
@@ -55,8 +55,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
           <div className="rounded-xl ring-1 ring-neutral-200 p-5">
             <h3 className="font-semibold">Extracted brand mark</h3>
             <div className="mt-3 grid grid-cols-2 gap-3">
-              <div className="rounded-lg bg-white ring-1 ring-neutral-200 p-3 grid place-items-center">{site.assets.logo ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={`/api/jobs/${jobId}/${site.assets.logo}`} alt="logo on white" className="max-h-20" /> : <span className="text-xs text-neutral-400">none</span>}</div>
-              <div className="rounded-lg bg-kapwa-brand-950 p-3 grid place-items-center">{site.assets.logo ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={`/api/jobs/${jobId}/${site.assets.logo}`} alt="logo on brand" className="max-h-20" /> : null}</div>
+              <div className="rounded-lg bg-white ring-1 ring-neutral-200 p-3 grid place-items-center">{site.assets.logo ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={`/api/jobs/${jobId}/${site.assets.logo}?v=${encodeURIComponent(site.generated_at)}`} alt="logo on white" className="max-h-20" /> : <span className="text-xs text-neutral-400">none</span>}</div>
+              <div className="rounded-lg bg-kapwa-brand-950 p-3 grid place-items-center">{site.assets.logo ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={`/api/jobs/${jobId}/${site.assets.logo}?v=${encodeURIComponent(site.generated_at)}`} alt="logo on brand" className="max-h-20" /> : null}</div>
             </div>
           </div>
           <div className="rounded-xl ring-1 ring-neutral-200 p-5">

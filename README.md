@@ -1,6 +1,6 @@
-# Site Resurrection Agent
+# RE:GOV — Reimagine Government
 
-**Legacy government website in. BetterGov-standard website out.**
+**Public websites deserve a second life.** An autonomous AI agent that transforms legacy government websites into modern, accessible, citizen-first digital experiences. Live at [regov.app](https://regov.app) (coming up).
 
 Paste the URL of an old Philippine government WordPress site. The agent crawls it, uses
 **SAM 3.1** and **Muse Spark 1.3** (Meta Model API) to understand every page, rebuilds the
@@ -20,7 +20,7 @@ BetterGov.ph volunteers already defined for the whole government.
 ## How it works
 
 ```
-URL ─▶ crawl.ts ─▶ segment.ts ─▶ understand.ts ─▶ plan.ts ─▶ site.json ─▶ Next.js + Kapwa
+URL ─▶ crawl.ts ─▶ segment.ts ─▶ understand.ts ─▶ plan.ts ─▶ band.ts ─▶ site.json ─▶ Next.js + Kapwa
        Playwright    SAM 3.1       Muse Spark 1.3    Muse Spark 1.3            live preview
        + WP REST     logo/seal     vision + strict   information               + migration
                      cut-out       JSON per page     architecture              report
@@ -32,8 +32,11 @@ URL ─▶ crawl.ts ─▶ segment.ts ─▶ understand.ts ─▶ plan.ts ─▶
 | Segment | **SAM 3.1** | Noun-phrase prompts on the homepage screenshot. Finds the agency seal, cuts it out with the mask as alpha, reuses it as the new brand mark. |
 | Understand | **Muse Spark 1.3** | Screenshot + text → strict-schema `PageModel`: typed content blocks (people, steps, FAQ, tables, timelines, contact…), accessibility issues, migration notes. Image-only content is transcribed. |
 | Plan | **Muse Spark 1.3** | All page models → citizen-first `SitePlan`: nav, popular services, homepage sections, footer, redirects. |
+| Identity band | **Muse Image** | Muse Spark writes an art brief from the site plan; Muse Image paints a wide header illustration in the Kapwa palette, unique to each agency or LGU. |
 | Render | — | Next.js renders `site.json` live on Kapwa tokens/components. No per-job build. |
 | Report | — | Coverage, SAM overlay, accessibility findings, "needs a human" list, page-by-page mapping. |
+
+Sites behind bot protection (Cloudflare challenges) fall back to the Wayback Machine: the crawler picks the archive month with the most real pages and rebuilds from that. Dead sites get a second life literally.
 
 Every model response is cached on disk under `jobs/<id>/models`, so reruns are free and demos are deterministic.
 

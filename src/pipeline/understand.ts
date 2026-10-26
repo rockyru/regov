@@ -16,9 +16,10 @@ Rules:
 - hrefs: keep same-site links as site-relative paths (e.g. /about-us/legal-basis), keep files and external links absolute.
 - a11y_issues: concrete, e.g. "hero text is an image with no alt", "low-contrast grey links", "no heading hierarchy".`;
 
-export async function understandPage(jobDir: string, page: CrawledPage) {
+export async function understandPage(jobDir: string, page: CrawledPage, archiveNote = "") {
   const shot = await toDataUrl(join(jobDir, page.screenshotFile));
   const prompt = [
+    archiveNote && `NOTE: ${archiveNote} Flag content that is clearly time-sensitive (officials, schedules, fees) in migration_notes.`,
     `URL: ${page.url}`,
     `Title: ${page.title}`,
     page.description && `Meta description: ${page.description}`,
@@ -28,7 +29,7 @@ export async function understandPage(jobDir: string, page: CrawledPage) {
     `\nVisible text:\n${page.text.slice(0, 14000)}`,
   ].filter(Boolean).join("\n");
 
-  return cached(jobDir, ["understand-v1", MUSE, page.url, page.text.length, shot.height], async () => {
+  return cached(jobDir, ["understand-v1", MUSE, page.url, page.text.length, shot.height, archiveNote], async () => {
     const r = await meta.responses.create({
       model: MUSE,
       instructions: SYSTEM,

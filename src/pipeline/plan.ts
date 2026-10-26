@@ -3,7 +3,9 @@ import { SitePlan, strictSchema, type SitePage } from "./schema";
 import { cached } from "./cache";
 import type { CrawlResult } from "./types";
 
-const SYSTEM = `You are the information architect for a Philippine government agency website being rebuilt on the BetterGov.ph standard.
+const SYSTEM = `You are the information architect for a Philippine government website being rebuilt on the BetterGov.ph standard.
+First classify the site (site_kind). A province, city, municipality or barangay is a LOCAL GOVERNMENT UNIT: residents come for permits and certificates (business permit, civil registry, cedula, barangay clearance), social services, health, disaster/emergency hotlines, local officials, barangays, tourism and festivals, bids and transparency. Build the IA around those, e.g. Services, Government (officials, Sangguniang Bayan, departments), Barangays, Tourism, Transparency, News. Fill "lgu" from the pages (officials, barangays, hotlines) - never invent names or numbers.
+A national agency, bureau or regional office is built around its mandate: Services, Programs, Issuances/Laws, Offices, Transparency, About.
 You get the list of migrated pages (slug, title, type, section, summary) plus the old site's navigation order.
 Design a citizen-first structure: services and what people come for go first; "About" and legal/transparency material go later.
 Navigation rules (strict):
@@ -21,7 +23,7 @@ export async function planSite(jobDir: string, crawl: CrawlResult, pages: SitePa
   const contact = pages.flatMap((p) => p.blocks.filter((b) => b.type === "contact")).map((b) => b.body_markdown + " " + b.items.map((i) => `${i.title}: ${i.description} ${i.meta}`).join("; ")).join("\n").slice(0, 2000);
   const prompt = `Site: ${crawl.origin}\nOld navigation order: ${oldNav}\n\nPages (${pages.length}):\n${listing}\n\nContact details found:\n${contact || "none"}\n\nValid slugs: ${pages.map((p) => p.slug).join(", ")}`;
 
-  return cached(jobDir, ["plan-v3", MUSE, prompt], async () => {
+  return cached(jobDir, ["plan-v4", MUSE, prompt], async () => {
     const r = await meta.responses.create({
       model: MUSE,
       instructions: SYSTEM,

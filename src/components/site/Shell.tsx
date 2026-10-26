@@ -48,7 +48,7 @@ function columns(children: NavChild[]): { heading: string; links: NavChild[] }[]
 
 export function Header({ site }: { site: SiteModel }) {
   const { jobId } = site;
-  const logo = site.assets.logo ? `/api/jobs/${jobId}/${site.assets.logo}` : null;
+  const logo = site.assets.logo ? `/api/jobs/${jobId}/${site.assets.logo}?v=${encodeURIComponent(site.generated_at)}` : null;
   const items = site.nav.filter((n) => n.slug !== "home");
   return (
     <header>
@@ -143,7 +143,7 @@ const RESOURCES = [
 
 export function Footer({ site }: { site: SiteModel }) {
   const { jobId, footer, agency } = site;
-  const logo = site.assets.logo ? `/api/jobs/${jobId}/${site.assets.logo}` : null;
+  const logo = site.assets.logo ? `/api/jobs/${jobId}/${site.assets.logo}?v=${encodeURIComponent(site.generated_at)}` : null;
   const host = new URL(site.origin).host;
   const findSlug = (re: RegExp) => site.pages.find((p) => re.test(p.slug) || re.test(p.title))?.slug;
   const quick = footer.quick_links.length ? footer.quick_links : site.nav.filter((n) => n.slug && n.slug !== "home").map((n) => ({ label: n.label, slug: n.slug }));
@@ -198,9 +198,9 @@ export function Footer({ site }: { site: SiteModel }) {
           <div className="flex flex-col items-start gap-3">
             <div className="inline-flex items-center gap-2 rounded-lg bg-kapwa-green-950/60 px-4 py-2 text-sm text-neutral-100 ring-1 ring-kapwa-green-700/50">Pages migrated by the agent = <span className="font-mono font-bold text-kapwa-green-400">{site.pages.length}</span></div>
             <a href={`mailto:${footer.email || "helpdesk@" + host}`} className={pill}>{Icon.flag} Report an issue</a>
-            <a href="https://github.com/rockyru/meta-hackaton" target="_blank" rel="noreferrer" className={pill}>{Icon.github} Contribute code with us</a>
+            <a href="https://github.com/rockyru/meta-hackaton" target="_blank" rel="noreferrer" className={pill}>{Icon.github} Contribute code on RE:GOV</a>
             <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
-              <span>Kapwa · BetterGov.ph</span><span>Muse Spark 1.3</span><span>SAM 3.1</span>
+              <span>RE:GOV</span><span>Kapwa · BetterGov.ph</span><span>Muse Spark 1.3</span><span>SAM 3.1</span><span>Muse Image</span>
             </div>
             {(footer.address || footer.phone) && (
               <address className="mt-4 not-italic text-sm text-neutral-400 space-y-1">
@@ -213,7 +213,7 @@ export function Footer({ site }: { site: SiteModel }) {
 
         <div className="mt-14 border-t border-white/10 pt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-sm text-neutral-500">
           <p>© {new Date().getFullYear()} {agency.name} <span className="mx-2 text-neutral-700">|</span> Public domain <span className="mx-2 text-neutral-700">|</span> Content sourced from <a className="underline hover:text-neutral-300" href={site.origin}>{host}</a></p>
-          <p className="flex items-center gap-2"><span className="inline-block size-2 rounded-full bg-kapwa-green-500" /> Resurrected {new Date(site.generated_at).toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" })}</p>
+          <p className="flex items-center gap-2"><span className="inline-block size-2 rounded-full bg-kapwa-green-500" /> Reimagined by RE:GOV · {new Date(site.generated_at).toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" })}</p>
         </div>
       </div>
     </footer>
@@ -224,8 +224,8 @@ export function PreviewBar({ site, currentSource }: { site: SiteModel; currentSo
   return (
     <div className="bg-amber-400 text-amber-950 text-[13px]">
       <div className="container-gov h-8 flex items-center gap-3 whitespace-nowrap overflow-hidden">
-        <span className="font-semibold shrink-0">Preview</span>
-        <span className="hidden md:inline truncate">{site.pages.length} pages rebuilt from {new URL(site.origin).host} with Muse Spark + SAM 3.1</span>
+        <span className="font-black shrink-0 tracking-tight">RE<span className="text-kapwa-red-700">:</span>GOV preview</span>
+        <span className="hidden md:inline truncate">{site.pages.length} pages reimagined from {new URL(site.origin).host} with Muse Spark, SAM 3.1 and Muse Image</span>
         <span className="ml-auto flex items-center gap-4">
           {currentSource && <a className="underline" href={currentSource} target="_blank" rel="noreferrer">Original ↗</a>}
           <Link className="underline" href={`/report/${site.jobId}`}>Report</Link>
