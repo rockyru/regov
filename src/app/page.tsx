@@ -24,8 +24,15 @@ export default async function Dashboard() {
             <div className="grid grid-cols-2 bg-neutral-100">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={`/api/jobs/${j.id}/shots/000.viewport.png`} alt="Original homepage" className="aspect-[4/3] w-full object-cover object-top opacity-80" />
-              <div className="aspect-[4/3] grid place-items-center bg-[radial-gradient(ellipse_at_top_left,var(--color-kapwa-brand-700),var(--color-kapwa-brand-950))] text-white text-center p-4">
-                {j.site ? <span><span className="block text-xs uppercase tracking-wider text-kapwa-yellow-300">Reimagined</span><span className="block font-bold">{j.site.agency.short_name}</span></span> : <span className="text-sm text-white/70">crawled, not yet built</span>}
+              <div className="relative aspect-[4/3] grid place-items-center bg-[radial-gradient(ellipse_at_top_left,var(--color-kapwa-brand-700),var(--color-kapwa-brand-950))] text-white text-center p-4 overflow-hidden">
+                {j.site?.assets.cover && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={`/api/jobs/${j.id}/${j.site.assets.cover}?v=${encodeURIComponent(j.site.generated_at)}`} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                )}
+                {j.site?.assets.cover && <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-kapwa-brand-950/90 to-transparent" aria-hidden />}
+                <span className="relative self-end justify-self-start text-left">
+                  {j.site ? <><span className="block text-[11px] uppercase tracking-wider text-kapwa-yellow-300">Reimagined</span><span className="block font-bold text-lg leading-tight drop-shadow">{j.site.agency.short_name}</span></> : <span className="text-sm text-white/70">crawled, not yet built</span>}
+                </span>
               </div>
             </div>
             <div className="p-5">

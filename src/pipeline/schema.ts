@@ -92,7 +92,7 @@ export interface SiteModel extends SitePlan {
   generated_at: string;
   pages: SitePage[];
   news: { title: string; date: string; excerpt: string; href: string }[];
-  assets: { logo: string; logo_box: number[]; band?: string; band_brief?: string };
+  assets: { logo: string; logo_box: number[]; band?: string; cover?: string; band_brief?: string };
   tokens?: number;
 }
 

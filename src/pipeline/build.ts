@@ -61,17 +61,17 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
   }).filter((n) => n.title && !/^(Protected|Private):/i.test(n.title.replace(/<[^>]+>/g, "")));
 
   onEvent({ type: "phase", phase: "band" });
-  let band: { band?: string; brief?: string } = {};
+  let band: { band?: string; cover?: string; brief?: string } = {};
   try {
     const b = await makeBand(jobDir, plan, unique.map((p) => p.summary));
-    band = { band: b.band, brief: b.brief };
+    band = { band: b.band, cover: b.cover, brief: b.brief };
     onEvent({ type: "band", brief: b.brief });
   } catch (e) {
     console.warn("[band] skipped:", (e as Error).message);
   }
 
   onEvent({ type: "phase", phase: "write" });
-  const site: SiteModel = { ...plan, jobId, origin: crawl.origin, generated_at: new Date().toISOString(), pages: unique, news, assets: { logo: seg.logo, logo_box: seg.logo_box, band: band.band, band_brief: band.brief }, tokens };
+  const site: SiteModel = { ...plan, jobId, origin: crawl.origin, generated_at: new Date().toISOString(), pages: unique, news, assets: { logo: seg.logo, logo_box: seg.logo_box, band: band.band, cover: band.cover, band_brief: band.brief }, tokens };
   await writeFile(join(jobDir, "site.json"), JSON.stringify(site, null, 2));
   onEvent({ type: "built", pages: unique.length, tokens, ms: Date.now() - t0 });
   return site;

@@ -58,11 +58,11 @@ export function Header({ site }: { site: SiteModel }) {
         {band && (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={band} alt="" aria-hidden className="absolute inset-y-0 right-0 h-full w-[72%] object-cover object-center [mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.35)_30%,black_60%)] [-webkit-mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.35)_30%,black_60%)]" />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,white_0%,white_30%,rgba(255,255,255,0.7)_48%,rgba(255,255,255,0.15)_72%,rgba(255,255,255,0)_100%)]" aria-hidden />
+            <img src={band} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover object-center" />
+            <div className="absolute inset-0 bg-white/85 md:bg-transparent md:bg-[linear-gradient(90deg,rgba(255,255,255,0.88)_0%,rgba(255,255,255,0.84)_26%,rgba(255,255,255,0.45)_44%,rgba(255,255,255,0.08)_58%,rgba(255,255,255,0)_68%)]" aria-hidden />
           </>
         )}
-        <div className="container-gov relative h-24 flex items-center">
+        <div className="container-gov relative h-28 md:h-36 flex items-center">
           <Link href={navHref(jobId, "home")} className="flex items-center gap-4 min-w-0">
             {logo ? (
               // eslint-disable-next-line @next/next/no-img-element

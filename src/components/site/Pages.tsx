@@ -10,7 +10,6 @@ const slugSummary = (site: SiteModel, slug: string) => site.pages.find((p) => p.
 
 export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
   const { jobId, agency } = site;
-  const band = site.assets.band ? `/api/jobs/${jobId}/${site.assets.band}?v=${encodeURIComponent(site.generated_at)}` : null;
   const hero = page.hero;
   const kind = site.site_kind ?? "national_agency";
   const isLgu = ["province", "city_municipality", "barangay"].includes(kind);
@@ -24,15 +23,7 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
   return (
     <>
       <section className="relative overflow-hidden bg-[radial-gradient(ellipse_at_top_left,var(--color-kapwa-brand-700),var(--color-kapwa-brand-950)_60%)] text-white">
-        {band ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={band} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover object-right" />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--color-kapwa-brand-950)_0%,color-mix(in_oklab,var(--color-kapwa-brand-950)_92%,transparent)_30%,color-mix(in_oklab,var(--color-kapwa-brand-950)_55%,transparent)_55%,transparent_80%)]" aria-hidden />
-          </>
-        ) : (
-          <div className="absolute inset-0 opacity-[0.07] bg-[linear-gradient(90deg,white_1px,transparent_1px),linear-gradient(white_1px,transparent_1px)] bg-[size:48px_48px]" aria-hidden />
-        )}
+        <div className="absolute inset-0 opacity-[0.07] bg-[linear-gradient(90deg,white_1px,transparent_1px),linear-gradient(white_1px,transparent_1px)] bg-[size:48px_48px]" aria-hidden />
         <div className="relative container-gov py-16 lg:py-24 grid gap-12 lg:grid-cols-[1.1fr_.9fr] items-center">
           <div>
             <p className="text-kapwa-yellow-300 font-semibold tracking-wide text-sm uppercase">{locality.province && kind !== "province" && !agency.parent.toLowerCase().includes(locality.province.toLowerCase()) ? `${agency.parent} · ${locality.province}` : agency.parent}</p>
@@ -49,7 +40,7 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
               </a>
             )}
           </div>
-          <div className="rounded-2xl bg-kapwa-brand-950/55 ring-1 ring-white/15 backdrop-blur-md p-6 shadow-2xl">
+          <div className="rounded-2xl bg-white/10 ring-1 ring-white/15 backdrop-blur p-6 shadow-2xl">
             <h2 className="text-lg font-semibold">{servicesLabel}</h2>
             <ul className="mt-4 grid grid-cols-2 gap-3">
               {site.popular_services.slice(0, 6).map((s) => (
