@@ -11,6 +11,7 @@ import { auditRebuilt } from "../src/pipeline/audit";
 import { scoreSite } from "../src/pipeline/scores";
 import { readCharters } from "../src/pipeline/charter";
 import { findPortraits } from "../src/pipeline/portraits";
+import { verifySite } from "../src/pipeline/verify";
 
 const [inputUrl, jobId, max = "20"] = process.argv.slice(2);
 let url = inputUrl;
@@ -59,6 +60,14 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
     }
     status.phase = "build";
     await buildSite(jobId, (e) => { if (e.type === "phase") status.phase = e.phase; log(e); });
+    // Self-check: Muse Spark compares each rebuilt page with its original (never fails the run).
+    status.phase = "verify"; await flush();
+    try {
+      const v = await verifySite(dir, JSON.parse(await readFile(join(dir, "site.json"), "utf8")));
+      log({ type: "verify", pages: v.pages.length, average: v.average, faithful: v.pages.filter((p) => p.verdict === "faithful").length, unsupported: v.pages.reduce((n, p) => n + p.unsupported.length, 0) });
+    } catch (e) {
+      console.warn("[verify] skipped:", (e as Error).message);
+    }
     // Citizen's Charter PDFs → service pages (Muse Spark reads each PDF; never fails the run).
     status.phase = "charter"; await flush();
     try {
