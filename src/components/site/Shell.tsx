@@ -70,14 +70,14 @@ export function Header({ site }: { site: SiteModel }) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={band} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover object-center" />
             {/* phones: artwork clear at the top, white only where the seal and name sit; md+: fades in from the left */}
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,35,101,0)_0%,rgba(6,35,101,0.15)_30%,rgba(6,35,101,0.82)_58%,rgba(6,35,101,0.96)_100%)] md:bg-[linear-gradient(90deg,rgba(255,255,255,0.9)_0%,rgba(255,255,255,0.86)_26%,rgba(255,255,255,0.45)_44%,rgba(255,255,255,0.08)_58%,rgba(255,255,255,0)_68%)]" aria-hidden />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,35,101,0)_0%,rgba(6,35,101,0.15)_22%,rgba(6,35,101,0.82)_50%,rgba(6,35,101,0.96)_100%)] md:bg-[linear-gradient(90deg,rgba(255,255,255,0.9)_0%,rgba(255,255,255,0.86)_26%,rgba(255,255,255,0.45)_44%,rgba(255,255,255,0.08)_58%,rgba(255,255,255,0)_68%)]" aria-hidden />
           </>
         )}
-        <div className="container-gov relative h-44 md:h-36 flex items-end pb-4 md:items-center md:pb-0">
+        <div className="container-gov relative h-36 md:h-36 flex items-end pb-3.5 md:items-center md:pb-0">
           <Link href={navHref(jobId, "home")} className="flex items-center gap-5 min-w-0">
             {logo ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={logo} alt={`${site.agency.short_name} seal`} className="size-16 md:size-[72px] object-contain shrink-0 drop-shadow-sm" />
+              <img src={logo} alt={`${site.agency.short_name} seal`} className="size-14 md:size-[72px] object-contain shrink-0 drop-shadow-sm" />
             ) : (
               <span className="size-16 bg-kapwa-brand-900 text-white grid place-items-center font-bold shrink-0 text-xl">{site.agency.short_name.slice(0, 3)}</span>
             )}
