@@ -1,4 +1,5 @@
 import type { SitePage } from "@/pipeline/schema";
+import { t, type Lang } from "./i18n";
 import { previewHref } from "@/lib/jobs";
 import { Markdown, hrefText, isBlank } from "./Markdown";
 import { knownGovUrl } from "@/lib/civic";
@@ -18,7 +19,7 @@ function A({ href, jobId, origin, className, children, label }: { href: string; 
 
 const H = ({ children }: { children: React.ReactNode }) => children ? <h2 className="text-2xl sm:text-[28px] font-bold tracking-tight leading-tight text-neutral-900 mb-4 pt-4 border-t-2 border-neutral-900 [[data-blocks]>:first-child_&]:border-t-0 [[data-blocks]>:first-child_&]:pt-0">{children}</h2> : null;
 
-export function Block({ block, jobId, origin }: { block: Block; jobId: string; origin: string }) {
+export function Block({ block, jobId, origin, lang }: { block: Block; jobId: string; origin: string; lang?: Lang }) {
   const md = <Markdown text={block.body_markdown} jobId={jobId} origin={origin} />;
   const items: Item[] = (block.items ?? []).filter((it) => !/^(Protected|Private):/i.test(it.title));
 
@@ -71,7 +72,7 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
             <div className="mt-4 grid gap-x-10 gap-y-8 sm:grid-cols-2 xl:grid-cols-3">
               {ordered.map(([g, its]) => (
                 <div key={g || "_"} className={its.length > 10 ? "sm:col-span-2 xl:col-span-3" : ""}>
-                  <h3 className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-500 border-b border-neutral-900 pb-2">{g || (ordered.length > 1 ? "More" : "Directory")} <span className="font-semibold tabular-nums text-neutral-500">{its.length}</span></h3>
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-500 border-b border-neutral-900 pb-2">{g || t(lang, ordered.length > 1 ? "More" : "Directory")} <span className="font-semibold tabular-nums text-neutral-500">{its.length}</span></h3>
                   <ul className={its.length > 10 ? "sm:columns-2 gap-x-10" : ""}>
                     {its.map((it, i) => (
                       <li key={i} className="break-inside-avoid border-b border-neutral-200">
@@ -208,7 +209,7 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
         <figure className="border border-dashed border-neutral-400 bg-neutral-50 p-5 text-sm text-neutral-600">
           {block.heading && <figcaption className="font-semibold text-neutral-800 mb-1">{block.heading}</figcaption>}
           <div className="prose-gov text-[15px]"><Markdown text={block.body_markdown} jobId={jobId} origin={origin} /></div>
-          <div className="mt-2 text-xs uppercase tracking-wider text-neutral-500">Image on the original site · transcribed</div>
+          <div className="mt-2 text-xs uppercase tracking-wider text-neutral-500">{t(lang, "Image on the original site · transcribed")}</div>
         </figure>
       );
     case "table":

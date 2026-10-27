@@ -3,6 +3,7 @@ import type { SiteModel } from "@/pipeline/schema";
 import { eyebrow, navHref } from "./Shell";
 import { projectsFor } from "@/lib/wikibayan";
 import { ProjectsOnRecord } from "./Projects";
+import { t } from "./i18n";
 import { CATEGORY_LABEL, NATIONAL_HOTLINES, getWeather, isLgu, kindLinks, localHotlines, siteHotlines, telHref, transparencyPages, wmoGlyph, wmoLabel, TRANSPARENCY_EXTERNAL, type Hotline, type Category } from "@/lib/civic";
 
 const nn = (i: number) => String(i + 1).padStart(2, "0");
@@ -20,7 +21,7 @@ export async function CivicStrip({ site }: { site: SiteModel }) {
       <div className="bg-kapwa-red-700 text-white h-full">
         <div className={`${weather ? "pl-5 sm:pl-8 lg:pl-12 pr-0" : "container-gov"} h-full grid auto-rows-fr grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(13rem,1fr))] border-l border-white/20 *:border-r *:border-b *:border-white/20`}>
           <a href="tel:911" className="flex flex-col justify-between gap-3 p-4 min-h-24 bg-kapwa-red-800 hover:bg-kapwa-red-900 col-span-2 md:col-span-1">
-            <span className={`${eyebrow} text-white`}>{lgu ? "Emergency" : "In an emergency"}</span>
+            <span className={`${eyebrow} text-white`}>{t(site.lang, lgu ? "Emergency" : "In an emergency")}</span>
             <span className="text-4xl font-extrabold tracking-tight leading-none">911 <span className="text-base font-semibold text-white">24/7</span></span>
           </a>
           {shown.map((h) => (
@@ -30,8 +31,8 @@ export async function CivicStrip({ site }: { site: SiteModel }) {
             </a>
           ))}
           <Link href={navHref(site.jobId, "hotlines")} className={`${cell} bg-kapwa-red-700/80 justify-end`}>
-            <span className="font-semibold">All hotlines <span aria-hidden>→</span></span>
-            <span className="text-xs text-white">Police, fire, medical, utilities for {site.locality?.province || "the Philippines"}</span>
+            <span className="font-semibold">{t(site.lang, "All hotlines")} <span aria-hidden>→</span></span>
+            <span className="text-xs text-white">{site.lang === "fil" ? `Pulis, bumbero, medikal at utilities para sa ${site.locality?.province || "Pilipinas"}` : `Police, fire, medical, utilities for ${site.locality?.province || "the Philippines"}`}</span>
           </Link>
         </div>
       </div>
@@ -79,13 +80,13 @@ export async function TransparencySection({ site, n }: { site: SiteModel; n: num
       <div className="border-t-2 border-neutral-900 pt-5 grid gap-3 lg:grid-cols-[1fr_minmax(0,34rem)] lg:gap-12 items-end">
         <div>
           <div className={`${eyebrow} text-kapwa-brand-700`}>{nn(n)}</div>
-          <h2 className="mt-2 font-bold tracking-tight text-neutral-900 text-3xl sm:text-4xl leading-[1.05]">Transparency and accountability</h2>
+          <h2 className="mt-2 font-bold tracking-tight text-neutral-900 text-3xl sm:text-4xl leading-[1.05]">{t(site.lang, "Transparency and accountability")}</h2>
         </div>
-        <p className="text-[17px] leading-relaxed text-neutral-600 lg:text-right">{lgu ? "Budgets, bids, plans and reports every local government must publish, plus the national portals that keep them honest." : "Documents this office publishes under the Transparency Seal, and the national portals where you can check procurement, budgets and records."}</p>
+        <p className="text-[17px] leading-relaxed text-neutral-600 lg:text-right">{site.lang === "fil" ? (lgu ? "Mga budget, bidding, plano at ulat na dapat ilathala ng bawat lokal na pamahalaan, at ang mga pambansang portal na nagbabantay sa mga ito." : "Mga dokumentong inilalathala ng tanggapang ito sa ilalim ng Transparency Seal, at ang mga pambansang portal kung saan masusuri ang procurement, budget at mga rekord.") : lgu ? "Budgets, bids, plans and reports every local government must publish, plus the national portals that keep them honest." : "Documents this office publishes under the Transparency Seal, and the national portals where you can check procurement, budgets and records."}</p>
       </div>
       <div className="mt-8 grid gap-10 lg:grid-cols-3">
         <div className="lg:col-span-1">
-          <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>Published by {site.agency.short_name || "this office"}</h3>
+          <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{site.lang === "fil" ? `Inilathala ng ${site.agency.short_name || "tanggapang ito"}` : `Published by ${site.agency.short_name || "this office"}`}</h3>
           {pages.length > 0 ? (
             <ol className="divide-y divide-neutral-200">
               {pages.map((p, i) => <li key={p.slug}><Link href={navHref(site.jobId, p.slug)} className="flex gap-3 py-3 font-medium text-neutral-900 hover:text-kapwa-brand-900"><span className="text-xs font-semibold tabular-nums text-neutral-500 pt-1">{nn(i)}</span>{p.label}</Link></li>)}
@@ -95,13 +96,13 @@ export async function TransparencySection({ site, n }: { site: SiteModel; n: num
           )}
         </div>
         <div>
-          <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>Check nationally</h3>
+          <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{t(site.lang, "Check nationally")}</h3>
           <ul className="divide-y divide-neutral-200">
             {TRANSPARENCY_EXTERNAL.map((l) => <li key={l.href}><a href={l.href} target="_blank" rel="noreferrer" className="block py-3 hover:text-kapwa-brand-900"><span className="font-medium text-neutral-900">{l.label} <span aria-hidden className="text-neutral-500">↗</span></span>{l.note && <span className="block text-sm text-neutral-500">{l.note}</span>}</a></li>)}
           </ul>
         </div>
         <div>
-          <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{lgu ? "For residents" : site.site_kind === "university" || site.site_kind === "school" ? "For students" : site.site_kind === "hospital" ? "For patients" : "Related portals"}</h3>
+          <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{t(site.lang, lgu ? "For residents" : site.site_kind === "university" || site.site_kind === "school" ? "For students" : site.site_kind === "hospital" ? "For patients" : "Related portals")}</h3>
           <ul className="divide-y divide-neutral-200">
             {ext.map((l) => <li key={l.href}><a href={l.href} target={l.href.startsWith("tel:") ? undefined : "_blank"} rel="noreferrer" className="block py-3 hover:text-kapwa-brand-900"><span className="font-medium text-neutral-900">{l.label} <span aria-hidden className="text-neutral-500">↗</span></span>{l.note && <span className="block text-sm text-neutral-500">{l.note}</span>}</a></li>)}
           </ul>

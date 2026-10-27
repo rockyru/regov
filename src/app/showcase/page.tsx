@@ -76,7 +76,7 @@ export default async function Showcase() {
             <figure>
               <figcaption className={`${eyebrow} pb-2 text-neutral-500`}><span className="text-kapwa-brand-900">After</span> · RE:GOV concept</figcaption>
               <Link href={`/preview/${j.id}`} className="group block">
-                <ScaledFrame src={`/preview/${j.id}`} title={`${site.agency.name} reimagined`} className="border border-kapwa-brand-900 bg-white group-hover:ring-4 group-hover:ring-kapwa-yellow-400" />
+                <ScaledFrame src={`/preview/${j.id}?lang=en`} title={`${site.agency.name} reimagined`} className="border border-kapwa-brand-900 bg-white group-hover:ring-4 group-hover:ring-kapwa-yellow-400" />
               </Link>
             </figure>
           </div>

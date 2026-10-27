@@ -96,6 +96,8 @@ export interface SiteModel extends SitePlan {
   /** From assess.ts. Missing on sites built before the design check: treated as redesign. */
   design?: { mode: "redesign" | "refine"; score: number; reason: string; primary: string; hero?: string };
   tokens?: number;
+  /** Set at render time on the Filipino edition (src/pipeline/translate.ts). */
+  lang?: "en" | "fil";
 }
 
 /** zod → strict JSON schema acceptable to the Responses API. */
