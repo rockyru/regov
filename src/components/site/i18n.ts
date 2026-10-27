@@ -59,6 +59,21 @@ const FIL: Record<string, string> = {
   "For patients": "Para sa mga pasyente",
   "Related portals": "Kaugnay na mga portal",
   "Unofficial concept. Not affiliated with the agency. Use the original site for transactions.": "Hindi opisyal na konsepto. Walang kaugnayan sa ahensiya. Gamitin ang orihinal na site para sa mga transaksiyon.",
+  "Search or ask": "Maghanap o magtanong",
+  "Search or ask a question…": "Maghanap o magtanong…",
+  "Your question or search words": "Ang inyong tanong o mga salitang hahanapin",
+  "e.g. How do I get a business permit?": "hal. Paano kumuha ng business permit?",
+  "Ask": "Itanong",
+  "Muse Spark is reading this site's pages…": "Binabasa ng Muse Spark ang mga pahina ng site na ito…",
+  "Matching pages": "Mga tugmang pahina",
+  "No page uses those words. Try fewer or simpler words, or ask a full question above.": "Walang pahinang gumagamit ng mga salitang iyan. Subukan ang mas kaunti o mas simpleng salita, o magtanong nang buo sa itaas.",
+  "People also look for": "Madalas ding hanapin",
+  "Answer from this site's pages": "Sagot mula sa mga pahina ng site na ito",
+  "Sources": "Pinagkunan",
+  "AI-generated from the pages of this unofficial concept site. It can be wrong: check the source page and the agency's official website before you act.": "Gawa ng AI mula sa mga pahina ng hindi opisyal na konseptong site na ito. Maaaring mali ito: tingnan ang pinagkunang pahina at ang opisyal na website ng ahensiya bago kumilos.",
+  "You have asked a lot of questions in the last few minutes. Please wait a little, or use the matching pages below.": "Marami na kayong naitanong sa nakalipas na ilang minuto. Maghintay nang kaunti, o gamitin ang mga tugmang pahina sa ibaba.",
+  "The assistant has answered as many questions as it can today. The matching pages below still work.": "Naabot na ng assistant ang dami ng tanong na kaya nitong sagutin ngayong araw. Gumagana pa rin ang mga tugmang pahina sa ibaba.",
+  "The assistant could not answer just now. The matching pages below still work.": "Hindi nakasagot ang assistant ngayon. Gumagana pa rin ang mga tugmang pahina sa ibaba.",
 };
 
 /** The interface string in the site's language, falling back to English. */
