@@ -30,7 +30,7 @@ export function progressOf(status: { phase: string; done: boolean; events: Ev[] 
     : cur === "plan" ? "site map and navigation"
     : cur === "segment" ? "reading the old homepage"
     : cur === "band" ? "painting the header"
-    : cur === "audit" ? "checking WCAG 2.2 AA"
+    : cur === "audit" ? "WCAG 2.2 AA and speed"
     : "writing pages";
   const frac = cur === "crawl" ? (crawlDone ? 1 : Math.min(0.95, fetched / 20)) : cur === "understand" ? (toUnderstand ? Math.min(1, understood / toUnderstand) : 0) : 0.4;
   const w = (k: string) => WEIGHT[k] ?? 0.05;

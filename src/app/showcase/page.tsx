@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { listJobs } from "@/lib/jobs";
+import { listJobs, JOBS_ROOT } from "@/lib/jobs";
+import { join } from "node:path";
+import { loadScores, fmtBytes, fmtMs } from "@/lib/scores";
 import { AppHeader, AppFooter, eyebrow, btn, nn } from "@/components/AppShell";
 import { ScaledFrame } from "@/components/ScaledFrame";
 import { ShowcaseList, type ShowcaseItem } from "@/components/ShowcaseList";
@@ -17,6 +19,7 @@ export default async function Showcase() {
   for (const j of jobs) counts.set(kindKey(j.site!.site_kind), (counts.get(kindKey(j.site!.site_kind)) ?? 0) + 1);
   const kinds = [...counts].sort((a, b) => b[1] - a[1]).map(([key, count]) => ({ key, label: KIND_LABEL[key] ?? "Other", count }));
 
+  const scores = await Promise.all(jobs.map((j) => loadScores(join(JOBS_ROOT, j.id))));
   const items: ShowcaseItem[] = jobs.map((j, i) => {
     const site = j.site!, crawl = j.crawl!;
     const home = crawl.pages[0];
@@ -26,6 +29,7 @@ export default async function Showcase() {
     const host = new URL(crawl.origin).host;
     const logo = site.assets.logo ? `/api/jobs/${j.id}/${site.assets.logo}?v=${v}` : null;
     const kind = (site.site_kind ?? "").replace(/_/g, " ");
+    const sc = scores[i]?.original && scores[i]?.rebuilt ? { o: scores[i]!.original!, r: scores[i]!.rebuilt! } : null;
     const place = [site.locality?.city, site.locality?.province, site.locality?.region].filter(Boolean).join(", ");
     const text = [site.agency.name, site.agency.short_name, host, kind, KIND_LABEL[kindKey(site.site_kind)], place, site.agency.parent].join(" ").toLowerCase();
     return {
@@ -46,6 +50,13 @@ export default async function Showcase() {
             <dl className="mt-4 grid grid-cols-3 gap-3 border-t border-neutral-200 pt-3">
               {[[site.pages.length, "pages"], [a11y, "a11y"], [notes, "to review"]].map(([n, l]) => <div key={String(l)}><dd className="text-lg font-semibold tabular-nums text-neutral-900">{n}</dd><dt className="text-[12px] text-neutral-500">{l}</dt></div>)}
             </dl>
+            {sc && (
+              <p className="mt-3 text-[13px] leading-relaxed text-neutral-600"><span className="font-semibold text-neutral-900">Homepage</span>{" "}
+                {([[sc.o.bytes, sc.r.bytes, fmtBytes, ""], [sc.o.lcp_ms ?? sc.o.load_ms, sc.r.lcp_ms ?? sc.r.load_ms, fmtMs, ""], [sc.o.axe_elements, sc.r.axe_elements, String, " axe errors"]] as const).map(([b, a, f, unit], k) => (
+                  <span key={k} className="tabular-nums">{k > 0 && " · "}<span className="whitespace-nowrap">{f(b)} → <span className={`font-semibold ${a <= b ? "text-kapwa-green-800" : "text-kapwa-red-700"}`}>{f(a)}</span>{unit}</span></span>
+                ))}
+              </p>
+            )}
             <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-semibold">
               <Link href={`/preview/${j.id}`} className="border-b-2 border-kapwa-brand-900 hover:text-kapwa-brand-900">Open the site →</Link>
               <Link href={`/report/${j.id}`} className="text-neutral-600 hover:text-kapwa-brand-900">Report</Link>
