@@ -1,13 +1,15 @@
 import type { SitePage } from "@/pipeline/schema";
 import { previewHref } from "@/lib/jobs";
 import { Markdown } from "./Markdown";
+import { knownGovUrl } from "@/lib/civic";
 
 type Block = SitePage["blocks"][number];
 type Item = Block["items"][number];
 
 const initials = (n: string) => n.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 2).map((w) => w[0]).join("");
 
-function A({ href, jobId, origin, className, children }: { href: string; jobId: string; origin: string; className?: string; children: React.ReactNode }) {
+function A({ href, jobId, origin, className, children, label }: { href: string; jobId: string; origin: string; className?: string; children: React.ReactNode; label?: string }) {
+  if ((!href || href === "/" || href === "#") && label) href = knownGovUrl(label) ?? href; // archived footer links lost their targets
   if (!href) return <span className={className}>{children}</span>;
   const h = previewHref(jobId, origin, href);
   const ext = /^https?:/.test(h);
@@ -51,15 +53,48 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
           </ul>
         </section>
       );
-    case "links":
+    case "links": {
+      // Dedupe by href+title; long directories become grouped columns instead of one tall list.
+      const seen = new Set<string>();
+      const links = items.filter((it) => { const k = `${it.href}|${it.title}`.toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
+      const fileExt = (h: string) => h.match(/\.(pdf|docx?|xlsx?|pptx?|zip)(\?|$)/i)?.[1].toUpperCase();
+      const metas = links.map((it) => (it.meta ?? "").trim());
+      const repeated = new Set(metas.filter((m, i) => m && metas.indexOf(m) !== i));
+      const directory = links.length >= 8;
+      if (directory) {
+        const groups = new Map<string, Item[]>();
+        for (const it of links) { const g = repeated.has((it.meta ?? "").trim()) ? (it.meta ?? "").trim() : ""; (groups.get(g) ?? groups.set(g, []).get(g)!).push(it); }
+        const ordered = [...groups.entries()].sort((a, b) => (a[0] === "" ? 1 : 0) - (b[0] === "" ? 1 : 0) || b[1].length - a[1].length);
+        return (
+          <section><H>{block.heading}</H>{md}
+            <div className="mt-4 grid gap-x-10 gap-y-8 sm:grid-cols-2 xl:grid-cols-3">
+              {ordered.map(([g, its]) => (
+                <div key={g || "_"} className={its.length > 10 ? "sm:col-span-2 xl:col-span-3" : ""}>
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-500 border-b border-neutral-900 pb-2">{g || (ordered.length > 1 ? "More" : "Directory")} <span className="font-mono tracking-normal text-neutral-400">{its.length}</span></h3>
+                  <ul className={its.length > 10 ? "sm:columns-2 gap-x-10" : ""}>
+                    {its.map((it, i) => (
+                      <li key={i} className="break-inside-avoid border-b border-neutral-200">
+                        <A href={it.href} label={it.title} jobId={jobId} origin={origin} className="group flex items-baseline justify-between gap-3 py-2.5 text-[15px] hover:text-kapwa-brand-900">
+                          <span className="min-w-0 flex items-baseline gap-2">{fileExt(it.href) && <span className="shrink-0 bg-kapwa-red-50 px-1.5 py-0.5 text-[10px] font-bold text-kapwa-red-700">{fileExt(it.href)}</span>}<span><span className="block font-medium text-neutral-900 group-hover:text-kapwa-brand-900">{it.title}</span>{it.description && !fileExt(it.href) && !repeated.has((it.meta ?? "").trim()) && it.description !== it.meta && it.description !== it.title && <span className="block text-sm text-neutral-500">{it.description}</span>}</span></span>
+                          <span aria-hidden className="text-neutral-300 group-hover:text-kapwa-brand-900">→</span>
+                        </A>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
       return (
         <section><H>{block.heading}</H>{md}
           <ul className="mt-3 divide-y divide-neutral-200 border-y border-neutral-900 bg-white">
-            {items.map((it, i) => {
+            {links.map((it, i) => {
               const isFile = /\.(pdf|docx?|xlsx?|pptx?|zip)/i.test(it.href);
               return (
                 <li key={i}>
-                  <A href={it.href} jobId={jobId} origin={origin} className="flex items-start gap-3 px-1 py-3 hover:bg-kapwa-brand-50">
+                  <A href={it.href} label={it.title} jobId={jobId} origin={origin} className="flex items-start gap-3 px-1 py-3 hover:bg-kapwa-brand-50">
                     <span className={`mt-0.5 inline-flex size-7 shrink-0 items-center justify-center text-[11px] font-bold ${isFile ? "bg-kapwa-red-50 text-kapwa-red-700" : "bg-kapwa-brand-50 text-kapwa-brand-800"}`}>{isFile ? it.href.split(".").pop()?.toUpperCase().slice(0, 4) : "→"}</span>
                     <span className="min-w-0">
                       <span className="block font-medium text-neutral-900">{it.title}</span>
@@ -72,6 +107,7 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
           </ul>
         </section>
       );
+    }
     case "list":
       return (
         <section><H>{block.heading}</H>{md}

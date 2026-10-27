@@ -3,11 +3,19 @@ import type { SiteModel, SitePage } from "@/pipeline/schema";
 import { Block } from "./Blocks";
 import { Markdown } from "./Markdown";
 import { navHref, eyebrow } from "./Shell";
+import { CivicStrip, TransparencySection } from "./Civic";
 
 const slugTitle = (site: SiteModel, slug: string) => site.pages.find((p) => p.slug === slug)?.title ?? slug;
 const initialsOf = (n: string) => n.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 2).map((w) => w[0]).join("") || "•";
 const slugSummary = (site: SiteModel, slug: string) => site.pages.find((p) => p.slug === slug)?.summary ?? "";
 const nn = (i: number) => String(i + 1).padStart(2, "0");
+
+/** WordPress titles arrive with 𝐛𝐨𝐥𝐝 unicode and "NEWS |" prefixes: normalise and split off the kicker. */
+function newsTitle(raw: string): { kicker: string; title: string } {
+  const t = raw.normalize("NFKC").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&#8217;|&rsquo;/g, "’").replace(/&#8220;|&#8221;|&ldquo;|&rdquo;/g, '"').trim();
+  const m = t.match(/^([A-Z][A-Z !]{2,24})\s*[|:–—-]\s*(.+)$/);
+  return m ? { kicker: m[1].trim(), title: m[2].trim() } : { kicker: "", title: t };
+}
 
 /** Editorial section head: numbered eyebrow, heavy top rule, heading left, deck right. */
 function SectionHead({ n, title, deck, small }: { n: number; title: string; deck?: string; small?: boolean }) {
@@ -32,7 +40,7 @@ function Tags({ items, jobId }: { items: { name: string; detail?: string; slug?:
   );
 }
 
-export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
+export async function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
   const { jobId, agency } = site;
   const hero = page.hero;
   const kind = site.site_kind ?? "national_agency";
@@ -40,9 +48,14 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
   const locality = site.locality ?? { province: "", region: "", city: "" };
   const ents = site.entities ?? [];
   const of = (t: string) => ents.filter((e) => e.type === t && e.name);
-  const officials = of("official"), hotlines = of("hotline"), barangays = of("barangay"), programs = of("program"), campuses = of("campus"), units = of("unit");
+  const officials = of("official"), barangays = of("barangay"), programs = of("program"), campuses = of("campus"), units = of("unit");
   const servicesLabel = isLgu ? "Services for residents" : kind === "university" || kind === "school" ? "For students and applicants" : kind === "hospital" ? "For patients and visitors" : kind === "embassy" ? "Consular services" : kind === "goc_corporation" ? "For members and customers" : "Popular services";
-  const mainBlocks = page.blocks.filter((b) => b.type !== "contact");
+  // Drop home blocks that repeat the WordPress news feed (same links or a news-like heading).
+  const newsHrefs = new Set(site.news.map((nw) => nw.href.replace(/\/$/, "")));
+  const repeatsNews = (b: SitePage["blocks"][number]) => site.news.length > 0 && (b.type === "cards" || b.type === "links" || b.type === "list") && (
+    /\b(news|updates|announcements|events|happening|press|stories|latest)\b/i.test(b.heading) ||
+    (b.items.length > 2 && b.items.filter((it) => newsHrefs.has(it.href.replace(/\/$/, ""))).length >= b.items.length / 2));
+  const mainBlocks = page.blocks.filter((b) => b.type !== "contact" && !repeatsNews(b));
   const contact = page.blocks.find((b) => b.type === "contact");
   const parentLine = locality.province && kind !== "province" && !agency.parent.toLowerCase().includes(locality.province.toLowerCase()) ? `${agency.parent} · ${locality.province}` : agency.parent;
   const showFeatured = hero.heading && hero.heading.trim().toLowerCase() !== agency.name.trim().toLowerCase();
@@ -87,14 +100,7 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
         </div>
       </section>
 
-      {hotlines.length > 0 && (
-        <section aria-label="Hotlines" className="bg-kapwa-red-700 text-white border-y border-black/20">
-          <div className="container-gov py-3 flex flex-wrap items-center gap-x-8 gap-y-2 text-sm">
-            <span className={`${eyebrow} shrink-0`}>{isLgu ? "Emergency hotlines" : "Hotlines"}</span>
-            {hotlines.slice(0, 6).map((h) => <a key={h.name + h.detail} href={`tel:${h.detail.replace(/[^+\d]/g, "")}`} className="hover:underline"><span className="text-white/80">{h.name}:</span> <span className="font-semibold">{h.detail}</span></a>)}
-          </div>
-        </section>
-      )}
+      <CivicStrip site={site} />
 
       <div className="container-gov">
         {officials.length > 0 && (
@@ -161,7 +167,7 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
                 <li key={nw.href} className="border-b border-neutral-200">
                   <a href={nw.href} className="group grid gap-2 py-5 md:grid-cols-[9rem_1fr_auto] md:gap-8 items-baseline hover:bg-kapwa-brand-50 -mx-3 px-3">
                     <time className="font-mono text-xs text-neutral-500">{nw.date.slice(0, 10)}</time>
-                    <span className="min-w-0"><h3 className="text-lg font-semibold leading-snug text-neutral-900 group-hover:text-kapwa-brand-900" dangerouslySetInnerHTML={{ __html: nw.title }} /><p className="mt-1.5 text-[15px] leading-relaxed text-neutral-600 line-clamp-2">{nw.excerpt}</p></span>
+                    <span className="min-w-0">{newsTitle(nw.title).kicker && <span className={`${eyebrow} text-kapwa-red-700 block mb-1`}>{newsTitle(nw.title).kicker}</span>}<h3 className="text-lg font-semibold leading-snug text-neutral-900 group-hover:text-kapwa-brand-900">{newsTitle(nw.title).title}</h3><p className="mt-1.5 text-[15px] leading-relaxed text-neutral-600 line-clamp-2">{nw.excerpt.normalize("NFKC")}</p></span>
                     <span aria-hidden className="hidden md:inline text-neutral-400 group-hover:text-kapwa-brand-900">→</span>
                   </a>
                 </li>
@@ -169,6 +175,8 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
             </ul>
           </section>
         )}
+
+        <TransparencySection site={site} n={n++} />
 
         <div className="py-14 grid gap-12 lg:grid-cols-[1fr_360px] border-t-2 border-neutral-900">
           <div className="space-y-14">{mainBlocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} />)}</div>

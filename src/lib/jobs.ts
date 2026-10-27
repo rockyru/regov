@@ -36,17 +36,34 @@ export async function listJobs() {
     const [hasCrawl, hasSite, hasStatus] = await Promise.all([has("crawl.json"), has("site.json"), has("status.json")]);
     let crawl: CrawlResult | null = null, site: SiteModel | null = null, status: JobStatus | null = null;
     if (hasCrawl) crawl = JSON.parse(await readFile(join(dir, "crawl.json"), "utf8"));
-    if (hasSite) site = JSON.parse(await readFile(join(dir, "site.json"), "utf8"));
+    if (hasSite) site = scrubOfficial(JSON.parse(await readFile(join(dir, "site.json"), "utf8")));
     if (hasStatus) try { status = JSON.parse(await readFile(join(dir, "status.json"), "utf8")); } catch { /* mid-write */ }
     return { id, crawl, site, status, mtime: (await stat(dir)).mtimeMs };
   }));
   return jobs.filter((j) => j.crawl || j.status).sort((a, b) => b.mtime - a.mtime);
 }
 
+const OFFICIAL_LEAD = /^\s*(the\s+)?official\s+(web\s?site|site|web\s?portal|portal|online\s+portal|home\s?page|page)\s+(of|for)\s+(the\s+)?/i;
+const OFFICIAL_ANY = /\b(the\s+)?official\s+(web\s?site|site|web\s?portal|portal|home\s?page)\b/gi;
+
+/** The reimagined site is a concept: never let generated copy call itself "the official website". */
+export function scrubOfficial(site: SiteModel): SiteModel {
+  const kind = site.site_kind ?? "national_agency";
+  const loc = site.locality ?? { province: "", region: "", city: "" };
+  const isLgu = ["province", "city_municipality", "barangay"].includes(kind);
+  const place = [loc.city || site.agency.short_name || site.agency.name, loc.province].filter(Boolean).join(", ");
+  const fallback = isLgu ? `Serving the people of ${place}` : kind === "university" || kind === "school" ? "Learning, research and service for the community" : kind === "hospital" ? "Care for every patient" : "Public service for every Filipino";
+  const fix = (t: string) => (OFFICIAL_LEAD.test(t) ? fallback : t.replace(OFFICIAL_ANY, "website"));
+  site.agency.tagline = fix(site.agency.tagline ?? "");
+  site.agency.description = (site.agency.description ?? "").replace(OFFICIAL_ANY, "website");
+  for (const p of site.pages) { if (p.hero?.subheading) p.hero.subheading = fix(p.hero.subheading); }
+  return site;
+}
+
 export async function loadSite(jobId: string): Promise<SiteModel | null> {
   if (!/^[\w.-]+$/.test(jobId)) return null;
   await ensureRestored();
-  try { return JSON.parse(await readFile(join(JOBS_ROOT, jobId, "site.json"), "utf8")); } catch { return null; }
+  try { return scrubOfficial(JSON.parse(await readFile(join(JOBS_ROOT, jobId, "site.json"), "utf8"))); } catch { return null; }
 }
 
 export function findPage(site: SiteModel, slug: string): SitePage | undefined {

@@ -56,7 +56,7 @@ export const SitePlan = z.object({
   agency: z.object({
     name: z.string(),
     short_name: z.string(),
-    tagline: z.string().describe("one line, citizen-facing"),
+    tagline: z.string().describe("one line, citizen-facing: a promise, mandate or welcome. Never 'official website of ...' or any claim of being official"),
     description: z.string().describe("2-3 sentences about the agency"),
     parent: z.string().describe("e.g. Republic of the Philippines, or parent department"),
   }),

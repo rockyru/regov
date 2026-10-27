@@ -10,7 +10,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
   const all = await listJobs();
   const jobs = all.filter((j) => j.site);
   const active = all.filter((j) => !j.site && j.status && !j.status.error && Date.now() - new Date(j.status.startedAt).getTime() < 60 * 60 * 1000);
-  const failed = all.filter((j) => !j.site && j.status?.error && Date.now() - new Date(j.status.startedAt).getTime() < 6 * 60 * 60 * 1000);
+  const failed = all.filter((j) => !j.site && j.status?.error && (j.crawl?.pages.length ?? 0) > 0 && Date.now() - new Date(j.status.startedAt).getTime() < 60 * 60 * 1000);
   return (
     <main className="relative min-h-dvh flex flex-col overflow-hidden">
       {/* Soft civic glow rising from the bottom: Kapwa blue with a touch of sun yellow and red */}

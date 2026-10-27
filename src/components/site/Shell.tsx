@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { SiteModel } from "@/pipeline/schema";
 import { MobileNav } from "./MobileNav";
 import { Caret } from "./Caret";
+import { BETTERGOV_TOOLS } from "@/lib/civic";
 
 const GOV_LINKS = [
   { label: "Official Gazette", href: "https://www.officialgazette.gov.ph" },
@@ -18,7 +19,8 @@ export function navHref(jobId: string, slug: string) {
 export const eyebrow = "text-[11px] font-bold uppercase tracking-[0.18em]";
 
 
-export function GovStrip() {
+export function GovStrip({ jobId }: { jobId?: string }) {
+  const links = jobId ? [{ label: "Hotlines", href: navHref(jobId, "hotlines") }, ...GOV_LINKS.map((l) => (l.href === "#transparency" ? { ...l, href: navHref(jobId, "home") + "#transparency" } : l))] : GOV_LINKS;
   return (
     <div className="bg-kapwa-brand-950 text-white/90 text-[13px]">
       <div className="container-gov h-9 flex items-center justify-between gap-4">
@@ -29,7 +31,7 @@ export function GovStrip() {
           GOVPH <span className="font-normal text-white/60 hidden sm:inline">· Republic of the Philippines</span>
         </div>
         <nav aria-label="Government links" className="hidden md:flex items-center gap-5">
-          {GOV_LINKS.map((l) => <a key={l.label} href={l.href} className="hover:text-white">{l.label}</a>)}
+          {links.map((l) => <a key={l.label} href={l.href} className="hover:text-white">{l.label}</a>)}
           <span className="text-white/40">|</span>
           <button className="hover:text-white" type="button">Filipino</button>
         </nav>
@@ -172,14 +174,14 @@ export function Footer({ site }: { site: SiteModel }) {
     { label: "FAQ", slug: findSlug(/faq|frequently/i) },
     { label: "Contact Us", slug: findSlug(/contact/i) },
   ].filter((x): x is { label: string; slug: string } => !!x.slug && !quick.some((q) => q.slug === x.slug));
-  const quickLinks = [...quick, ...extras].slice(0, 8);
+  const quickLinks = [...quick, ...extras].slice(0, 7).concat([{ label: "Emergency hotlines", slug: "hotlines" }]);
   const pill = "inline-flex items-center gap-2 border border-white/20 px-4 py-2.5 text-sm font-medium text-neutral-100 hover:bg-white/10 hover:border-white/40";
   const colHead = `${eyebrow} text-neutral-500 pb-3 border-b border-white/15`;
 
   return (
     <footer className="mt-20 bg-neutral-950 text-neutral-300">
       <div className="container-gov py-16">
-        <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1.1fr]">
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.9fr_0.9fr_1fr_1.1fr]">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-4">
@@ -205,11 +207,19 @@ export function Footer({ site }: { site: SiteModel }) {
             </ul>
           </div>
 
-          {/* Resources */}
+          {/* Government */}
           <div>
-            <h2 className={colHead}>Resources</h2>
+            <h2 className={colHead}>Government</h2>
             <ul className="mt-4 space-y-3 text-[15px]">
               {RESOURCES.map((l) => <li key={l.label}><a className="text-neutral-200 hover:text-white" href={l.href} target="_blank" rel="noreferrer">{l.label}</a></li>)}
+            </ul>
+          </div>
+
+          {/* BetterGov.ph tools */}
+          <div>
+            <h2 className={colHead}>Citizen tools <span className="normal-case tracking-normal text-neutral-600">· BetterGov.ph</span></h2>
+            <ul className="mt-4 space-y-3 text-[15px]">
+              {BETTERGOV_TOOLS.map((l) => <li key={l.label}><a className="text-neutral-200 hover:text-white" href={l.href} target="_blank" rel="noreferrer">{l.label}</a></li>)}
             </ul>
           </div>
 

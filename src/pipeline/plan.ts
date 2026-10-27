@@ -19,7 +19,8 @@ Navigation rules (strict):
 - Repetitive series (regional news, yearly reports, numbered issuances) NEVER go in nav one by one: put ONE child that links to their hub page, and list the series under "hubs" with that hub slug.
 - Every page slug must appear exactly once: in nav (top level or child) or in a hub's slugs. Only use slugs that exist.
 - popular_services and home_sections must reference existing slugs. Write for citizens, not bureaucrats.
-Agency identity must come from the pages (name, address, email, phone); never invent contact details - leave empty strings if unknown.`;
+Agency identity must come from the pages (name, address, email, phone); never invent contact details - leave empty strings if unknown.
+The rebuilt site is an unofficial concept: the tagline and description must never call it "official" or "the official website"; write a mandate or welcome instead (e.g. "Serving the people of Lupao, Nueva Ecija").`;
 
 export async function planSite(jobDir: string, crawl: CrawlResult, pages: SitePage[]) {
   const home = crawl.pages[0];
