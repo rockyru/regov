@@ -163,11 +163,11 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
           <thead className="block print:table-header-group">
             <tr className="block print:table-row"><td className="block print:table-cell print:pb-6">
               {/* Letterhead */}
-              <div className="grid grid-cols-[auto_1fr] items-start gap-x-10 gap-y-3 border-b border-neutral-300 pb-5 sm:grid-cols-[auto_1fr_auto] print:grid-cols-[auto_1fr_auto] print:pb-3">
+              <div className="grid grid-cols-[auto_1fr] items-center gap-x-12 gap-y-3 border-b border-neutral-300 pb-6 sm:grid-cols-[13rem_1fr_1.4fr] print:grid-cols-[42mm_1fr_1.4fr] print:gap-x-6 print:pb-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/brand/logo.svg" alt="RE:GOV. Reimagine Government." className="h-11 w-auto print:h-[11mm]" />
-                <div className="hidden text-[13px] leading-snug text-neutral-700 sm:block print:block print:text-[8pt]"><div className="font-semibold text-neutral-900">{site.agency.name} · {host}</div><div>Migration report</div></div>
-                <div className="justify-self-end text-right text-[13px] leading-snug text-neutral-700 print:text-[8pt]"><div className="font-semibold text-neutral-900">RE:GOV</div><div>regov.app</div></div>
+                <img src="/brand/logo.svg" alt="RE:GOV. Reimagine Government." className="h-12 w-auto print:h-[12mm]" />
+                <div className="text-[13px] leading-relaxed text-neutral-800 print:text-[8.5pt]"><div>RE:GOV</div><div>regov.app</div></div>
+                <div className="hidden text-[13px] leading-relaxed text-neutral-800 sm:block print:block print:text-[8.5pt]"><div>{site.agency.short_name || site.agency.name} · {host}</div><div>Migration report</div></div>
               </div>
             </td></tr>
           </thead>
