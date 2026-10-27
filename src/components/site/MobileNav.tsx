@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { SiteModel } from "@/pipeline/schema";
 import { Caret } from "./Caret";
+import { t, type Lang } from "./i18n";
 
 type NavItem = SiteModel["nav"][number];
 
@@ -46,7 +47,7 @@ function iconFor(label: string) {
   return "grid";
 }
 
-export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string }) {
+export function MobileNav({ nav, jobId, lang }: { nav: SiteModel["nav"]; jobId: string; lang?: Lang }) {
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
   const pathname = usePathname();
@@ -83,19 +84,19 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
         <ul className="flex items-stretch divide-x divide-white/15">
           <li className="flex flex-1 min-w-0">
             <Link href={href("home")} aria-current={isActive(nav[0]) ? "page" : undefined} className={tab(pathname === href("home"))}>
-              {bar(pathname === href("home"))}<Icon name="home" /><span className="truncate max-w-full">Home</span>
+              {bar(pathname === href("home"))}<Icon name="home" /><span className="truncate max-w-full">{t(lang, "Home")}</span>
             </Link>
           </li>
           {primary.map((item) => (
             <li key={item.label} className="flex flex-1 min-w-0">
               <Link href={href(item.slug)} aria-current={isActive(item) ? "page" : undefined} className={tab(isActive(item))}>
-                {bar(isActive(item))}<Icon name={iconFor(item.label)} /><span className="truncate max-w-full">{item.label}</span>
+                {bar(isActive(item))}<Icon name={iconFor(`${item.label} ${item.slug}`)} /><span className="truncate max-w-full">{item.label}</span>
               </Link>
             </li>
           ))}
           <li className="flex flex-1 min-w-0">
             <button type="button" aria-expanded={open} aria-controls="mobile-drawer" onClick={() => (open ? close() : setOpen(true))} className={tab(open)}>
-              {bar(open)}<Icon name={open ? "menu" : "grid"} /><span>More</span>
+              {bar(open)}<Icon name={open ? "menu" : "grid"} /><span>{t(lang, "More")}</span>
             </button>
           </li>
         </ul>
@@ -103,11 +104,11 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
 
       {/* Drawer that rises from the bottom */}
       {open && (
-        <div className="fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-label="All sections">
-          <button type="button" aria-label="Close menu" onClick={close} className={`absolute inset-0 bg-kapwa-brand-950/60 backdrop-blur-[2px] motion-safe:duration-300 motion-safe:fill-mode-forwards ${closing ? "motion-safe:animate-out motion-safe:fade-out" : "motion-safe:animate-in motion-safe:fade-in"}`} />
+        <div className="fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-label={t(lang, "All sections")}>
+          <button type="button" aria-label={t(lang, "Close menu")} onClick={close} className={`absolute inset-0 bg-kapwa-brand-950/60 backdrop-blur-[2px] motion-safe:duration-300 motion-safe:fill-mode-forwards ${closing ? "motion-safe:animate-out motion-safe:fade-out" : "motion-safe:animate-in motion-safe:fade-in"}`} />
           <div id="mobile-drawer" onAnimationEnd={finishClose} className={`absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col bg-white text-neutral-900 border-t-4 border-kapwa-yellow-400 shadow-2xl motion-safe:duration-300 motion-safe:fill-mode-forwards ${closing ? "motion-safe:animate-out motion-safe:slide-out-to-bottom motion-safe:ease-in" : "motion-safe:animate-in motion-safe:slide-in-from-bottom motion-safe:ease-out"}`}>
             <div className="flex items-center justify-between px-5 h-14 border-b-2 border-neutral-900 shrink-0">
-              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-600">All sections</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-600">{t(lang, "All sections")}</span>
               <button type="button" onClick={close} className="inline-flex h-9 items-center gap-1.5 px-3 text-sm font-semibold border border-neutral-900 hover:bg-neutral-900 hover:text-white">
                 Close <Caret />
               </button>
@@ -115,9 +116,9 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
 
             <div className="overflow-y-auto overscroll-contain pb-[max(1rem,env(safe-area-inset-bottom))]">
               <form role="search" className="flex m-5 mb-0">
-                <label className="sr-only" htmlFor="drawer-search">Search this site</label>
-                <input id="drawer-search" placeholder="Search services, forms, offices…" className="h-11 flex-1 min-w-0 border-2 border-r-0 border-neutral-900 bg-white px-3 text-[15px] placeholder:text-neutral-500 focus:outline-none focus:bg-kapwa-yellow-50" />
-                <button type="submit" aria-label="Search" className="h-11 w-12 grid place-items-center bg-neutral-900 text-white hover:bg-kapwa-brand-900"><Icon name="search" className="size-5" /></button>
+                <label className="sr-only" htmlFor="drawer-search">{t(lang, "Search this site")}</label>
+                <input id="drawer-search" placeholder={t(lang, "Search services, forms, offices…")} className="h-11 flex-1 min-w-0 border-2 border-r-0 border-neutral-900 bg-white px-3 text-[15px] placeholder:text-neutral-500 focus:outline-none focus:bg-kapwa-yellow-50" />
+                <button type="submit" aria-label={t(lang, "Search")} className="h-11 w-12 grid place-items-center bg-neutral-900 text-white hover:bg-kapwa-brand-900"><Icon name="search" className="size-5" /></button>
               </form>
 
               <ul className="mt-5 border-t-2 border-neutral-900">
@@ -126,7 +127,7 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
                     {item.children.length > 0 ? (
                       <details className="group">
                         <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4">
-                          <Icon name={iconFor(item.label)} className="text-kapwa-brand-900" />
+                          <Icon name={iconFor(`${item.label} ${item.slug}`)} className="text-kapwa-brand-900" />
                           <span className="flex-1 min-w-0">
                             <span className="block font-semibold">{item.label}</span>
                             {item.description && <span className="block text-[13px] text-neutral-500 truncate">{item.description}</span>}
@@ -141,7 +142,7 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
                       </details>
                     ) : (
                       <Link href={href(item.slug)} onClick={close} className="flex items-center gap-4 px-5 py-4">
-                        <Icon name={iconFor(item.label)} className="text-kapwa-brand-900" />
+                        <Icon name={iconFor(`${item.label} ${item.slug}`)} className="text-kapwa-brand-900" />
                         <span className="flex-1 min-w-0">
                           <span className="block font-semibold">{item.label}</span>
                           {item.description && <span className="block text-[13px] text-neutral-500 truncate">{item.description}</span>}
@@ -154,10 +155,10 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
               </ul>
 
               <div className="grid grid-cols-2 gap-px bg-neutral-900 border-b-2 border-neutral-900">
-                <Link href={href("hotlines")} onClick={close} className="flex items-center gap-3 bg-kapwa-red-700 px-5 py-4 text-white font-semibold hover:bg-kapwa-red-800"><Icon name="phone" className="size-5" />Hotlines</Link>
-                <a href={`${href("home")}#transparency`} onClick={close} className="flex items-center gap-3 bg-white px-5 py-4 font-semibold hover:bg-neutral-100"><Icon name="file" className="size-5 text-kapwa-brand-900" />Transparency</a>
+                <Link href={href("hotlines")} onClick={close} className="flex items-center gap-3 bg-kapwa-red-700 px-5 py-4 text-white font-semibold hover:bg-kapwa-red-800"><Icon name="phone" className="size-5" />{t(lang, "Hotlines")}</Link>
+                <a href={`${href("home")}#transparency`} onClick={close} className="flex items-center gap-3 bg-white px-5 py-4 font-semibold hover:bg-neutral-100"><Icon name="file" className="size-5 text-kapwa-brand-900" />{t(lang, "Transparency")}</a>
               </div>
-              <p className="px-5 py-4 text-[12px] text-neutral-500">Unofficial concept. Not affiliated with the agency. Use the original site for transactions.</p>
+              <p className="px-5 py-4 text-[12px] text-neutral-500">{t(lang, "Unofficial concept. Not affiliated with the agency. Use the original site for transactions.")}</p>
             </div>
           </div>
         </div>

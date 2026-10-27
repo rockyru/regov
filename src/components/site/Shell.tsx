@@ -3,6 +3,7 @@ import type { SiteModel } from "@/pipeline/schema";
 import { MobileNav } from "./MobileNav";
 import { Caret } from "./Caret";
 import { BETTERGOV_TOOLS } from "@/lib/civic";
+import { t, type Lang } from "./i18n";
 
 const GOV_LINKS = [
   { label: "Official Gazette", href: "https://www.officialgazette.gov.ph" },
@@ -19,8 +20,13 @@ export function navHref(jobId: string, slug: string) {
 export const eyebrow = "text-[11px] font-bold uppercase tracking-[0.18em]";
 
 
-export function GovStrip({ jobId }: { jobId?: string }) {
-  const links = jobId ? [{ label: "Hotlines", href: navHref(jobId, "hotlines") }, ...GOV_LINKS.map((l) => (l.href === "#transparency" ? { ...l, href: navHref(jobId, "home") + "#transparency" } : l))] : GOV_LINKS;
+/** The language switch sets a cookie through /api/lang and comes back to the same page. */
+export function langHref(to: Lang, here: string) {
+  return `/api/lang?l=${to}&back=${encodeURIComponent(here)}`;
+}
+
+export function GovStrip({ jobId, lang, here }: { jobId?: string; lang?: Lang; here?: string }) {
+  const links = jobId ? [{ label: t(lang, "Hotlines"), href: navHref(jobId, "hotlines") }, ...GOV_LINKS.map((l) => (l.href === "#transparency" ? { ...l, href: navHref(jobId, "home") + "#transparency" } : l))] : GOV_LINKS;
   return (
     <div className="bg-kapwa-brand-950 text-white/90 text-[13px]">
       <div className="container-gov h-9 flex items-center justify-between gap-4">
@@ -28,13 +34,21 @@ export function GovStrip({ jobId }: { jobId?: string }) {
           <span className="inline-grid grid-cols-3 w-5 h-3.5 shrink-0" aria-hidden>
             <span className="bg-kapwa-brand-500" /><span className="bg-kapwa-red-600" /><span className="bg-kapwa-yellow-400" />
           </span>
-          GOVPH <span className="font-normal text-white/60 hidden sm:inline">· Republic of the Philippines</span>
+          GOVPH <span className="font-normal text-white/60 hidden sm:inline">· {t(lang, "Republic of the Philippines")}</span>
         </div>
-        <nav aria-label="Government links" className="hidden lg:flex items-center gap-5 whitespace-nowrap">
-          {links.map((l) => <a key={l.label} href={l.href} className="hover:text-white">{l.label}</a>)}
-          <span aria-hidden className="text-white/70">|</span>
-          <button className="hover:text-white" type="button">Filipino</button>
-        </nav>
+        <div className="flex items-center gap-5 whitespace-nowrap">
+          <nav aria-label={t(lang, "Government links")} className="hidden lg:flex items-center gap-5">
+            {links.map((l) => <a key={l.label} href={l.href} className="hover:text-white">{l.label}</a>)}
+          </nav>
+          {here && (
+            <>
+              <span aria-hidden className="hidden lg:inline text-white/70">|</span>
+              {lang === "fil"
+                ? <a href={langHref("en", here)} lang="en" hrefLang="en" className="font-semibold hover:text-white">English</a>
+                : <a href={langHref("fil", here)} lang="fil" hrefLang="fil" className="font-semibold hover:text-white">Filipino</a>}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -94,7 +108,7 @@ export function Header({ site }: { site: SiteModel }) {
       {/* Row 2: full-bleed primary navigation with mega menus */}
       <nav aria-label="Primary" className="sticky top-0 z-40 bg-kapwa-brand-900 text-white relative border-b border-black/20">
         <div className="container-gov flex items-stretch">
-          <Link href={navHref(jobId, "home")} className="hidden lg:flex shrink-0 items-center px-3 xl:px-5 h-14 font-semibold whitespace-nowrap border-b-4 border-transparent hover:bg-white/10 hover:border-kapwa-yellow-400">Home</Link>
+          <Link href={navHref(jobId, "home")} className="hidden lg:flex shrink-0 items-center px-3 xl:px-5 h-14 font-semibold whitespace-nowrap border-b-4 border-transparent hover:bg-white/10 hover:border-kapwa-yellow-400">{t(site.lang, "Home")}</Link>
           <div className="hidden lg:flex flex-wrap items-stretch flex-1 min-w-0">
             {items.map((item) => {
               const cols = columns(item.children);
@@ -110,15 +124,15 @@ export function Header({ site }: { site: SiteModel }) {
                       <div className="bg-white text-neutral-900 shadow-2xl border-t-4 border-kapwa-yellow-400 border-b-2 border-b-neutral-900">
                         <div className="container-gov py-8 grid gap-10 lg:grid-cols-[280px_1fr]">
                           <div className="lg:border-r lg:border-neutral-200 lg:pr-8">
-                            <div className={`${eyebrow} text-kapwa-brand-700`}>Section</div>
+                            <div className={`${eyebrow} text-kapwa-brand-700`}>{t(site.lang, "Section")}</div>
                             <div className="mt-2 text-2xl font-bold tracking-tight leading-tight">{item.label}</div>
                             {item.description && <p className="mt-3 text-[15px] leading-relaxed text-neutral-600">{item.description}</p>}
-                            {item.slug && <Link href={navHref(jobId, item.slug)} className="mt-5 inline-block font-semibold text-kapwa-brand-800 border-b-2 border-kapwa-brand-800 hover:text-kapwa-brand-950">Overview →</Link>}
+                            {item.slug && <Link href={navHref(jobId, item.slug)} className="mt-5 inline-block font-semibold text-kapwa-brand-800 border-b-2 border-kapwa-brand-800 hover:text-kapwa-brand-950">{t(site.lang, "Overview →")}</Link>}
                           </div>
                           <div className="flex flex-wrap gap-x-12 gap-y-8">
                             {cols.map((col, i) => (
                               <div key={i} className="w-64 shrink-0">
-                                <div className={`${eyebrow} text-neutral-500 pb-2 mb-2 border-b border-neutral-900`}>{col.heading || "Pages"}</div>
+                                <div className={`${eyebrow} text-neutral-500 pb-2 mb-2 border-b border-neutral-900`}>{col.heading || t(site.lang, "Pages")}</div>
                                 <ul className="divide-y divide-neutral-100">
                                   {col.links.map((c) => <li key={c.slug + c.label}><Link href={navHref(jobId, c.slug)} className="block py-2 text-[15px] font-medium text-neutral-800 hover:text-kapwa-brand-900 hover:pl-1 transition-[padding]">{c.label}</Link></li>)}
                                 </ul>
@@ -134,14 +148,14 @@ export function Header({ site }: { site: SiteModel }) {
             })}
           </div>
           <form role="search" className="flex flex-1 lg:flex-none lg:shrink-0 items-center lg:ml-auto py-2">
-            <label className="sr-only" htmlFor="site-search">Search this site</label>
-            <input id="site-search" placeholder="Search services, forms, offices…" className="h-10 w-full lg:w-40 xl:w-80 border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
-            <button type="submit" className="h-10 bg-kapwa-yellow-400 px-4 text-sm font-bold text-kapwa-brand-950 hover:bg-kapwa-yellow-300">Search</button>
+            <label className="sr-only" htmlFor="site-search">{t(site.lang, "Search this site")}</label>
+            <input id="site-search" placeholder={t(site.lang, "Search services, forms, offices…")} className="h-10 w-full lg:w-40 xl:w-80 border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
+            <button type="submit" className="h-10 bg-kapwa-yellow-400 px-4 text-sm font-bold text-kapwa-brand-950 hover:bg-kapwa-yellow-300">{t(site.lang, "Search")}</button>
           </form>
         </div>
       </nav>
       {/* Mobile: floating bottom bar with three sections + a "More" drawer */}
-      <MobileNav nav={site.nav} jobId={jobId} />
+      <MobileNav nav={site.nav} jobId={jobId} lang={site.lang} />
     </header>
   );
 }
@@ -177,7 +191,7 @@ export function Footer({ site }: { site: SiteModel }) {
     { label: "FAQ", slug: findSlug(/faq|frequently/i) },
     { label: "Contact Us", slug: findSlug(/contact/i) },
   ].filter((x): x is { label: string; slug: string } => !!x.slug && !quick.some((q) => q.slug === x.slug));
-  const quickLinks = [...quick, ...extras].slice(0, 7).concat([{ label: "Emergency hotlines", slug: "hotlines" }]);
+  const quickLinks = [...quick, ...extras].slice(0, 7).concat([{ label: t(site.lang, "Emergency hotlines"), slug: "hotlines" }]);
   const pill = "inline-flex items-center gap-2 border border-white/20 px-4 py-2.5 text-sm font-medium text-neutral-100 hover:bg-white/10 hover:border-white/40";
   const colHead = `${eyebrow} text-neutral-400 pb-3 border-b border-white/15`;
 
@@ -204,7 +218,7 @@ export function Footer({ site }: { site: SiteModel }) {
 
           {/* Quick links */}
           <div>
-            <h2 className={colHead}>Quick links</h2>
+            <h2 className={colHead}>{t(site.lang, "Quick links")}</h2>
             <ul className="mt-4 space-y-3 text-[15px]">
               {quickLinks.map((l) => <li key={l.label}><Link className="text-neutral-200 hover:text-white" href={navHref(jobId, l.slug)}>{l.label}</Link></li>)}
             </ul>
@@ -212,7 +226,7 @@ export function Footer({ site }: { site: SiteModel }) {
 
           {/* Government */}
           <div>
-            <h2 className={colHead}>Government</h2>
+            <h2 className={colHead}>{t(site.lang, "Government")}</h2>
             <ul className="mt-4 space-y-3 text-[15px]">
               {RESOURCES.map((l) => <li key={l.label}><a className="text-neutral-200 hover:text-white" href={l.href} target="_blank" rel="noreferrer">{l.label}</a></li>)}
             </ul>
@@ -220,7 +234,7 @@ export function Footer({ site }: { site: SiteModel }) {
 
           {/* BetterGov.ph tools */}
           <div>
-            <h2 className={colHead}>Citizen tools <span className="normal-case tracking-normal text-neutral-400">· BetterGov.ph</span></h2>
+            <h2 className={colHead}>{t(site.lang, "Citizen tools")} <span className="normal-case tracking-normal text-neutral-400">· BetterGov.ph</span></h2>
             <ul className="mt-4 space-y-3 text-[15px]">
               {BETTERGOV_TOOLS.map((l) => <li key={l.label}><a className="text-neutral-200 hover:text-white" href={l.href} target="_blank" rel="noreferrer">{l.label}</a></li>)}
             </ul>
@@ -228,9 +242,9 @@ export function Footer({ site }: { site: SiteModel }) {
 
           {/* Pills */}
           <div className="flex flex-col items-start gap-3">
-            <div className="inline-flex items-center gap-2 border-l-4 border-kapwa-green-500 bg-white/5 px-4 py-2 text-sm text-neutral-100">Pages migrated by the agent = <span className="font-bold tabular-nums text-kapwa-green-400">{site.pages.length}</span></div>
-            <a href={`mailto:${footer.email || "helpdesk@" + host}`} className={pill}>{Icon.flag} Report an issue</a>
-            <a href="https://github.com/rockyru/regov" target="_blank" rel="noreferrer" className={pill}>{Icon.github} Contribute code on RE:GOV</a>
+            <div className="inline-flex items-center gap-2 border-l-4 border-kapwa-green-500 bg-white/5 px-4 py-2 text-sm text-neutral-100">{t(site.lang, "Pages migrated by the agent")} = <span className="font-bold tabular-nums text-kapwa-green-400">{site.pages.length}</span></div>
+            <a href={`mailto:${footer.email || "helpdesk@" + host}`} className={pill}>{Icon.flag} {t(site.lang, "Report an issue")}</a>
+            <a href="https://github.com/rockyru/regov" target="_blank" rel="noreferrer" className={pill}>{Icon.github} {t(site.lang, "Contribute code on RE:GOV")}</a>
             <div className={`mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 ${eyebrow} text-neutral-400`}>
               <span>RE:GOV</span><span>Kapwa · BetterGov.ph</span><span>Muse Spark 1.3</span><span>SAM 3.1</span><span>Muse Image</span>
             </div>
@@ -245,12 +259,20 @@ export function Footer({ site }: { site: SiteModel }) {
 
         {/* Unofficial notice */}
         <div className="mt-14 border-t-2 border-white/20 pt-6 grid gap-4 lg:grid-cols-[200px_1fr] text-sm">
-          <div className={`${eyebrow} text-kapwa-yellow-400`}>Unofficial · Concept</div>
+          <div className={`${eyebrow} text-kapwa-yellow-400`}>{site.lang === "fil" ? "Hindi opisyal · Konsepto" : "Unofficial · Concept"}</div>
+          {site.lang === "fil" ? (
+            <p className="max-w-4xl leading-relaxed text-neutral-400">
+              Ang website na ito ay isang <strong className="text-neutral-200">hindi opisyal na muling-pagdisenyo na gawa ng AI</strong> mula sa <a className="underline hover:text-neutral-200" href={site.origin} target="_blank" rel="noreferrer">{host}</a>, ginawa ng RE:GOV bilang demonstrasyon.
+              Hindi ito pinapatakbo, inendorso, o kaugnay ng {agency.name} o ng anumang ahensiya ng pamahalaan. Awtomatikong inilipat ang nilalaman at maaaring kulang o luma na.
+              Ang salin sa Filipino ay gawa ng AI (Muse Spark) at maaaring may mali. Para sa opisyal na impormasyon at serbisyo, laging gamitin ang opisyal na website ng ahensiya.
+            </p>
+          ) : (
           <p className="max-w-4xl leading-relaxed text-neutral-400">
             This website is an <strong className="text-neutral-200">unofficial, AI-generated reimagining</strong> of <a className="underline hover:text-neutral-200" href={site.origin} target="_blank" rel="noreferrer">{host}</a> produced by RE:GOV for demonstration purposes.
             It is not operated by, endorsed by, or affiliated with {agency.name} or any government body. Content was migrated automatically and may be incomplete or out of date.
             For official information and services, always use the agency&rsquo;s official website.
           </p>
+          )}
         </div>
 
         <div className="mt-6 border-t border-white/10 pt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-sm text-neutral-400">
@@ -272,7 +294,7 @@ export function PreviewBar({ site, currentSource }: { site: SiteModel; currentSo
           <img src="/brand/mark-ink.svg" alt="" className="h-4 w-auto" /><span>RE<span className="text-kapwa-red-700">:</span>GOV</span>
         </Link>
         <span className="shrink-0 border border-amber-950/40 px-1.5 py-px text-[10px] font-bold uppercase tracking-[0.14em]">Unofficial concept</span>
-        <span className="truncate"><span className="hidden md:inline">{site.pages.length} pages reimagined from {host} by an AI agent · </span>not affiliated with {site.agency.short_name || "the agency"}</span>
+        <span className="truncate"><span className="hidden md:inline">{site.pages.length} pages reimagined from {host} by an AI agent · </span>not affiliated with {site.agency.short_name || "the agency"}{site.lang === "fil" && <span lang="en"> · Filipino text machine-translated by Muse Spark</span>}</span>
         <span className="ml-auto flex items-center gap-4 shrink-0">
           {currentSource && <a className="underline" href={currentSource} target="_blank" rel="noreferrer">Official site ↗</a>}
           <Link className="underline" href={`/report/${site.jobId}`}>Report</Link>
