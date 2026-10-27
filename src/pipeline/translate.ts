@@ -7,6 +7,7 @@ import { z } from "zod";
 import { meta, MUSE } from "../lib/meta";
 import { strictSchema, type SiteModel, type SitePage } from "./schema";
 import { cached, pmap } from "./cache";
+import { withUsage } from "../lib/usage";
 import { createHash } from "node:crypto";
 
 const SYSTEM = `You translate the text of a Philippine government website from English into Filipino for the citizens who use it.
@@ -39,13 +40,13 @@ async function translateChunk(jobDir: string, chunk: { id: string; text: string 
     if (spent.day !== today()) spent = { day: today(), n: 0 };
     if (spent.n >= DAILY_MAX) throw new TranslateBudgetError("Daily translation budget used");
     spent.n++;
-    const r = await meta.responses.create({
+    const r = await withUsage(jobDir, "on_demand", "translate", () => meta.responses.create({
       model: MUSE,
       instructions: SYSTEM,
       input: JSON.stringify(chunk),
       text: { format: { type: "json_schema", name: "translation", strict: true, schema: SCHEMA } },
       reasoning: { effort: "low" } as never,
-    }, { timeout: 120_000 });
+    }, { timeout: 120_000 }));
     const out: Record<string, string> = {};
     for (const it of Out.parse(JSON.parse(r.output_text)).items) if (it.text.trim()) out[it.id] = it.text;
     return out;

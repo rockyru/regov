@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { recordUsage } from "./usage";
 
 /**
  * One client for every Meta Model API model: Muse Spark, SAM 3.1, Muse Image.
@@ -25,7 +26,26 @@ const wellFormedFetch: typeof fetch = (url, init) => {
   if (init && typeof init.body === "string") init = { ...init, body: scrubLoneSurrogates(init.body) };
   return fetch(url, init);
 };
-export const meta = new Proxy({} as OpenAI, { get: (_t, prop) => (get() as unknown as Record<PropertyKey, unknown>)[prop] });
+// Count every call for the per-site usage record (src/lib/usage.ts). Streams (SAM) and images report no tokens; they count as calls.
+type Create = (body: { model?: string; stream?: boolean }, opts?: unknown) => Promise<unknown>;
+function counted(fn: Create): Create {
+  return async (body, opts) => {
+    const r = await fn(body, opts);
+    const tokens = body?.stream ? 0 : ((r as { usage?: { total_tokens?: number } })?.usage?.total_tokens ?? 0);
+    recordUsage(String(body?.model ?? "?"), tokens);
+    return r;
+  };
+}
+const wrapped = new WeakMap<object, unknown>();
+export const meta = new Proxy({} as OpenAI, {
+  get: (_t, prop) => {
+    const c = get() as unknown as Record<PropertyKey, Record<string, Create>>;
+    if (prop !== "responses" && prop !== "images") return c[prop];
+    const api = c[prop];
+    if (!wrapped.has(api)) wrapped.set(api, prop === "responses" ? { create: counted(api.create.bind(api)) } : { generate: counted(api.generate.bind(api)) });
+    return wrapped.get(api);
+  },
+});
 
 export const MUSE = process.env.MUSE_MODEL ?? "muse-spark-1.3";
 export const SAM = "sam-3.1";

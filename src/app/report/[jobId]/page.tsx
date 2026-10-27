@@ -17,6 +17,8 @@ import type { CharterFile } from "@/pipeline/charter";
 import type { PortraitFile } from "@/pipeline/portraits";
 import type { VerifyFile } from "@/pipeline/verify";
 import type { EvidenceFile } from "@/pipeline/evidence";
+import { loadUsage, type UsageFile } from "@/lib/usage";
+import { STEP_LABEL, usd, totalOf } from "@/lib/usageLabels";
 
 export const dynamic = "force-dynamic";
 
@@ -216,6 +218,42 @@ function EvidenceSection({ n, e, jobId }: { n: number; e: EvidenceFile; jobId: s
   );
 }
 
+/** Model calls and tokens this site has used: the run, then on-demand use by visitors. */
+function UsageSection({ n, u, legacy }: { n: number; u: UsageFile | null; legacy?: number }) {
+  // Sites built before per-step records keep their build total (site.tokens) as one row.
+  const early = legacy && u && !Object.keys(u.run).some((k) => ["understand", "plan", "build"].includes(k)) ? legacy : 0;
+  const rows = (section: "run" | "on_demand") => [...Object.entries(u?.[section] ?? {}), ...(section === "run" && early ? [["build_early", { calls: 0, tokens: early, models: ["muse-spark-1.3"] }] as const] : [])].sort((a, b) => b[1].tokens - a[1].tokens);
+  const t = u ? (({ calls, tokens }) => ({ calls, tokens: tokens + early }))(totalOf(u)) : null;
+  const table = (title: string, list: ReturnType<typeof rows>) => list.length > 0 && (
+    <tbody>
+      <tr><th colSpan={4} className="pt-4 pb-1 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-600">{title}</th></tr>
+      {list.map(([k, v]) => (
+        <tr key={title + k} className="border-b border-neutral-200 print:break-inside-avoid">
+          <td className="py-1.5 pr-3">{STEP_LABEL[k] ?? k}</td>
+          <td className="py-1.5 px-3 text-[13px] text-neutral-600">{v.models.join(", ")}</td>
+          <td className="py-1.5 px-3 text-right tabular-nums">{v.calls || "–"}</td>
+          <td className="py-1.5 pl-3 text-right tabular-nums">{v.tokens ? v.tokens.toLocaleString("en-PH") : "–"}</td>
+        </tr>
+      ))}
+    </tbody>
+  );
+  return (
+    <Sec n={n} title="Model usage" aside="Meta Model API calls for this site">
+      {t ? (
+        <>
+          <p className="max-w-3xl text-neutral-700 print:text-[10pt]">This site has used <strong className="font-semibold tabular-nums">{t.tokens.toLocaleString("en-PH")}</strong> Muse Spark tokens in <span className="tabular-nums">{t.calls}</span> calls, about <strong className="font-semibold">{usd(t.tokens)}</strong>. Cached results cost nothing, so reruns and repeat visitors are free.</p>
+          <table className="mt-4 w-full text-sm print:text-[8.5pt]">
+            <thead><tr className="border-b-2 border-kapwa-brand-900 text-left"><th className="py-2 pr-3 font-semibold">Step</th><th className="py-2 px-3 font-semibold">Models</th><th className="py-2 px-3 font-semibold text-right">Calls</th><th className="py-2 pl-3 font-semibold text-right">Tokens</th></tr></thead>
+            {table("Building the site", rows("run"))}
+            {table("Visitors (on demand)", rows("on_demand"))}
+          </table>
+          <p className="mt-3 max-w-3xl text-[13px] text-neutral-600 print:text-[8pt]">Tokens as reported by the API. SAM 3.1 and Muse Image calls are counted, not tokenized. The dollar figure is an estimate from the average early runs; the Meta developer dashboard has the exact charge.</p>
+        </>
+      ) : <p className="max-w-3xl text-neutral-700">Built before per-step usage was recorded.{legacy ? ` The build reported ${legacy.toLocaleString("en-PH")} Muse Spark tokens, about ${usd(legacy)}.` : ""}</p>}
+    </Sec>
+  );
+}
+
 /** WikiBayan's community record of public projects for this place or office, against what the original site publishes. */
 function ProjectsSection({ n, rows, lgu, publishes, jobId }: { n: number; rows: Matched[]; lgu: boolean; publishes: boolean; jobId: string }) {
   const total = rows.reduce((t, p) => t + p.budget, 0);
@@ -321,6 +359,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
   try { wcag = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/wcag.json"), "utf8")); } catch {}
   const axeBefore = crawl.pages.flatMap((p) => p.axe?.violations ?? []);
   const scores = await loadScores(join(JOBS_ROOT, jobId));
+  const usage = await loadUsage(join(JOBS_ROOT, jobId));
   let evidence: EvidenceFile | null = null;
   try { evidence = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/evidence.json"), "utf8")); } catch {}
   let verify: VerifyFile | null = null;
@@ -510,6 +549,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
               <ol className="grid gap-x-10 2xl:grid-cols-2">{crawl.skipped.map((s, i) => <li key={i} className="grid grid-cols-[2.5rem_1fr] gap-x-3 border-b border-neutral-200 py-2 text-sm print:break-inside-avoid print:py-1 print:text-[8.5pt]"><span className="font-semibold tabular-nums text-neutral-500">X-{String(i + 1).padStart(2, "0")}</span><span className="min-w-0"><span className="block truncate text-neutral-800">{s.url}</span><span className="text-xs text-neutral-500">{s.reason}</span></span></li>)}</ol>
             </Sec>
           )}
+
+          <UsageSection n={n++} u={usage} legacy={site.tokens} />
 
           <p className="mt-14 border-t border-neutral-300 pt-4 text-[13px] text-neutral-500 lg:pl-[calc(12rem+3rem)] print:mt-8 print:pl-[calc(34mm+1.5rem)] print:text-[8pt]">Prepared automatically by RE:GOV. The rebuilt site is an unofficial, AI-generated concept and is not affiliated with or endorsed by {site.agency.short_name}. Findings are machine observations and may be incomplete; verify against the official website before acting on them.</p>
             </td></tr>

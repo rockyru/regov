@@ -13,6 +13,7 @@ import { readCharters } from "../src/pipeline/charter";
 import { findPortraits } from "../src/pipeline/portraits";
 import { verifySite } from "../src/pipeline/verify";
 import { findEvidence } from "../src/pipeline/evidence";
+import { withUsage } from "../src/lib/usage";
 
 const [inputUrl, jobId, max = "20"] = process.argv.slice(2);
 let url = inputUrl;
@@ -60,11 +61,11 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
       await runCrawl(snap.timestamp);
     }
     status.phase = "build";
-    await buildSite(jobId, (e) => { if (e.type === "phase") status.phase = e.phase; log(e); });
+    await withUsage(dir, "run", "build", () => buildSite(jobId, (e) => { if (e.type === "phase") status.phase = e.phase; log(e); }));
     // Self-check: Muse Spark compares each rebuilt page with its original (never fails the run).
     status.phase = "verify"; await flush();
     try {
-      const v = await verifySite(dir, JSON.parse(await readFile(join(dir, "site.json"), "utf8")));
+      const v = await withUsage(dir, "run", "verify", async () => verifySite(dir, JSON.parse(await readFile(join(dir, "site.json"), "utf8"))));
       log({ type: "verify", pages: v.pages.length, average: v.average, faithful: v.pages.filter((p) => p.verdict === "faithful").length, unsupported: v.pages.reduce((n, p) => n + p.unsupported.length, 0) });
     } catch (e) {
       console.warn("[verify] skipped:", (e as Error).message);
@@ -72,7 +73,7 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
     // Citizen's Charter PDFs → service pages (Muse Spark reads each PDF; never fails the run).
     status.phase = "charter"; await flush();
     try {
-      const c = await readCharters(dir);
+      const c = await withUsage(dir, "run", "charter", () => readCharters(dir));
       log({ type: "charter", docs: c.docs.length, services: c.docs.reduce((n, d) => n + d.services.length, 0) });
     } catch (e) {
       console.warn("[charter] skipped:", (e as Error).message);
@@ -80,7 +81,7 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
     // Officials' photos: SAM 3.1 finds them on the crawled pages, Muse Spark names them (never fails the run).
     status.phase = "portraits"; await flush();
     try {
-      const p = await findPortraits(dir, JSON.parse(await readFile(join(dir, "site.json"), "utf8")));
+      const p = await withUsage(dir, "run", "portraits", async () => findPortraits(dir, JSON.parse(await readFile(join(dir, "site.json"), "utf8"))));
       log({ type: "portraits", found: p.checked, named: p.people.length });
     } catch (e) {
       console.warn("[portraits] skipped:", (e as Error).message);
@@ -88,7 +89,7 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
     // Outline the old homepage's accessibility problems for the report (never fails the run).
     status.phase = "evidence"; await flush();
     try {
-      const ev = await findEvidence(dir, JSON.parse(await readFile(join(dir, "site.json"), "utf8")));
+      const ev = await withUsage(dir, "run", "evidence", async () => findEvidence(dir, JSON.parse(await readFile(join(dir, "site.json"), "utf8"))));
       log({ type: "evidence", outlined: ev?.items.length ?? 0 });
     } catch (e) {
       console.warn("[evidence] skipped:", (e as Error).message);

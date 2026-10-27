@@ -14,7 +14,7 @@ async function main() {
     const dir = join("jobs", id), t = Date.now();
     const site = JSON.parse(await readFile(join(dir, "site.json"), "utf8")) as SiteModel;
     const pages = allPages ? site.pages : site.pages.filter((p) => p.slug === "home");
-    await Promise.all([translateSite(dir, site), pmap(pages, 3, (p) => translatePage(dir, p))]);
+    await Promise.all([translateSite(dir, site), pmap(pages, 3, (p) => translatePage(dir, p))]); // counted per chunk in translate.ts
     console.log(`${id}: site strings + ${pages.length} pages in ${((Date.now() - t) / 1000).toFixed(0)}s`);
   }
 }
