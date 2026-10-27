@@ -2,7 +2,7 @@ import { readFile, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { listJobs, loadSite, JOBS_ROOT } from "./jobs";
 import { isLgu } from "./civic";
-import { CHARTER_SLUG } from "./charterPages";
+import { isServicePage } from "./charterPages";
 import type { SitePage } from "@/pipeline/schema";
 
 type Block = SitePage["blocks"][number];
@@ -74,7 +74,7 @@ export async function kapwaStudy(): Promise<Study> {
   if (top?.n) {
     const full = await loadSite(top.j.id);
     const caps = (t: string) => (t.match(/\b[A-Z]{3,}\b/g) ?? []).length;
-    const page = full?.pages.filter((p) => p.document && p.slug !== CHARTER_SLUG).sort((a, b) => caps(a.title) - caps(b.title))[0];
+    const page = full?.pages.filter(isServicePage).sort((a, b) => caps(a.title) - caps(b.title))[0];
     if (page) charter = { jobId: top.j.id, slug: page.slug, site: top.j.site!.agency.short_name || top.j.site!.agency.name };
   }
   const lgu = (top?.n && isLgu(top.j.site!) ? top.j : undefined) ?? jobs.find((j) => isLgu(j.site!));

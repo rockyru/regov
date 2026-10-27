@@ -5,6 +5,11 @@ import type { SiteModel, SitePage } from "@/pipeline/schema";
 import type { CharterFile, Service } from "@/pipeline/charter";
 
 export const CHARTER_SLUG = "charter";
+
+/** The hub page that lists the charter's services (its slug moves aside when the crawled site already has /charter). */
+export const charterHub = (site: { pages: SitePage[] }) => site.pages.find((p) => p.document && !p.slug.includes("/"));
+/** One service page built from a Citizen's Charter PDF. */
+export const isServicePage = (p: SitePage) => !!p.document && p.slug.includes("/");
 const SMALL = new Set("a an and as at by for from in into of on or the to with per".split(" "));
 
 /** "ISSUANCE OF BIRTH CERTIFICATE (PSA)" → "Issuance of birth certificate (PSA)"; mixed-case text is left alone. */
@@ -54,15 +59,17 @@ export async function withCharter(site: SiteModel, jobDir: string): Promise<Site
   const common = /permit|certificat|clearance|licen|registr|birth|marriage|business|tax|id\b|assistance/i;
   const weight = (d: CharterFile["docs"][number]) => d.services.filter((s) => common.test(s.title)).length;
   const docs = file.docs.filter((d) => d.services.length).sort((a, b) => weight(b) - weight(a) || b.services.length - a.services.length);
-  if (!docs.length || site.pages.some((p) => p.slug === CHARTER_SLUG)) return site;
+  if (!docs.length || site.pages.some((p) => p.document)) return site;
   const used = new Set(site.pages.map((p) => p.slug));
+  const hubSlug = used.has(CHARTER_SLUG) ? `${CHARTER_SLUG}-services` : CHARTER_SLUG;
+  used.add(hubSlug);
   const pages: SitePage[] = [];
   const groups: SitePage["blocks"] = [];
   for (const d of docs) {
     const office = unshout(d.office);
     const items: SitePage["blocks"][number]["items"] = [];
     for (const s of d.services) {
-      let slug = `${CHARTER_SLUG}/${slugify(office, 40)}/${slugify(unshout(s.title))}`;
+      let slug = `${hubSlug}/${slugify(office, 40)}/${slugify(unshout(s.title))}`;
       for (let n = 2; used.has(slug); n++) slug = slug.replace(/(-\d+)?$/, `-${n}`);
       used.add(slug);
       const p = servicePage(slug, office, s, d.url);
@@ -73,19 +80,19 @@ export async function withCharter(site: SiteModel, jobDir: string): Promise<Site
   }
   const summary = `${pages.length} services from ${docs.length} ${docs.length === 1 ? "office" : "offices"}: requirements, steps, fees and processing time, read from the Citizen's Charter documents.`;
   const hub: SitePage = {
-    slug: CHARTER_SLUG, title: "Services and requirements", page_type: "service", summary, section: "Citizen's Charter",
+    slug: hubSlug, title: "Services and requirements", page_type: "service", summary, section: "Citizen's Charter",
     hero: { heading: "Services and requirements", subheading: summary, primary_cta_label: "", primary_cta_href: "" },
     blocks: groups, language: "en", a11y_issues: [], migration_notes: [], source_url: docs[0].url, source_screenshot: "", document: docs[0].url,
   };
   // Surface it: under the services section of the menu, and first on the homepage's curated sections.
   const nav = structuredClone(site.nav);
   const home = nav.find((n) => /service/i.test(`${n.label} ${n.slug}`)) ?? nav.find((n) => n.slug !== "home" && n.children.length);
-  home?.children.unshift({ label: "Services and requirements", slug: CHARTER_SLUG, group: home.children[0]?.group ?? "" });
+  home?.children.unshift({ label: "Services and requirements", slug: hubSlug, group: home.children[0]?.group ?? "" });
   const featured = [...pages].sort((a, b) => Number(common.test(b.title)) - Number(common.test(a.title))).slice(0, 5).map((p) => p.slug);
   return {
     ...site,
     nav,
     pages: [...site.pages, hub, ...pages],
-    home_sections: [{ heading: "Services and requirements", description: `From the Citizen's Charter: what to bring, what to pay and how long it takes, for ${pages.length} services.`, slugs: [CHARTER_SLUG, ...featured] }, ...site.home_sections],
+    home_sections: [{ heading: "Services and requirements", description: `From the Citizen's Charter: what to bring, what to pay and how long it takes, for ${pages.length} services.`, slugs: [hubSlug, ...featured] }, ...site.home_sections],
   };
 }
