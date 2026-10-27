@@ -16,9 +16,11 @@ R=$H/releases/$(date +%Y%m%d-%H%M%S)
 sudo -u regov -H bash -lc "set -e
 git clone -q --depth 1 -b $BRANCH $REPO $R
 cd $R && git log --oneline -1
-ln -s $H/jobs jobs && ln -s $H/.env .env
+ln -s $H/.env .env
 npm ci --include=dev --no-audit --no-fund --loglevel=error
 npm run build > build.log 2>&1 || { tail -30 build.log; exit 1; }
+# After the build: Turbopack refuses symlinks that leave the project, and the build never reads job data.
+ln -s $H/jobs jobs
 npx playwright install chromium > /dev/null"
 ln -sfn "$R" $H/current
 systemctl restart regov
