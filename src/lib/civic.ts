@@ -27,7 +27,7 @@ type Row = { hotlineName: string; hotlineNumber: string; regionName: string; pro
 const ROWS = (dataset as { hotlines: Row[] }).hotlines;
 const CAT: Record<string, Category> = { police_hotlines: "police", fire_hotlines: "fire", medical_hotlines: "medical", government_hotlines: "government", utility_hotlines: "utility" };
 
-const norm = (s: string) => s.toLowerCase().replace(/\b(city|municipality|province|of|the|region)\b/g, " ").replace(/[^a-z0-9]+/g, " ").trim();
+export const norm = (s: string) => s.toLowerCase().replace(/\b(city|municipality|province|of|the|region)\b/g, " ").replace(/[^a-z0-9]+/g, " ").trim();
 const roman = (s: string) => (s.match(/region\s+([ivx]+)(?:-?[ab])?/i)?.[1] ?? "").toUpperCase();
 
 /** Dataset hotlines for the site's locality: same city first, then province, then region. */

@@ -10,7 +10,7 @@ export default function Privacy() {
         <ul>
           <li><strong>The website address you submit.</strong> It is kept as part of the job record so the result can be shown and linked.</li>
           <li><strong>Public content of that website.</strong> The agent downloads pages, images and screenshots from the site you name, or from its Wayback Machine capture, and stores them with the job. This is the agency&rsquo;s public content, not yours.</li>
-          <li><strong>Standard server logs.</strong> Cloudflare, which hosts RE:GOV, records request metadata such as IP address, user agent and time for security and operations, under <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare&rsquo;s privacy policy</a>.</li>
+          <li><strong>Standard server logs.</strong> RE:GOV runs on a virtual server, with Cloudflare in front of it as a content delivery network. Both record request metadata such as IP address, user agent and time for security and operations; Cloudflare does so under <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare&rsquo;s privacy policy</a>. Generated sites are backed up to Cloudflare R2 storage.</li>
         </ul>
         <p>Nothing you type is tied to you as a person. Job records are public: anyone with the link can see which site was reimagined and when.</p>
       </> },

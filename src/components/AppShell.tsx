@@ -46,11 +46,14 @@ const FOOTER_COLS: { heading: string; links: { label: string; href: string; ext?
     { label: "SAM 3.1 · Muse Image", href: "https://ai.meta.com", ext: true },
     { label: "Next.js", href: "https://nextjs.org", ext: true },
     { label: "Playwright", href: "https://playwright.dev", ext: true },
-    { label: "Cloudflare Containers", href: "https://developers.cloudflare.com/containers/", ext: true },
+    { label: "axe-core WCAG 2.2", href: "https://github.com/dequelabs/axe-core", ext: true },
+    { label: "Hostinger VPS · Caddy", href: "https://caddyserver.com", ext: true },
+    { label: "Cloudflare CDN · R2", href: "https://www.cloudflare.com", ext: true },
   ] },
   { heading: "Standards and data", links: [
     { label: "BetterGov.ph", href: "https://bettergov.ph", ext: true },
     { label: "Kapwa design system", href: "https://github.com/bettergovph/kapwa", ext: true },
+    { label: "WikiBayan projects", href: "https://wikibayan.vercel.app", ext: true },
     { label: "Wayback Machine", href: "https://web.archive.org", ext: true },
     { label: "Open-Meteo weather", href: "https://open-meteo.com", ext: true },
     { label: "Open Data Portal", href: "https://data.gov.ph", ext: true },
@@ -105,7 +108,7 @@ export function AppFooter() {
 
         <div className="mt-8 border-t border-white/15 pt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[13px] text-neutral-400">
           <p>© {new Date().getFullYear()} <a href="https://rmbergonia.com" className="hover:text-white">Ruther Bergonia</a> · RE:GOV is an independent civic-tech project, not a government service. · <Link href="/privacy" className="hover:text-white">Privacy</Link> · <Link href="/terms" className="hover:text-white">Terms</Link></p>
-          <p>Muse Spark 1.3 · SAM 3.1 · Muse Image · Kapwa by BetterGov.ph</p>
+          <p>Muse Spark 1.3 · SAM 3.1 · Muse Image · Kapwa by BetterGov.ph · WikiBayan</p>
         </div>
       </div>
     </footer>

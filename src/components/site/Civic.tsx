@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { SiteModel } from "@/pipeline/schema";
 import { eyebrow, navHref } from "./Shell";
+import { projectsFor } from "@/lib/wikibayan";
+import { ProjectsOnRecord } from "./Projects";
 import { CATEGORY_LABEL, NATIONAL_HOTLINES, getWeather, isLgu, kindLinks, localHotlines, siteHotlines, telHref, transparencyPages, wmoGlyph, wmoLabel, TRANSPARENCY_EXTERNAL, type Hotline, type Category } from "@/lib/civic";
 
 const nn = (i: number) => String(i + 1).padStart(2, "0");
@@ -67,8 +69,9 @@ function WeatherPanel({ w }: { w: NonNullable<Awaited<ReturnType<typeof getWeath
 }
 
 /** Home-page section: transparency pages the agent found, plus the right government portals for this kind of body. */
-export function TransparencySection({ site, n }: { site: SiteModel; n: number }) {
+export async function TransparencySection({ site, n }: { site: SiteModel; n: number }) {
   const pages = transparencyPages(site);
+  const projects = await projectsFor(site);
   const ext = kindLinks(site);
   const lgu = isLgu(site);
   return (
@@ -104,6 +107,7 @@ export function TransparencySection({ site, n }: { site: SiteModel; n: number })
           </ul>
         </div>
       </div>
+      <ProjectsOnRecord site={site} rows={projects} />
     </section>
   );
 }

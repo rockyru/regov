@@ -4,6 +4,8 @@ import { GovStrip, Header, Footer, PreviewBar } from "@/components/site/Shell";
 import { HomePage, ContentPage } from "@/components/site/Pages";
 import { HotlinesPage } from "@/components/site/Civic";
 import { brandScale } from "@/components/site/theme";
+import { PublicProjectsPage, PROJECTS_SLUG } from "@/components/site/Projects";
+import { projectsFor } from "@/lib/wikibayan";
 
 export const dynamic = "force-dynamic";
 
@@ -12,14 +14,15 @@ export default async function Preview({ params }: { params: Promise<{ jobId: str
   const site = await loadSite(jobId);
   if (!site) notFound();
   const path = slug.join("/");
-  const page = path === "hotlines" ? undefined : findPage(site, path);
-  if (!page && path !== "hotlines") notFound();
+  const virtual = path === "hotlines" || path === PROJECTS_SLUG;
+  const page = virtual ? undefined : findPage(site, path);
+  if (!page && !virtual) notFound();
   return (
     <div className="editorial site-shell flex flex-1 flex-col" style={site.design?.mode === "refine" ? brandScale(site.design.primary) : undefined}>
       <PreviewBar site={site} currentSource={page?.source_url} />
       <GovStrip jobId={jobId} />
       <Header site={site} />
-      <main className="flex-1">{!page ? <HotlinesPage site={site} /> : page.slug === "home" ? <HomePage site={site} page={page} /> : <ContentPage site={site} page={page} />}</main>
+      <main className="flex-1">{path === PROJECTS_SLUG ? <PublicProjectsPage site={site} rows={await projectsFor(site)} /> : !page ? <HotlinesPage site={site} /> : page.slug === "home" ? <HomePage site={site} page={page} /> : <ContentPage site={site} page={page} />}</main>
       <Footer site={site} />
     </div>
   );
@@ -30,6 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ jobId: st
   const site = await loadSite(jobId);
   const path = slug.join("/");
   if (site && path === "hotlines") return { title: `Emergency hotlines | ${site.agency.short_name} (unofficial RE:GOV concept)`, robots: { index: false, follow: false } };
+  if (site && path === PROJECTS_SLUG) return { title: `Public projects | ${site.agency.short_name} (unofficial RE:GOV concept)`, robots: { index: false, follow: false } };
   const page = site && findPage(site, path);
   return { title: page ? `${page.title} | ${site!.agency.short_name} (unofficial RE:GOV concept)` : "Preview", description: page ? `Unofficial AI-generated concept of ${new URL(site!.origin).host}. ${page.summary ?? ""}`.trim() : undefined, robots: { index: false, follow: false } };
 }

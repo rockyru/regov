@@ -9,6 +9,8 @@ import { AppHeader, AppFooter, eyebrow, btn, nn } from "@/components/AppShell";
 import { PrintButton } from "@/components/PrintButton";
 import { WCAG22, scSort, wcagForFinding } from "@/pipeline/wcag";
 import type { RebuiltAudit } from "@/pipeline/audit";
+import { projectsFor, projectUrl, peso, statusLabel, type Matched } from "@/lib/wikibayan";
+import { isLgu } from "@/lib/civic";
 
 export const dynamic = "force-dynamic";
 
@@ -104,6 +106,35 @@ function WcagSection({ n, a11y, before, after }: { n: number; a11y: Finding[]; b
   );
 }
 
+/** WikiBayan's community record of public projects for this place or office, against what the original site publishes. */
+function ProjectsSection({ n, rows, lgu, publishes, jobId }: { n: number; rows: Matched[]; lgu: boolean; publishes: boolean; jobId: string }) {
+  const total = rows.reduce((t, p) => t + p.budget, 0);
+  const shown = rows.slice(0, 12);
+  return (
+    <Sec n={n} title="Public projects" aside="Community record from WikiBayan">
+      <p className="max-w-3xl text-neutral-700 print:text-[10pt]">
+        WikiBayan lists <strong className="font-semibold tabular-nums">{rows.length}</strong> government {rows.length === 1 ? "project" : "projects"} {lgu ? "in and around this locality" : "naming this office as implementing agency"}, worth <strong className="font-semibold tabular-nums">{peso(total)}</strong> in approved budgets.{" "}
+        {publishes ? "The original site has a projects or procurement page; the two should be checked against each other." : "The original site publishes no projects or procurement page, so residents cannot see this work from it."}{" "}
+        The rebuilt site shows them on a <Link href={`/preview/${jobId}/public-projects`} className="underline decoration-neutral-300 underline-offset-4 hover:decoration-kapwa-brand-900">public projects page</Link>.
+      </p>
+      <table className="mt-6 w-full text-sm print:text-[8.5pt]">
+        <thead><tr className="border-b-2 border-kapwa-brand-900 text-left"><th className="py-2 pr-3 font-semibold">Project</th><th className="py-2 px-3 font-semibold text-right">Budget</th><th className="py-2 px-3 font-semibold">Status</th><th className="py-2 pl-3 font-semibold text-right">Progress</th></tr></thead>
+        <tbody>
+          {shown.map((p) => (
+            <tr key={p.id} className="border-b border-neutral-200 align-top print:break-inside-avoid">
+              <td className="py-2 pr-3"><a href={projectUrl(p.id)} target="_blank" rel="noreferrer" className="font-semibold text-neutral-900 hover:text-kapwa-brand-900">{p.name}</a><span className="block text-xs text-neutral-500">{[p.sector, [p.city, p.province].filter(Boolean).join(", ") || p.region, `${p.source_count} ${p.source_count === 1 ? "source" : "sources"}`].filter(Boolean).join(" · ")}</span></td>
+              <td className="py-2 px-3 text-right tabular-nums">{peso(p.budget)}</td>
+              <td className="py-2 px-3">{statusLabel(p.status)}</td>
+              <td className="py-2 pl-3 text-right tabular-nums">{p.pct != null ? `${Math.round(p.pct)}%` : "–"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="mt-4 max-w-3xl text-[13px] text-neutral-600 print:text-[8pt]">{rows.length > shown.length ? `Showing ${shown.length} of ${rows.length}. ` : ""}Community-sourced and moderated on WikiBayan; not verified by the agency or by RE:GOV. Each project links to its sources.</p>
+    </Sec>
+  );
+}
+
 /** A register of findings, grouped by page, with reference numbers. */
 function Register({ n, title, deck, items, cats, jobId, tone }: { n: number; title: string; deck: string; items: Finding[]; cats: [string, RegExp][]; jobId: string; tone: "red" | "amber" }) {
   const byPage = new Map<string, Finding[]>();
@@ -188,6 +219,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
   const notePages = new Set(notes.map((x) => x.slug)).size;
   const logo = site.assets.logo ? `/api/jobs/${jobId}/${site.assets.logo}?v=${encodeURIComponent(site.generated_at)}` : null;
   const pageHref = (slug: string) => (slug === "home" ? `/preview/${jobId}` : `/preview/${jobId}/${slug}`);
+  const projects = await projectsFor(site);
+  const publishesProjects = site.pages.some((p) => /project|infrastructure|bids?\b|procure/i.test(p.slug) || /project|infrastructure|bids?\b|procure/i.test(p.title));
   let n = 1;
   const figures: [string | number, string][] = [[crawl.pages.length, "pages crawled"], [site.pages.length, "pages rebuilt"], [blocks, "content blocks"], [a11y.length, "accessibility findings"], [notes.length, "items for human review"], [imageOnly, "image-only sections transcribed"]];
 
@@ -300,6 +333,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
               ))}
             </ol>
           </Sec>
+
+          {projects.length > 0 && <ProjectsSection n={n++} rows={projects} lgu={isLgu(site)} publishes={publishesProjects} jobId={jobId} />}
 
           <Register n={n++} title="Accessibility findings" tone="red" items={a11y} cats={A11Y_CATEGORIES} jobId={jobId}
             deck="Issues Muse Spark observed on the original pages. The rebuilt site addresses them with semantic headings, real text instead of images of text, labelled controls and WCAG AA contrast." />
