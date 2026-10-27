@@ -115,9 +115,9 @@ export function MobileNav({ nav, jobId, lang }: { nav: SiteModel["nav"]; jobId: 
             </div>
 
             <div className="overflow-y-auto overscroll-contain pb-[max(1rem,env(safe-area-inset-bottom))]">
-              <form role="search" className="flex m-5 mb-0">
+              <form role="search" action={href("search")} className="flex m-5 mb-0">
                 <label className="sr-only" htmlFor="drawer-search">{t(lang, "Search this site")}</label>
-                <input id="drawer-search" placeholder={t(lang, "Search services, forms, offices…")} className="h-11 flex-1 min-w-0 border-2 border-r-0 border-neutral-900 bg-white px-3 text-[15px] placeholder:text-neutral-500 focus:outline-none focus:bg-kapwa-yellow-50" />
+                <input id="drawer-search" name="q" maxLength={200} placeholder={t(lang, "Search or ask a question…")} className="h-11 flex-1 min-w-0 border-2 border-r-0 border-neutral-900 bg-white px-3 text-[15px] placeholder:text-neutral-500 focus:outline-none focus:bg-kapwa-yellow-50" />
                 <button type="submit" aria-label={t(lang, "Search")} className="h-11 w-12 grid place-items-center bg-neutral-900 text-white hover:bg-kapwa-brand-900"><Icon name="search" className="size-5" /></button>
               </form>
 

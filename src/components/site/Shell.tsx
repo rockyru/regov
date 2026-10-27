@@ -147,9 +147,9 @@ export function Header({ site }: { site: SiteModel }) {
               );
             })}
           </div>
-          <form role="search" className="flex flex-1 lg:flex-none lg:shrink-0 items-center lg:ml-auto py-2">
+          <form role="search" action={navHref(jobId, "search")} className="flex flex-1 lg:flex-none lg:shrink-0 items-center lg:ml-auto py-2">
             <label className="sr-only" htmlFor="site-search">{t(site.lang, "Search this site")}</label>
-            <input id="site-search" placeholder={t(site.lang, "Search services, forms, offices…")} className="h-10 w-full lg:w-40 xl:w-80 border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
+            <input id="site-search" name="q" maxLength={200} placeholder={t(site.lang, "Search or ask a question…")} className="h-10 w-full lg:w-40 xl:w-80 border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
             <button type="submit" className="h-10 bg-kapwa-yellow-400 px-4 text-sm font-bold text-kapwa-brand-950 hover:bg-kapwa-yellow-300">{t(site.lang, "Search")}</button>
           </form>
         </div>
