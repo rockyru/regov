@@ -26,6 +26,9 @@ export async function POST(req: Request) {
   const existing = runQueue.existing(host);
   if (existing) return go(`/jobs/${existing.jobId}?existing=${existing.state}`);
 
+  // Daily budget (Meta credits), then per-visitor limit, then overall capacity.
+  if (runQueue.quotaLeft === 0) return go(`/?error=quota&url=${encodeURIComponent(host)}`);
+
   // Per-visitor limit, then overall capacity. Both are cheap to hit and cheap to recover from.
   const wait = runQueue.rateLimit(clientIp(req));
   if (wait > 0) return go(`/?error=ratelimit&wait=${wait}&url=${encodeURIComponent(host)}`);
