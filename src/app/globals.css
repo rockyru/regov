@@ -44,3 +44,6 @@ body { @apply bg-white text-neutral-900; }
   @media (width >= 40rem) { padding-inline: 2rem; }
   @media (width >= 64rem) { padding-inline: 3rem; }
 }
+
+/* Mobile drawer on reimagined sites */
+@keyframes drawer-up { from { transform: translateY(100%); } to { transform: translateY(0); } }

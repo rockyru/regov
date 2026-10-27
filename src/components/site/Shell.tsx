@@ -131,14 +131,15 @@ export function Header({ site }: { site: SiteModel }) {
               );
             })}
           </div>
-          <form role="search" className="hidden md:flex items-center ml-auto py-2">
+          <form role="search" className="flex flex-1 lg:flex-none items-center lg:ml-auto py-2">
             <label className="sr-only" htmlFor="site-search">Search this site</label>
-            <input id="site-search" placeholder="Search services, forms, offices…" className="h-10 w-60 xl:w-80 border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
+            <input id="site-search" placeholder="Search services, forms, offices…" className="h-10 w-full lg:w-60 xl:w-80 border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
             <button type="submit" className="h-10 bg-kapwa-yellow-400 px-4 text-sm font-bold text-kapwa-brand-950 hover:bg-kapwa-yellow-300">Search</button>
           </form>
-          <div className="flex items-center ml-auto md:ml-3 py-1.5"><MobileNav nav={site.nav} jobId={jobId} /></div>
         </div>
       </nav>
+      {/* Mobile: floating bottom bar with three sections + a "More" drawer */}
+      <MobileNav nav={site.nav} jobId={jobId} />
     </header>
   );
 }
@@ -179,7 +180,7 @@ export function Footer({ site }: { site: SiteModel }) {
   const colHead = `${eyebrow} text-neutral-500 pb-3 border-b border-white/15`;
 
   return (
-    <footer className="mt-20 bg-neutral-950 text-neutral-300">
+    <footer className="mt-20 bg-neutral-950 text-neutral-300 pb-24 lg:pb-0">
       <div className="container-gov py-16">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.9fr_0.9fr_1fr_1.1fr]">
           {/* Brand */}
