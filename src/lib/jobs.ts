@@ -4,6 +4,7 @@ import type { SiteModel, SitePage } from "@/pipeline/schema";
 import type { CrawlResult } from "@/pipeline/types";
 import { slugOf } from "@/pipeline/slug";
 import { fixPageTitles } from "@/pipeline/titles";
+import { withCharter } from "./charterPages";
 
 export const JOBS_ROOT = resolve(process.cwd(), "jobs");
 
@@ -95,7 +96,9 @@ export function scrubOfficial(site: SiteModel): SiteModel {
 export async function loadSite(jobId: string): Promise<SiteModel | null> {
   if (!/^[\w.-]+$/.test(jobId)) return null;
   await ensureRestored();
-  try { return scrubOfficial(JSON.parse(await readFile(join(JOBS_ROOT, jobId, "site.json"), "utf8"))); } catch { return null; }
+  let site: SiteModel;
+  try { site = scrubOfficial(JSON.parse(await readFile(join(JOBS_ROOT, jobId, "site.json"), "utf8"))); } catch { return null; }
+  return withCharter(site, join(JOBS_ROOT, jobId));
 }
 
 export function findPage(site: SiteModel, slug: string): SitePage | undefined {

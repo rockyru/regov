@@ -243,7 +243,7 @@ export function Footer({ site }: { site: SiteModel }) {
 
           {/* Pills */}
           <div className="flex flex-col items-start gap-3">
-            <div className="inline-flex items-center gap-2 border-l-4 border-kapwa-green-500 bg-white/5 px-4 py-2 text-sm text-neutral-100">{t(site.lang, "Pages migrated by the agent")} = <span className="font-bold tabular-nums text-kapwa-green-400">{site.pages.length}</span></div>
+            <div className="inline-flex items-center gap-2 border-l-4 border-kapwa-green-500 bg-white/5 px-4 py-2 text-sm text-neutral-100">{t(site.lang, "Pages migrated by the agent")} = <span className="font-bold tabular-nums text-kapwa-green-400">{site.pages.filter((p) => !p.document).length}</span></div>
             <a href={`mailto:${footer.email || "helpdesk@" + host}`} className={pill}>{Icon.flag} {t(site.lang, "Report an issue")}</a>
             <a href="https://github.com/rockyru/regov" target="_blank" rel="noreferrer" className={pill}>{Icon.github} {t(site.lang, "Contribute code on RE:GOV")}</a>
             <div className={`mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 ${eyebrow} text-neutral-400`}>
@@ -295,7 +295,7 @@ export function PreviewBar({ site, currentSource }: { site: SiteModel; currentSo
           <img src="/brand/mark-ink.svg" alt="" className="h-4 w-auto" /><span>RE<span className="text-kapwa-red-700">:</span>GOV</span>
         </Link>
         <span className="shrink-0 border border-amber-950/40 px-1.5 py-px text-[10px] font-bold uppercase tracking-[0.14em]">Unofficial concept</span>
-        <span className="truncate"><span className="hidden md:inline">{site.pages.length} pages reimagined from {host} by an AI agent · </span>not affiliated with {site.agency.short_name || "the agency"}{site.lang === "fil" && <span lang="en"> · Filipino text machine-translated by Muse Spark</span>}</span>
+        <span className="truncate"><span className="hidden md:inline">{site.pages.filter((p) => !p.document).length} pages reimagined from {host} by an AI agent · </span>not affiliated with {site.agency.short_name || "the agency"}{site.lang === "fil" && <span lang="en"> · Filipino text machine-translated by Muse Spark</span>}</span>
         <span className="ml-auto flex items-center gap-4 shrink-0">
           {currentSource && <a className="underline" href={currentSource} target="_blank" rel="noreferrer">Official site ↗</a>}
           <Link className="underline" href={`/report/${site.jobId}`}>Report</Link>

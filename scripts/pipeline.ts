@@ -9,6 +9,7 @@ import { pushJob, pushFile } from "./sync-jobs";
 import { buildSite } from "../src/pipeline/build";
 import { auditRebuilt } from "../src/pipeline/audit";
 import { scoreSite } from "../src/pipeline/scores";
+import { readCharters } from "../src/pipeline/charter";
 
 const [inputUrl, jobId, max = "20"] = process.argv.slice(2);
 let url = inputUrl;
@@ -57,6 +58,14 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
     }
     status.phase = "build";
     await buildSite(jobId, (e) => { if (e.type === "phase") status.phase = e.phase; log(e); });
+    // Citizen's Charter PDFs → service pages (Muse Spark reads each PDF; never fails the run).
+    status.phase = "charter"; await flush();
+    try {
+      const c = await readCharters(dir);
+      log({ type: "charter", docs: c.docs.length, services: c.docs.reduce((n, d) => n + d.services.length, 0) });
+    } catch (e) {
+      console.warn("[charter] skipped:", (e as Error).message);
+    }
     // WCAG 2.2 check of the rebuilt pages through the running app (free; never fails the run).
     status.phase = "audit"; await flush();
     try {
