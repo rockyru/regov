@@ -104,7 +104,7 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
       {/* Drawer that rises from the bottom */}
       {open && (
         <div className="fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-label="All sections">
-          <button type="button" aria-label="Close menu" onClick={close} className={`absolute inset-0 bg-kapwa-brand-950/60 backdrop-blur-[2px] motion-safe:duration-200 ${closing ? "motion-safe:animate-out motion-safe:fade-out" : "motion-safe:animate-in motion-safe:fade-in"}`} />
+          <button type="button" aria-label="Close menu" onClick={close} className={`absolute inset-0 bg-kapwa-brand-950/60 backdrop-blur-[2px] motion-safe:duration-300 motion-safe:fill-mode-forwards ${closing ? "motion-safe:animate-out motion-safe:fade-out" : "motion-safe:animate-in motion-safe:fade-in"}`} />
           <div id="mobile-drawer" onAnimationEnd={finishClose} className={`absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col bg-white text-neutral-900 border-t-4 border-kapwa-yellow-400 shadow-2xl motion-safe:duration-300 motion-safe:fill-mode-forwards ${closing ? "motion-safe:animate-out motion-safe:slide-out-to-bottom motion-safe:ease-in" : "motion-safe:animate-in motion-safe:slide-in-from-bottom motion-safe:ease-out"}`}>
             <div className="flex items-center justify-between px-5 h-14 border-b-2 border-neutral-900 shrink-0">
               <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-600">All sections</span>
