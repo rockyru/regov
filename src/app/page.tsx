@@ -5,6 +5,7 @@ import { JobCard, cardGrid } from "@/components/JobCard";
 import { AppHeader, AppFooter, SectionHead, eyebrow } from "@/components/AppShell";
 import { Reveal } from "@/components/Reveal";
 import { progressOf } from "@/lib/progress";
+import { LiveRefresh } from "@/components/LiveRefresh";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
   return (
     <>
       <AppHeader />
+      {/* Keeps the queue strip current: fast while something is running, slow otherwise so new runs still appear. */}
+      <LiveRefresh ms={active.length > 0 ? 4000 : 30000} />
       <main className="flex-1">
         {(active.length > 0 || failed.length > 0) && (
           <section className="border-b border-kapwa-yellow-400/60 bg-kapwa-yellow-50">
