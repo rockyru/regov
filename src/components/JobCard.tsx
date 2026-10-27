@@ -23,7 +23,7 @@ export function JobCard({ id, site, crawl, index, className = "" }: { id: string
         )}
       </div>
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-display font-bold leading-snug text-neutral-900 text-xl tracking-tight"><Link href={`/preview/${id}`} className="after:absolute after:inset-0 group-hover:text-kapwa-brand-900">{site.agency.name}</Link></h3>
+        <h3 className="font-display font-normal leading-snug text-neutral-900 text-[22px] tracking-tight"><Link href={`/preview/${id}`} className="after:absolute after:inset-0 group-hover:text-kapwa-brand-900">{site.agency.name}</Link></h3>
         <p className="mt-1.5 text-sm text-neutral-500 tabular-nums">{new URL(crawl.origin).host} · {site.pages.length} pages{crawl.archive ? ` · ${crawl.archive.date.slice(0, 4)} archive` : ""}</p>
         <div className="mt-auto pt-5 flex items-center gap-4 text-sm font-semibold">
           <Link href={`/preview/${id}`} className="relative z-10 border-b-2 border-kapwa-brand-900 hover:text-kapwa-brand-900 hover:border-kapwa-brand-900">View site →</Link>

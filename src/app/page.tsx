@@ -50,7 +50,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
           </div>
           <Reveal className="container-gov pt-14 pb-56 sm:pb-[22vw] lg:pt-20 text-center">
           <p className={`${eyebrow} text-kapwa-brand-900`}>Autonomous civic technology</p>
-          <h1 className="mt-5 text-5xl sm:text-6xl xl:text-[84px] font-display font-medium tracking-tight leading-[0.95] text-neutral-900">Reimagine <span className="text-kapwa-brand-900">Government</span>.</h1>
+          <h1 className="mt-5 text-5xl sm:text-6xl xl:text-[84px] font-display font-normal tracking-tight leading-[0.95] text-neutral-900">Reimagine <span className="text-kapwa-brand-900">Government</span>.</h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-neutral-600 leading-snug">Public websites deserve a second life. Paste a Philippine government site and an agent crawls it, understands it, and rebuilds it on the BetterGov Kapwa standard.</p>
           <div className="mx-auto mt-10 max-w-2xl">
             <ReimagineBox done={jobs.map((j) => new URL(j.crawl!.origin).host.replace(/^www\./, ""))} initialError={error} initialUrl={url} initialWait={Number(wait) || 0} />
@@ -67,7 +67,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
             {STEPS.map((st, i) => (
               <li key={st.title} className="relative flex flex-col border-t-2 border-kapwa-brand-900 pt-6">
                 <span aria-hidden className="absolute -top-0.5 left-0 h-1.5 w-12 bg-kapwa-yellow-400" />
-                <div className="text-5xl font-display font-medium tracking-tight tabular-nums text-kapwa-brand-900">{String(i + 1).padStart(2, "0")}</div>
+                <div className="text-5xl font-display font-normal tracking-tight tabular-nums text-kapwa-brand-900">{String(i + 1).padStart(2, "0")}</div>
                 <h3 className="mt-5 text-xl font-bold text-neutral-900">{st.title}</h3>
                 <p className="mt-2 text-[15px] leading-snug text-neutral-600">{st.body}</p>
                 <ul className="mt-auto pt-5 flex flex-wrap gap-2">

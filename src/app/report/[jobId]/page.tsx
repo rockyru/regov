@@ -54,7 +54,7 @@ function Register({ n, title, deck, items, cats, jobId, tone }: { n: number; tit
       <div className={`border-t-2 border-kapwa-brand-900 pt-4`}>
         <div className={`${eyebrow} text-neutral-500`}><span className="text-kapwa-brand-900 tabular-nums mr-3">{nn(n - 1)}</span>{title}</div>
         <div className="mt-2 flex flex-wrap items-baseline gap-x-6 gap-y-1">
-          <h2 className="text-2xl sm:text-3xl font-display font-medium tracking-tight"><span className="tabular-nums">{items.length}</span> {items.length === 1 ? "finding" : "findings"} <span className="text-neutral-400 font-semibold">across {groups.length} {groups.length === 1 ? "page" : "pages"}</span></h2>
+          <h2 className="text-2xl sm:text-3xl font-display font-normal tracking-tight"><span className="tabular-nums">{items.length}</span> {items.length === 1 ? "finding" : "findings"} <span className="text-neutral-400 font-semibold">across {groups.length} {groups.length === 1 ? "page" : "pages"}</span></h2>
         </div>
         <p className="mt-2 max-w-3xl text-neutral-600">{deck}</p>
       </div>
@@ -140,7 +140,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
           <div className="grid gap-8 lg:grid-cols-[1fr_minmax(280px,34%)] border-b-2 border-kapwa-brand-900 pb-8">
             <div>
               <p className={`${eyebrow} text-kapwa-brand-900 flex items-center gap-3`}><span className="h-px w-10 bg-kapwa-red-600" />Migration report</p>
-              <h1 className="mt-4 text-4xl sm:text-5xl font-display font-medium tracking-tight text-neutral-900">{site.agency.name}</h1>
+              <h1 className="mt-4 text-4xl sm:text-5xl font-display font-normal tracking-tight text-neutral-900">{site.agency.name}</h1>
               <p className="mt-3 max-w-2xl text-lg text-neutral-600">Automated assessment and rebuild of <a href={site.origin} className="underline decoration-neutral-300 underline-offset-4 hover:decoration-kapwa-brand-900" target="_blank" rel="noreferrer">{host}</a> on the BetterGov Kapwa design standard.</p>
               <div className="mt-6 flex flex-wrap gap-3 print:hidden">
                 <Link href={`/preview/${jobId}`} className={btn.primary}>View the rebuilt site →</Link>
@@ -168,7 +168,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
               It recorded <strong className="font-semibold tabular-nums">{a11y.length}</strong> accessibility findings on <span className="tabular-nums">{a11yPages}</span> pages, corrected in the rebuild, and <strong className="font-semibold tabular-nums">{notes.length}</strong> items on <span className="tabular-nums">{notePages}</span> pages that need a person to confirm before any of this is published.
             </p>
             <dl className="mt-6 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 border-t border-l border-kapwa-brand-900">
-              {figures.map(([v, l]) => <div key={l} className="border-r border-b border-kapwa-brand-900 p-4"><dd className="text-3xl font-display font-medium tracking-tight tabular-nums text-neutral-900">{v}</dd><dt className="mt-1 text-[13px] text-neutral-600">{l}</dt></div>)}
+              {figures.map(([v, l]) => <div key={l} className="border-r border-b border-kapwa-brand-900 p-4"><dd className="text-3xl font-display font-normal tracking-tight tabular-nums text-neutral-900">{v}</dd><dt className="mt-1 text-[13px] text-neutral-600">{l}</dt></div>)}
             </dl>
             {site.site_notes.length > 0 && (
               <ol className="mt-6 grid gap-x-10 md:grid-cols-2">
@@ -181,7 +181,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
           <section className="mt-12 grid gap-8 lg:grid-cols-[1fr_320px]">
             <div>
               <div className={`border-t-2 border-kapwa-brand-900 pt-4 ${eyebrow} text-neutral-500`}><span className="text-kapwa-brand-900 tabular-nums mr-3">{nn(n++ - 1)}</span>Source analysis</div>
-              <h2 className="mt-2 text-2xl font-display font-medium tracking-tight">What SAM 3.1 saw on the old homepage</h2>
+              <h2 className="mt-2 text-2xl font-display font-normal tracking-tight">What SAM 3.1 saw on the old homepage</h2>
               <p className="mt-1 text-neutral-600">Noun-phrase prompts (logo, navigation menu, banner, sidebar, footer) on the original screenshot. The seal was cut out and reused as the new site&rsquo;s brand mark.</p>
               <div className="mt-4 relative overflow-hidden border border-kapwa-brand-900 bg-white" style={{ aspectRatio: `${vw}/${vh}` }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}

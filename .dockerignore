@@ -7,4 +7,3 @@ jobs
 .wrangler
 worker
 *.png
-public/fonts/Larken-*

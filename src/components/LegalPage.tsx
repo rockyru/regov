@@ -10,7 +10,7 @@ export function LegalPage({ kicker, title, deck, updated, sections }: { kicker: 
       <main className="flex-1">
         <div className="container-gov pt-10 pb-20 max-w-5xl">
           <p className={`${eyebrow} text-kapwa-brand-900`}>{kicker}</p>
-          <h1 className="mt-2 text-4xl sm:text-5xl font-display font-medium tracking-tight">{title}</h1>
+          <h1 className="mt-2 text-4xl sm:text-5xl font-display font-normal tracking-tight">{title}</h1>
           <p className="mt-4 max-w-2xl text-lg text-neutral-600">{deck}</p>
           <p className="mt-3 text-sm text-neutral-500">Last updated {updated}. Questions: <a className="underline decoration-neutral-300 underline-offset-4 hover:decoration-kapwa-brand-900" href="https://github.com/rockyru/regov/issues">GitHub issues</a> or <a className="underline decoration-neutral-300 underline-offset-4 hover:decoration-kapwa-brand-900" href="https://rmbergonia.com">rmbergonia.com</a>.</p>
           <ol className="mt-10 border-t-2 border-kapwa-brand-900">
