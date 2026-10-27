@@ -2,11 +2,12 @@ import Link from "next/link";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { JOBS_ROOT, loadSite } from "@/lib/jobs";
+import { runQueue, type QueueInfo } from "@/lib/runQueue";
 import { AppHeader, AppFooter, SectionHead, eyebrow, btn, nn } from "@/components/AppShell";
 
 export const dynamic = "force-dynamic";
 type Ev = { t: number; type: string; [k: string]: unknown };
-type Status = { url: string; phase: string; events: Ev[]; done: boolean; error: string; startedAt: string };
+type Status = { url: string; phase: string; events: Ev[]; done: boolean; error: string; startedAt: string; queue?: QueueInfo };
 
 const STEPS: { key: string; label: string; tool: string }[] = [
   { key: "crawl", label: "Crawl", tool: "Playwright" },
@@ -37,8 +38,9 @@ function describe(e: Ev): { text: string; tag?: string } {
 }
 const TAG: Record<string, string> = { crawl: "text-neutral-500", spark: "text-kapwa-brand-800", sam: "text-kapwa-orange-700", image: "text-kapwa-green-800", archive: "text-kapwa-orange-800", warn: "text-kapwa-red-700", phase: "text-neutral-900" };
 
-export default async function JobStatus({ params }: { params: Promise<{ jobId: string }> }) {
+export default async function JobStatus({ params, searchParams }: { params: Promise<{ jobId: string }>; searchParams: Promise<{ existing?: string }> }) {
   const { jobId } = await params;
+  const { existing = "" } = await searchParams;
   let status: Status | null = null;
   let fromMirror = false;
   try { status = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "status.json"), "utf8")); } catch { /* not local */ }
@@ -53,6 +55,14 @@ export default async function JobStatus({ params }: { params: Promise<{ jobId: s
       status.phase = "error";
     }
   }
+  // Queued on disk but unknown to the live queue: the process that owned it is gone.
+  if (status && status.phase === "queued" && !status.done && !status.error && !runQueue.isTracked(jobId)) {
+    status.error = "The agent restarted before this run started. Please start it again.";
+    status.phase = "error";
+  }
+  // No record anywhere: a mistyped reference, or a queued run that never got far enough to be saved.
+  if (!status) status = { url: "", phase: "error", events: [], done: false, error: "There is no run with this reference. If you just started it, the agent may have restarted before it began. Please start it again.", startedAt: new Date().toISOString() };
+  const queued = status?.phase === "queued" && !status.error ? status.queue : undefined;
   const site = status?.done ? await loadSite(jobId) : null;
   let procLog = "";
   if (!status?.done && (status?.error || (status?.events.length ?? 0) === 0)) {
@@ -65,12 +75,15 @@ export default async function JobStatus({ params }: { params: Promise<{ jobId: s
   const v = site ? encodeURIComponent(site.generated_at) : "";
   const live = !status?.done && !status?.error;
   const elapsed = status ? Math.round((Date.now() - new Date(status.startedAt).getTime()) / 1000) : 0;
-  const state = live ? "Reimagining" : status?.error ? "Stopped" : "Reimagined";
+  const state = queued ? "Waiting in line" : live ? "Reimagining" : status?.error ? "Stopped" : "Reimagined";
+  const existingNote = existing === "done" ? "This site was reimagined recently, so the agent is showing that run instead of starting another."
+    : existing === "running" ? "The agent is already working on this site. You are watching that run."
+    : existing === "queued" ? "This site is already in the queue. You are watching that run." : "";
   let n = 1;
 
   return (
     <>
-      {live && <meta httpEquiv="refresh" content="2" />}
+      {live && <meta httpEquiv="refresh" content={queued ? "4" : "2"} />}
       <AppHeader crumb={host} />
       <main className="flex-1">
         <div className="container-gov pt-10 pb-16">
@@ -86,12 +99,31 @@ export default async function JobStatus({ params }: { params: Promise<{ jobId: s
             {site && <div className="flex flex-wrap gap-3"><Link href={`/preview/${jobId}`} className={btn.yellow}>View site →</Link><Link href={`/report/${jobId}`} className={btn.ghost}>Migration report</Link></div>}
           </div>
 
+          {existingNote && (
+            <p className="mt-6 border-l-4 border-kapwa-brand-900 bg-kapwa-brand-50 px-5 py-3 text-sm text-neutral-800">{existingNote} <Link href="/#reimagine" className="font-semibold text-kapwa-brand-900 hover:underline">Try another address →</Link></p>
+          )}
+
+          {queued && (
+            <section className="mt-10 border-t-2 border-kapwa-brand-900 bg-kapwa-yellow-50 p-6 sm:p-8">
+              <div className="flex flex-wrap items-end justify-between gap-6">
+                <div>
+                  <p className={`${eyebrow} text-neutral-500`}>Queue</p>
+                  <p className="mt-2 text-3xl sm:text-4xl font-black tracking-tight text-neutral-900">{queued.position === 1 ? "Next up" : `${queued.position - 1} ahead of you`}</p>
+                  <p className="mt-2 max-w-xl text-neutral-700">The agent rebuilds a few sites at a time so each run gets the whole machine. Keep this page open; it starts on its own and usually takes four to eight minutes once it begins.</p>
+                </div>
+                <dl className="grid grid-cols-3 gap-6">
+                  {[[queued.position, "your place"], [queued.of, "in line"], [queued.running, "running now"]].map(([v, l]) => <div key={String(l)}><dd className="text-2xl font-bold tabular-nums">{v}</dd><dt className="text-[12px] text-neutral-500">{l}</dt></div>)}
+                </dl>
+              </div>
+            </section>
+          )}
+
           {/* Pipeline */}
           <section className="mt-10">
             <SectionHead n={n++} title="Pipeline" aside={<span className="tabular-nums">{steps.length} steps</span>} />
             <ol className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 border-l border-neutral-200">
               {steps.map((s, i) => {
-                const st = status?.error && i === idx ? "error" : i < idx || status?.done ? "done" : i === idx ? "active" : "todo";
+                const st = status?.error && i === idx ? "error" : i < idx || status?.done ? "done" : i === idx && !queued ? "active" : "todo";
                 const top = st === "done" ? "border-t-kapwa-brand-900" : st === "active" ? "border-t-kapwa-yellow-400" : st === "error" ? "border-t-kapwa-red-600" : "border-t-neutral-200";
                 return (
                   <li key={s.key} className={`border-t-4 border-r border-b border-neutral-200 p-4 ${top} ${st === "todo" ? "text-neutral-400" : "text-neutral-900"} ${st === "active" ? "bg-kapwa-yellow-50" : ""}`}>
@@ -143,7 +175,7 @@ export default async function JobStatus({ params }: { params: Promise<{ jobId: s
                   </li>
                 );
               })}
-              {(!status || status.events.length === 0) && !procLog && <li className="px-1 py-6 text-sm text-neutral-400">Starting the agent… {status?.phase === "queued" && live ? `(${elapsed}s)` : ""}</li>}
+              {(!status || status.events.length === 0) && !procLog && <li className="px-1 py-6 text-sm text-neutral-400">{queued ? `Waiting for a free slot… (${elapsed}s)` : "Starting the agent…"}</li>}
               {procLog && <li className="px-1 py-4"><div className={`${eyebrow} text-neutral-400 mb-2`}>Process output</div><pre className="whitespace-pre-wrap break-words text-xs text-neutral-600">{procLog}</pre></li>}
             </ol>
           </section>

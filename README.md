@@ -63,7 +63,22 @@ node --env-file=.env node_modules/tsx/dist/cli.mjs scripts/pipeline.ts https://c
 npm run dev                      # http://localhost:3000  → dashboard, /preview/<job>, /report/<job>
 ```
 
-Or use the dashboard: paste a URL, press **Resurrect**, watch the job page stream progress.
+Or use the dashboard: paste a URL, press **Reimagine**, watch the job page stream progress.
+
+### Capacity and abuse limits
+
+Runs are admitted by an in-process queue (`src/lib/runQueue.ts`); the app runs as one Node
+process inside a single container, so the queue is authoritative. Defaults, all overridable
+through environment variables:
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `RUN_CONCURRENCY` | `2` | Pipelines allowed to run at once. Extra submissions wait in order and the job page shows their place. |
+| `RUN_QUEUE_MAX` | `8` | Waiting runs allowed. Past this the form answers "the agent is busy". |
+| `RUN_RATE_LIMIT` / `RUN_RATE_WINDOW_MIN` | `3` / `10` | Submissions per visitor IP per window. |
+| `RUN_DEDUPE_HOURS` | `24` | A host that is running, waiting, or finished within this window is not rebuilt again; the visitor is sent to that run. |
+
+`GET /api/run` reports the live counts.
 
 ## Layout
 

@@ -31,6 +31,7 @@ export default {
     const headers = new Headers(request.headers);
     headers.set("x-forwarded-host", url.host);
     headers.set("x-forwarded-proto", url.protocol.replace(":", ""));
+    headers.set("x-real-ip", request.headers.get("cf-connecting-ip") ?? "");
     const res = await env.REGOV.getByName("main").fetch(new Request(request, { headers }));
     // Safety net: anything the app built from its internal address gets pointed back at the public origin.
     const loc = res.headers.get("location");

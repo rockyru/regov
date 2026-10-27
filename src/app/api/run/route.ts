@@ -1,12 +1,14 @@
-import { spawn } from "node:child_process";
-import { resolve } from "node:path";
-import { existsSync, mkdirSync, writeFileSync, openSync } from "node:fs";
 import { isGovernmentHost, normalizeSiteUrl } from "@/lib/govdomain";
+import { runQueue } from "@/lib/runQueue";
+
+function clientIp(req: Request) {
+  return req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "local";
+}
 
 export async function POST(req: Request) {
   const form = await req.formData();
   const raw = String(form.get("url") ?? "");
-  const max = String(form.get("max") ?? "20");
+  const max = String(Math.min(Math.max(Number(form.get("max")) || 20, 1), 40));
   const parsed = normalizeSiteUrl(raw);
   // Behind the Worker the container sees 0.0.0.0:3000 as its own host, so build redirects from the public origin.
   const fwdHost = req.headers.get("x-forwarded-host");
@@ -17,21 +19,22 @@ export async function POST(req: Request) {
   if (!isGovernmentHost(parsed.hostname)) return go(`/?error=notgov&url=${encodeURIComponent(parsed.hostname)}`);
   const url = parsed.toString();
   const host = parsed.hostname;
+
+  // Same site already in flight, waiting, or rebuilt recently: show that run instead of starting another.
+  const existing = runQueue.existing(host);
+  if (existing) return go(`/jobs/${existing.jobId}?existing=${existing.state}`);
+
+  // Per-visitor limit, then overall capacity. Both are cheap to hit and cheap to recover from.
+  const wait = runQueue.rateLimit(clientIp(req));
+  if (wait > 0) return go(`/?error=ratelimit&wait=${wait}&url=${encodeURIComponent(host)}`);
+  if (runQueue.full) return go(`/?error=busy&url=${encodeURIComponent(host)}`);
+
   const jobId = `${host.replace(/[^a-z0-9]+/gi, "-")}-${Date.now().toString(36)}`;
-  const root = process.cwd();
-  const args = [resolve(root, "node_modules/tsx/dist/cli.mjs"), "scripts/pipeline.ts", url, jobId, max];
-  if (existsSync(resolve(root, ".env"))) args.unshift("--env-file=.env");
-  // Write the job dir and a queued status first, and keep the child's output, so a failed start is visible.
-  const jobDir = resolve(root, "jobs", jobId);
-  mkdirSync(jobDir, { recursive: true });
-  writeFileSync(resolve(jobDir, "status.json"), JSON.stringify({ url, jobId, startedAt: new Date().toISOString(), phase: "queued", events: [], done: false, error: "" }));
-  const log = openSync(resolve(jobDir, "pipeline.log"), "a");
-  try {
-    const child = spawn(process.execPath, args, { cwd: root, detached: true, stdio: ["ignore", log, log], env: { ...process.env } });
-    child.on("error", (e) => writeFileSync(resolve(jobDir, "status.json"), JSON.stringify({ url, jobId, startedAt: new Date().toISOString(), phase: "error", events: [], done: false, error: `could not start the agent: ${e.message}` })));
-    child.unref();
-  } catch (e) {
-    writeFileSync(resolve(jobDir, "status.json"), JSON.stringify({ url, jobId, startedAt: new Date().toISOString(), phase: "error", events: [], done: false, error: `could not start the agent: ${(e as Error).message}` }));
-  }
+  runQueue.enqueue({ jobId, url, host, max, ip: clientIp(req) });
   return go(`/jobs/${jobId}`);
+}
+
+/** Capacity readout for the UI and for operators. */
+export async function GET() {
+  return Response.json(runQueue.snapshot(), { headers: { "cache-control": "no-store" } });
 }

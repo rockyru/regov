@@ -4,11 +4,18 @@ import { isGovernmentHost, normalizeSiteUrl } from "@/lib/govdomain";
 
 const EXAMPLES = ["region10.dilg.gov.ph", "isu.edu.ph", "bulacan.gov.ph", "nrcp.dost.gov.ph", "philsa.gov.ph", "launion.gov.ph", "pchrd.dost.gov.ph", "region5.dilg.gov.ph"];
 
-export function ReimagineBox({ done = [], initialError = "", initialUrl = "" }: { done?: string[]; initialError?: string; initialUrl?: string }) {
+const INITIAL: Record<string, (url: string, wait: number) => string> = {
+  notgov: (u) => `${u} is not a government domain.`,
+  invalid: () => "That doesn't look like a website address.",
+  ratelimit: (_u, w) => `You have started a few runs already. Please wait about ${w >= 90 ? `${Math.ceil(w / 60)} minutes` : `${w} seconds`} before starting another.`,
+  busy: () => "The agent is busy right now and its queue is full. Please try again in a few minutes, or browse the showcase meanwhile.",
+};
+
+export function ReimagineBox({ done = [], initialError = "", initialUrl = "", initialWait = 0 }: { done?: string[]; initialError?: string; initialUrl?: string; initialWait?: number }) {
   const examples = EXAMPLES.filter((e) => !done.includes(e)).slice(0, 4);
-  const [url, setUrl] = useState(initialUrl);
+  const [url, setUrl] = useState(initialError === "ratelimit" || initialError === "busy" ? "" : initialUrl);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(initialError === "notgov" ? `${initialUrl} is not a government domain.` : initialError === "invalid" ? "That doesn't look like a website address." : "");
+  const [error, setError] = useState(INITIAL[initialError]?.(initialUrl, initialWait) ?? "");
   const check = (v: string) => {
     const u = normalizeSiteUrl(v);
     if (!u) return "That doesn't look like a website address.";

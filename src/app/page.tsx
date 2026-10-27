@@ -15,8 +15,8 @@ const STEPS: { title: string; body: string; tools: { name: string; meta?: boolea
   { title: "Rebuild", body: "A site plan, mega menus, hotlines, transparency and a migration report, assembled on the BetterGov Kapwa design system.", tools: [{ name: "Kapwa" }, { name: "Next.js" }] },
 ];
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ error?: string; url?: string }> }) {
-  const { error = "", url = "" } = await searchParams;
+export default async function Home({ searchParams }: { searchParams: Promise<{ error?: string; url?: string; wait?: string }> }) {
+  const { error = "", url = "", wait = "" } = await searchParams;
   const all = await listJobs();
   const jobs = all.filter((j) => j.site);
   const now = new Date().getTime();
@@ -41,7 +41,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
           <h1 className="mt-5 text-5xl sm:text-6xl xl:text-[84px] font-black tracking-tight leading-[0.95] text-neutral-900">Reimagine <span className="text-kapwa-brand-900">Government</span>.</h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-neutral-600 leading-snug">Public websites deserve a second life. Paste a Philippine government site and an agent crawls it, understands it, and rebuilds it on the BetterGov Kapwa standard.</p>
           <div className="mx-auto mt-10 max-w-2xl">
-            <ReimagineBox done={jobs.map((j) => new URL(j.crawl!.origin).host.replace(/^www\./, ""))} initialError={error} initialUrl={url} />
+            <ReimagineBox done={jobs.map((j) => new URL(j.crawl!.origin).host.replace(/^www\./, ""))} initialError={error} initialUrl={url} initialWait={Number(wait) || 0} />
           </div>
           <p className="mx-auto mt-6 max-w-2xl text-[13px] text-neutral-500">Government domains only: agencies, LGUs, state universities, hospitals. Sites behind bot protection are rebuilt from their Wayback Machine archive. Output is an unofficial concept.</p>
           </Reveal>
@@ -50,7 +50,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
         {(active.length > 0 || failed.length > 0) && (
           <section className="border-b border-neutral-200 bg-kapwa-yellow-50">
             <ul className="container-gov py-3 flex flex-wrap gap-x-8 gap-y-2 text-sm">
-              {active.map((j) => <li key={j.id}><Link href={`/jobs/${j.id}`} className="inline-flex items-center gap-2 font-semibold text-kapwa-brand-900 hover:underline"><span className="size-2 bg-kapwa-brand-600 animate-pulse" />Reimagining {new URL(j.status!.url).host} · {j.status!.phase} →</Link></li>)}
+              {active.map((j) => <li key={j.id}><Link href={`/jobs/${j.id}`} className="inline-flex items-center gap-2 font-semibold text-kapwa-brand-900 hover:underline"><span className="size-2 bg-kapwa-brand-600 animate-pulse" />{j.status!.phase === "queued" ? "Queued" : "Reimagining"} {new URL(j.status!.url).host}{j.status!.phase !== "queued" && ` · ${j.status!.phase}`} →</Link></li>)}
               {failed.map((j) => <li key={j.id}><Link href={`/jobs/${j.id}`} className="inline-flex items-center gap-2 font-semibold text-kapwa-red-800 hover:underline"><span className="size-2 bg-kapwa-red-600" />{new URL(j.status!.url).host} stopped →</Link></li>)}
             </ul>
           </section>
