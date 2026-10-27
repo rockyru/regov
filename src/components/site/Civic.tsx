@@ -18,18 +18,18 @@ export async function CivicStrip({ site }: { site: SiteModel }) {
       <div className="bg-kapwa-red-700 text-white h-full">
         <div className={`${weather ? "pl-5 sm:pl-8 lg:pl-12 pr-0" : "container-gov"} h-full grid auto-rows-fr grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(13rem,1fr))] border-l border-white/20 *:border-r *:border-b *:border-white/20`}>
           <a href="tel:911" className="flex flex-col justify-between gap-3 p-4 min-h-24 bg-kapwa-red-800 hover:bg-kapwa-red-900 col-span-2 md:col-span-1">
-            <span className={`${eyebrow} text-white/80`}>{lgu ? "Emergency" : "In an emergency"}</span>
-            <span className="text-4xl font-extrabold tracking-tight leading-none">911 <span className="text-base font-semibold text-white/70">24/7</span></span>
+            <span className={`${eyebrow} text-white`}>{lgu ? "Emergency" : "In an emergency"}</span>
+            <span className="text-4xl font-extrabold tracking-tight leading-none">911 <span className="text-base font-semibold text-white">24/7</span></span>
           </a>
           {shown.map((h) => (
             <a key={h.number} href={telHref(h.number)} className={cell}>
-              <span className={`${eyebrow} text-white/80 line-clamp-2`}>{h.name}</span>
+              <span className={`${eyebrow} text-white line-clamp-2`}>{h.name}</span>
               <span className="text-xl font-bold tracking-tight leading-none tabular-nums">{h.number}</span>
             </a>
           ))}
           <Link href={navHref(site.jobId, "hotlines")} className={`${cell} bg-kapwa-red-700/80 justify-end`}>
             <span className="font-semibold">All hotlines <span aria-hidden>→</span></span>
-            <span className="text-xs text-white/70">Police, fire, medical, utilities for {site.locality?.province || "the Philippines"}</span>
+            <span className="text-xs text-white">Police, fire, medical, utilities for {site.locality?.province || "the Philippines"}</span>
           </Link>
         </div>
       </div>
@@ -44,24 +44,24 @@ function WeatherPanel({ w }: { w: NonNullable<Awaited<ReturnType<typeof getWeath
   return (
     <aside className="bg-kapwa-brand-950 text-white p-5 lg:pr-12 border-t lg:border-t-0 lg:border-l border-white/15">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className={`${eyebrow} text-white/70`}>Weather · {w.place}</h2>
-        <span className="text-[11px] font-medium tabular-nums text-white/40">{w.current.time.slice(11, 16)}</span>
+        <h2 className={`${eyebrow} text-white/80`}>Weather · {w.place}</h2>
+        <span className="text-[11px] font-medium tabular-nums text-white/80">{w.current.time.slice(11, 16)}</span>
       </div>
       <div className="mt-3 flex items-end gap-4">
         <span className="text-5xl font-extrabold tracking-tight leading-none tabular-nums">{Math.round(w.current.temp)}°</span>
-        <span className="pb-1 text-sm leading-snug"><span className="block font-semibold">{wmoGlyph(w.current.code)} {wmoLabel(w.current.code)}</span><span className="text-white/60">Feels {Math.round(w.current.feels)}° · {w.current.humidity}% humidity · {Math.round(w.current.wind)} km/h</span></span>
+        <span className="pb-1 text-sm leading-snug"><span className="block font-semibold">{wmoGlyph(w.current.code)} {wmoLabel(w.current.code)}</span><span className="text-white/80">Feels {Math.round(w.current.feels)}° · {w.current.humidity}% humidity · {Math.round(w.current.wind)} km/h</span></span>
       </div>
       <ol className="mt-4 grid grid-cols-4 border-t border-white/15 text-center">
         {w.daily.map((d, i) => (
           <li key={d.date} className={`py-2.5 ${i ? "border-l border-white/15" : ""}`}>
-            <div className={`${eyebrow} text-white/60`}>{i === 0 ? "Today" : dayName(d.date)}</div>
+            <div className={`${eyebrow} text-white/80`}>{i === 0 ? "Today" : dayName(d.date)}</div>
             <div className="mt-1 text-lg" aria-label={wmoLabel(d.code)}>{wmoGlyph(d.code)}</div>
             <div className="text-sm font-semibold tabular-nums">{Math.round(d.max)}° <span className="text-white/50 font-normal">{Math.round(d.min)}°</span></div>
             {d.rain >= 30 && <div className="text-[11px] text-kapwa-yellow-300">{d.rain}% rain</div>}
           </li>
         ))}
       </ol>
-      <p className="mt-3 text-[11px] text-white/40">Open-Meteo · {today ? `${Math.round(today.min)}–${Math.round(today.max)}° today` : ""} · Not an official PAGASA advisory</p>
+      <p className="mt-3 text-[11px] text-white/80">Open-Meteo · {today ? `${Math.round(today.min)}–${Math.round(today.max)}° today` : ""} · Not an official PAGASA advisory</p>
     </aside>
   );
 }
@@ -85,7 +85,7 @@ export function TransparencySection({ site, n }: { site: SiteModel; n: number })
           <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>Published by {site.agency.short_name || "this office"}</h3>
           {pages.length > 0 ? (
             <ol className="divide-y divide-neutral-200">
-              {pages.map((p, i) => <li key={p.slug}><Link href={navHref(site.jobId, p.slug)} className="flex gap-3 py-3 font-medium text-neutral-900 hover:text-kapwa-brand-900"><span className="text-xs font-semibold tabular-nums text-neutral-400 pt-1">{nn(i)}</span>{p.label}</Link></li>)}
+              {pages.map((p, i) => <li key={p.slug}><Link href={navHref(site.jobId, p.slug)} className="flex gap-3 py-3 font-medium text-neutral-900 hover:text-kapwa-brand-900"><span className="text-xs font-semibold tabular-nums text-neutral-500 pt-1">{nn(i)}</span>{p.label}</Link></li>)}
             </ol>
           ) : (
             <p className="py-3 text-sm text-neutral-500">The agent found no transparency pages on the original site. Under the Transparency Seal every agency should publish its mandate, officials, budget, procurement plan and reports.</p>
@@ -94,13 +94,13 @@ export function TransparencySection({ site, n }: { site: SiteModel; n: number })
         <div>
           <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>Check nationally</h3>
           <ul className="divide-y divide-neutral-200">
-            {TRANSPARENCY_EXTERNAL.map((l) => <li key={l.href}><a href={l.href} target="_blank" rel="noreferrer" className="block py-3 hover:text-kapwa-brand-900"><span className="font-medium text-neutral-900">{l.label} <span aria-hidden className="text-neutral-400">↗</span></span>{l.note && <span className="block text-sm text-neutral-500">{l.note}</span>}</a></li>)}
+            {TRANSPARENCY_EXTERNAL.map((l) => <li key={l.href}><a href={l.href} target="_blank" rel="noreferrer" className="block py-3 hover:text-kapwa-brand-900"><span className="font-medium text-neutral-900">{l.label} <span aria-hidden className="text-neutral-500">↗</span></span>{l.note && <span className="block text-sm text-neutral-500">{l.note}</span>}</a></li>)}
           </ul>
         </div>
         <div>
           <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{lgu ? "For residents" : site.site_kind === "university" || site.site_kind === "school" ? "For students" : site.site_kind === "hospital" ? "For patients" : "Related portals"}</h3>
           <ul className="divide-y divide-neutral-200">
-            {ext.map((l) => <li key={l.href}><a href={l.href} target={l.href.startsWith("tel:") ? undefined : "_blank"} rel="noreferrer" className="block py-3 hover:text-kapwa-brand-900"><span className="font-medium text-neutral-900">{l.label} <span aria-hidden className="text-neutral-400">↗</span></span>{l.note && <span className="block text-sm text-neutral-500">{l.note}</span>}</a></li>)}
+            {ext.map((l) => <li key={l.href}><a href={l.href} target={l.href.startsWith("tel:") ? undefined : "_blank"} rel="noreferrer" className="block py-3 hover:text-kapwa-brand-900"><span className="font-medium text-neutral-900">{l.label} <span aria-hidden className="text-neutral-500">↗</span></span>{l.note && <span className="block text-sm text-neutral-500">{l.note}</span>}</a></li>)}
           </ul>
         </div>
       </div>
@@ -156,7 +156,7 @@ export function HotlinesPage({ site }: { site: SiteModel }) {
       </div>
       <div className="container-gov">
         <a href="tel:911" className="mt-10 flex flex-wrap items-center justify-between gap-6 bg-kapwa-red-700 text-white p-6 sm:p-8 hover:bg-kapwa-red-800">
-          <span><span className={`${eyebrow} text-white/80`}>Life-threatening emergency</span><span className="block mt-1 text-5xl sm:text-6xl font-extrabold tracking-tight leading-none">911</span></span>
+          <span><span className={`${eyebrow} text-white`}>Life-threatening emergency</span><span className="block mt-1 text-5xl sm:text-6xl font-extrabold tracking-tight leading-none">911</span></span>
           <span className="max-w-md text-[15px] leading-relaxed text-white/85">The national emergency hotline, free from any phone, 24 hours a day. For police, fire, medical and rescue, call 911 first and then the local responder.</span>
         </a>
         {groups.map((g) => (

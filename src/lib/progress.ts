@@ -7,17 +7,18 @@ export const STEPS: { key: string; label: string; tool: string }[] = [
   { key: "segment", label: "Segment", tool: "SAM 3.1" },
   { key: "band", label: "Illustrate", tool: "Muse Image" },
   { key: "write", label: "Assemble", tool: "RE:GOV" },
+  { key: "audit", label: "Audit", tool: "axe-core WCAG 2.2" },
 ];
 
 // Share of a typical run spent in each step, for progress percentages.
-const WEIGHT: Record<string, number> = { crawl: 0.25, archive: 0.05, understand: 0.45, plan: 0.08, segment: 0.04, band: 0.12, write: 0.06 };
+const WEIGHT: Record<string, number> = { crawl: 0.25, archive: 0.05, understand: 0.45, plan: 0.08, segment: 0.04, band: 0.12, write: 0.06, audit: 0.05 };
 
 type Ev = { type: string; [k: string]: unknown };
 export function progressOf(status: { phase: string; done: boolean; events: Ev[] }) {
   const { events } = status;
   const archived = events.some((e) => e.type === "archive");
   const steps = STEPS.filter((s) => s.key !== "archive" || archived || status.phase === "archive");
-  const idx = Math.max(0, steps.findIndex((s) => s.key === (status.done ? "write" : status.phase === "queued" ? "crawl" : status.phase)));
+  const idx = Math.max(0, steps.findIndex((s) => s.key === (status.done ? "audit" : status.phase === "queued" ? "crawl" : status.phase)));
   const fetched = events.filter((e) => e.type === "page" && e.url).length;
   const understood = events.filter((e) => e.type === "page" && e.title).length;
   const crawlDone = events.find((e) => e.type === "done");
@@ -29,6 +30,7 @@ export function progressOf(status: { phase: string; done: boolean; events: Ev[] 
     : cur === "plan" ? "site map and navigation"
     : cur === "segment" ? "reading the old homepage"
     : cur === "band" ? "painting the header"
+    : cur === "audit" ? "checking WCAG 2.2 AA"
     : "writing pages";
   const frac = cur === "crawl" ? (crawlDone ? 1 : Math.min(0.95, fetched / 20)) : cur === "understand" ? (toUnderstand ? Math.min(1, understood / toUnderstand) : 0) : 0.4;
   const w = (k: string) => WEIGHT[k] ?? 0.05;

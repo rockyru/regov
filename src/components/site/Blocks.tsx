@@ -71,7 +71,7 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
             <div className="mt-4 grid gap-x-10 gap-y-8 sm:grid-cols-2 xl:grid-cols-3">
               {ordered.map(([g, its]) => (
                 <div key={g || "_"} className={its.length > 10 ? "sm:col-span-2 xl:col-span-3" : ""}>
-                  <h3 className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-500 border-b border-neutral-900 pb-2">{g || (ordered.length > 1 ? "More" : "Directory")} <span className="font-semibold tabular-nums text-neutral-400">{its.length}</span></h3>
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-500 border-b border-neutral-900 pb-2">{g || (ordered.length > 1 ? "More" : "Directory")} <span className="font-semibold tabular-nums text-neutral-500">{its.length}</span></h3>
                   <ul className={its.length > 10 ? "sm:columns-2 gap-x-10" : ""}>
                     {its.map((it, i) => (
                       <li key={i} className="break-inside-avoid border-b border-neutral-200">
@@ -116,7 +116,7 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
             {items.map((it, i) => (
               <li key={i} className="flex gap-3">
                 <span className="mt-[0.7em] h-px w-4 shrink-0 bg-neutral-900" />
-                <span><A href={it.href} jobId={jobId} origin={origin} className={it.href ? "font-medium text-kapwa-brand-800 hover:underline" : "font-medium text-neutral-900"}>{it.title}</A>{it.meta && <span className="text-neutral-500"> · {it.meta}</span>}{it.description && <span className="text-neutral-700"> — {it.description}</span>}</span>
+                <span><A href={it.href} jobId={jobId} origin={origin} className={it.href ? "font-medium text-kapwa-brand-800 underline underline-offset-2 decoration-kapwa-brand-300 hover:decoration-kapwa-brand-800" : "font-medium text-neutral-900"}>{it.title}</A>{it.meta && <span className="text-neutral-500"> · {it.meta}</span>}{it.description && <span className="text-neutral-700"> — {it.description}</span>}</span>
               </li>
             ))}
           </ul>
@@ -141,7 +141,7 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
           <div className="mt-3 divide-y divide-neutral-200 border-y border-neutral-900">
             {items.map((it, i) => (
               <details key={i} className="group px-1 py-3">
-                <summary className="cursor-pointer list-none font-medium text-neutral-900 flex justify-between gap-4">{it.title}<span className="text-neutral-400 group-open:rotate-45 transition">+</span></summary>
+                <summary className="cursor-pointer list-none font-medium text-neutral-900 flex justify-between gap-4">{it.title}<span className="text-neutral-500 group-open:rotate-45 transition">+</span></summary>
                 <p className="mt-2 text-[15px] text-neutral-700">{it.description}</p>
               </details>
             ))}
@@ -175,14 +175,14 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
         return { label, value, extra };
       }).filter((r) => r.value);
       const Val = ({ v }: { v: string }) => {
-        if (/^[\w.+-]+@[\w-]+\.[\w.-]+$/.test(v)) return <a className="text-kapwa-brand-800 hover:underline break-all" href={`mailto:${v}`}>{v}</a>;
-        if (/^(\+?\d[\d\s().-]{6,})$/.test(v)) return <a className="text-kapwa-brand-800 hover:underline" href={`tel:${v.replace(/[^+\d]/g, "")}`}>{v}</a>;
-        if (/^(https?:\/\/|www\.)/i.test(v)) return <a className="text-kapwa-brand-800 hover:underline break-all" href={v.startsWith("http") ? v : `https://${v}`} target="_blank" rel="noreferrer">{v.replace(/^https?:\/\//, "")}</a>;
+        if (/^[\w.+-]+@[\w-]+\.[\w.-]+$/.test(v)) return <a className="text-kapwa-brand-800 underline underline-offset-2 decoration-kapwa-brand-300 hover:decoration-kapwa-brand-800 break-all" href={`mailto:${v}`}>{v}</a>;
+        if (/^(\+?\d[\d\s().-]{6,})$/.test(v)) return <a className="text-kapwa-brand-800 underline underline-offset-2 decoration-kapwa-brand-300 hover:decoration-kapwa-brand-800" href={`tel:${v.replace(/[^+\d]/g, "")}`}>{v}</a>;
+        if (/^(https?:\/\/|www\.)/i.test(v)) return <a className="text-kapwa-brand-800 underline underline-offset-2 decoration-kapwa-brand-300 hover:decoration-kapwa-brand-800 break-all" href={v.startsWith("http") ? v : `https://${v}`} target="_blank" rel="noreferrer">{v.replace(/^https?:\/\//, "")}</a>;
         return <>{v}</>;
       };
       return (
         <section className="bg-kapwa-brand-50 border-t-2 border-neutral-900 p-6">
-          {block.heading && <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-500 mb-3">{block.heading}</h2>}
+          {block.heading && <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-600 mb-3">{block.heading}</h2>}
           {md}
           {rows.length > 0 && (
             <dl className="mt-3 space-y-4">
@@ -208,7 +208,7 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
         <figure className="border border-dashed border-neutral-400 bg-neutral-50 p-5 text-sm text-neutral-600">
           {block.heading && <figcaption className="font-semibold text-neutral-800 mb-1">{block.heading}</figcaption>}
           <div className="prose-gov text-[15px]"><Markdown text={block.body_markdown} jobId={jobId} origin={origin} /></div>
-          <div className="mt-2 text-xs uppercase tracking-wider text-neutral-400">Image on the original site · transcribed</div>
+          <div className="mt-2 text-xs uppercase tracking-wider text-neutral-500">Image on the original site · transcribed</div>
         </figure>
       );
     case "table":
@@ -216,7 +216,7 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
     default:
       return (
         <section><H>{block.heading}</H>{md}
-          {items.length > 0 && <ul className="mt-3 list-disc pl-6 space-y-1 text-[16px]">{items.map((it, i) => <li key={i}><A href={it.href} jobId={jobId} origin={origin} className={it.href ? "text-kapwa-brand-800 hover:underline" : ""}>{it.title}</A>{it.description && <span className="text-neutral-700"> — {it.description}</span>}</li>)}</ul>}
+          {items.length > 0 && <ul className="mt-3 list-disc pl-6 space-y-1 text-[16px]">{items.map((it, i) => <li key={i}><A href={it.href} jobId={jobId} origin={origin} className={it.href ? "text-kapwa-brand-800 underline underline-offset-2 decoration-kapwa-brand-300 hover:decoration-kapwa-brand-800" : ""}>{it.title}</A>{it.description && <span className="text-neutral-700"> — {it.description}</span>}</li>)}</ul>}
         </section>
       );
   }

@@ -14,7 +14,7 @@ Rules:
 - Text that only exists inside an image (infographics, posters, scanned notices): transcribe what is legible into a block and list it in migration_notes.
 - Use the block types well: 'people' for officials/staff, 'contact' for addresses/phones, 'steps' for procedures, 'faq' for Q&A, 'table' for tabular data, 'links' for document/download lists, 'timeline' for dated history.
 - hrefs: keep same-site links as site-relative paths (e.g. /about-us/legal-basis), keep files and external links absolute.
-- a11y_issues: concrete, e.g. "hero text is an image with no alt", "low-contrast grey links", "no heading hierarchy".`;
+- a11y_issues: concrete, and each starts with the WCAG 2.2 success criterion it fails, e.g. "1.1.1 Non-text Content: hero text is an image with no alt", "1.4.3 Contrast (Minimum): low-contrast grey links", "1.3.1 Info and Relationships: no heading hierarchy". Use a criterion only when it really applies; otherwise write "Best practice: ...".`;
 
 export async function understandPage(jobDir: string, page: CrawledPage, archiveNote = "") {
   const shot = await toDataUrl(join(jobDir, page.screenshotFile));

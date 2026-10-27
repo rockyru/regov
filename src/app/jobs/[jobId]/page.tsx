@@ -28,6 +28,7 @@ function describe(e: Ev): { text: string; tag?: string } {
     case "phase": return { text: `${STEPS.find((s) => s.key === e.phase)?.label ?? e.phase}${e.detail ? ` · ${e.detail}` : ""}`, tag: "phase" };
     case "plan": return { text: `Site plan for ${e.agency}: ${(e.nav as string[]).join(" · ")}`, tag: "spark" };
     case "segment": return { text: `SAM 3.1 found ${e.regions} regions${e.logo ? " and cut out the seal" : ""}`, tag: "sam" };
+    case "wcag": return { text: Number(e.violations) === 0 ? `WCAG 2.2 AA check: no automated violations on ${e.pages} rebuilt pages` : `WCAG 2.2 AA check: ${e.violations} automated issues on ${e.pages} rebuilt pages`, tag: "phase" };
     case "design": return { text: e.mode === "refine" ? `Design check ${e.score}/10: already modern, keeping its look and upgrading it. ${e.reason}` : `Design check ${e.score}/10: rebuilding on the RE:GOV design. ${e.reason}`, tag: "spark" };
     case "band": return { text: `Muse Image brief: ${String(e.brief).slice(0, 160)}…`, tag: "image" };
     case "built": return { text: `Assembled ${e.pages} pages in ${((e.ms as number) / 1000).toFixed(0)}s · ${e.tokens} tokens`, tag: "phase" };
@@ -123,7 +124,7 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
           {/* Pipeline */}
           <section className="mt-10">
             <SectionHead n={n++} title="Pipeline" aside={<span className="tabular-nums">{steps.length} steps</span>} />
-            <ol className={`mt-6 grid grid-cols-2 sm:grid-cols-3 ${steps.length === 7 ? "lg:grid-cols-7" : "lg:grid-cols-6"} border-l border-neutral-200`}>
+            <ol className={`mt-6 grid grid-cols-2 sm:grid-cols-3 ${steps.length === 8 ? "lg:grid-cols-8" : "lg:grid-cols-7"} border-l border-neutral-200`}>
               {steps.map((s, i) => {
                 const st = status?.error && i === idx ? "error" : i < idx || status?.done ? "done" : i === idx && !queued ? "active" : "todo";
                 const top = st === "done" ? "border-t-kapwa-brand-900" : st === "active" ? "border-t-kapwa-yellow-400" : st === "error" ? "border-t-kapwa-red-600" : "border-t-neutral-200";

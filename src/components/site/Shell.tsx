@@ -32,7 +32,7 @@ export function GovStrip({ jobId }: { jobId?: string }) {
         </div>
         <nav aria-label="Government links" className="hidden lg:flex items-center gap-5 whitespace-nowrap">
           {links.map((l) => <a key={l.label} href={l.href} className="hover:text-white">{l.label}</a>)}
-          <span className="text-white/40">|</span>
+          <span aria-hidden className="text-white/70">|</span>
           <button className="hover:text-white" type="button">Filipino</button>
         </nav>
       </div>
@@ -179,7 +179,7 @@ export function Footer({ site }: { site: SiteModel }) {
   ].filter((x): x is { label: string; slug: string } => !!x.slug && !quick.some((q) => q.slug === x.slug));
   const quickLinks = [...quick, ...extras].slice(0, 7).concat([{ label: "Emergency hotlines", slug: "hotlines" }]);
   const pill = "inline-flex items-center gap-2 border border-white/20 px-4 py-2.5 text-sm font-medium text-neutral-100 hover:bg-white/10 hover:border-white/40";
-  const colHead = `${eyebrow} text-neutral-500 pb-3 border-b border-white/15`;
+  const colHead = `${eyebrow} text-neutral-400 pb-3 border-b border-white/15`;
 
   return (
     <footer className="mt-20 bg-neutral-950 text-neutral-300 pb-24 lg:pb-0">
@@ -220,7 +220,7 @@ export function Footer({ site }: { site: SiteModel }) {
 
           {/* BetterGov.ph tools */}
           <div>
-            <h2 className={colHead}>Citizen tools <span className="normal-case tracking-normal text-neutral-600">· BetterGov.ph</span></h2>
+            <h2 className={colHead}>Citizen tools <span className="normal-case tracking-normal text-neutral-400">· BetterGov.ph</span></h2>
             <ul className="mt-4 space-y-3 text-[15px]">
               {BETTERGOV_TOOLS.map((l) => <li key={l.label}><a className="text-neutral-200 hover:text-white" href={l.href} target="_blank" rel="noreferrer">{l.label}</a></li>)}
             </ul>
@@ -231,7 +231,7 @@ export function Footer({ site }: { site: SiteModel }) {
             <div className="inline-flex items-center gap-2 border-l-4 border-kapwa-green-500 bg-white/5 px-4 py-2 text-sm text-neutral-100">Pages migrated by the agent = <span className="font-bold tabular-nums text-kapwa-green-400">{site.pages.length}</span></div>
             <a href={`mailto:${footer.email || "helpdesk@" + host}`} className={pill}>{Icon.flag} Report an issue</a>
             <a href="https://github.com/rockyru/regov" target="_blank" rel="noreferrer" className={pill}>{Icon.github} Contribute code on RE:GOV</a>
-            <div className={`mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 ${eyebrow} text-neutral-500`}>
+            <div className={`mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 ${eyebrow} text-neutral-400`}>
               <span>RE:GOV</span><span>Kapwa · BetterGov.ph</span><span>Muse Spark 1.3</span><span>SAM 3.1</span><span>Muse Image</span>
             </div>
             {(footer.address || footer.phone) && (
@@ -253,8 +253,8 @@ export function Footer({ site }: { site: SiteModel }) {
           </p>
         </div>
 
-        <div className="mt-6 border-t border-white/10 pt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-sm text-neutral-500">
-          <p>© {new Date().getFullYear()} {agency.name} <span className="mx-2 text-neutral-700">|</span> Public domain <span className="mx-2 text-neutral-700">|</span> Content sourced from <a className="underline hover:text-neutral-300" href={site.origin}>{host}</a></p>
+        <div className="mt-6 border-t border-white/10 pt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-sm text-neutral-400">
+          <p>© {new Date().getFullYear()} {agency.name} <span aria-hidden className="mx-2 text-neutral-400">|</span> Public domain <span aria-hidden className="mx-2 text-neutral-400">|</span> Content sourced from <a className="underline hover:text-neutral-300" href={site.origin}>{host}</a></p>
           <p className="flex items-center gap-2"><span className="inline-block size-2 bg-kapwa-green-500" /> Reimagined by RE:GOV · {new Date(site.generated_at).toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" })}</p>
         </div>
       </div>

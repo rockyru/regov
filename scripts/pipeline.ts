@@ -7,6 +7,7 @@ import { pickReachable } from "../src/pipeline/reach";
 import { findSnapshot } from "../src/pipeline/archive";
 import { pushJob, pushFile } from "./sync-jobs";
 import { buildSite } from "../src/pipeline/build";
+import { auditRebuilt } from "../src/pipeline/audit";
 
 const [inputUrl, jobId, max = "20"] = process.argv.slice(2);
 let url = inputUrl;
@@ -55,6 +56,14 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
     }
     status.phase = "build";
     await buildSite(jobId, (e) => { if (e.type === "phase") status.phase = e.phase; log(e); });
+    // WCAG 2.2 check of the rebuilt pages through the running app (free; never fails the run).
+    status.phase = "audit"; await flush();
+    try {
+      const a = await auditRebuilt(dir, jobId);
+      log({ type: "wcag", pages: a.pages.length, violations: a.pages.reduce((t, p) => t + p.violations.length, 0) });
+    } catch (e) {
+      console.warn("[audit] skipped:", (e as Error).message);
+    }
     status.phase = "done"; status.done = true;
     await flush();
     await pushJob(jobId).catch((e) => console.warn("[sync]", (e as Error).message));

@@ -3,6 +3,7 @@
  * visible text and link graph per page, plus WordPress REST JSON when exposed.
  */
 import { chromium, type Page } from "playwright";
+import { axeAudit } from "./wcag";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { CrawlResult, CrawledPage, CrawlEvent, WpRest } from "./types";
@@ -200,6 +201,8 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
         ex.navLinks = ex.navLinks.map(fromArchive).filter(sameSite);
         ex.imgs = ex.imgs.map(fromArchive).filter(sameSite);
       }
+      // Baseline for the report's WCAG section; a failed audit never fails the crawl.
+      const axe = await axeAudit(page).catch(() => undefined);
       const html = await page.content();
       const fullH = Math.min(await page.evaluate("document.documentElement.scrollHeight") as number, maxFullPageHeight);
       const shot = `shots/${key}.png`;
@@ -218,7 +221,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
         url, path: u.pathname + u.search, depth, status, title: ex.title, description: ex.description,
         htmlFile: `html/${key}.html`, screenshotFile: shot, viewportShotFile: vshot,
         text: ex.text, headings: ex.headings, links: pageLinks, attachments, navLinks,
-        fetchedAt: new Date().toISOString(), width: viewport.width, height: fullH,
+        fetchedAt: new Date().toISOString(), width: viewport.width, height: fullH, axe,
       });
       onEvent({ type: "page", url, index: idx, title: ex.title, status });
 

@@ -9,10 +9,11 @@ export function brandScale(primary: string): CSSProperties {
   return {
     "--color-kapwa-brand-950": mix(62, "black"),
     "--color-kapwa-brand-900": primary,
-    "--color-kapwa-brand-800": mix(88, "white"),
-    "--color-kapwa-brand-700": mix(76, "white"),
-    "--color-kapwa-brand-600": mix(64, "white"),
-    "--color-kapwa-brand-500": mix(52, "white"),
+    // 600-800 are used for text on white, so they stay at or darker than the primary (AA contrast).
+    "--color-kapwa-brand-800": mix(88, "black"),
+    "--color-kapwa-brand-700": mix(94, "black"),
+    "--color-kapwa-brand-600": primary,
+    "--color-kapwa-brand-500": mix(80, "white"),
     "--color-kapwa-brand-400": mix(40, "white"),
     "--color-kapwa-brand-300": mix(28, "white"),
     "--color-kapwa-brand-200": mix(18, "white"),

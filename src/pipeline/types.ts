@@ -1,3 +1,4 @@
+import type { AxeResult } from "./wcag";
 export interface CrawledPage {
   url: string;
   path: string;          // URL path + search, used as a stable key
@@ -16,6 +17,7 @@ export interface CrawledPage {
   fetchedAt: string;
   width: number;
   height: number;        // full-page screenshot size in px
+  axe?: AxeResult;       // WCAG 2.2 A/AA audit of the original page (runs from Oct 27 2026)
 }
 
 export interface WpRest {

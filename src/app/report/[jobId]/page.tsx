@@ -7,10 +7,12 @@ import type { CrawlResult } from "@/pipeline/types";
 import type { Box } from "@/pipeline/segment";
 import { AppHeader, AppFooter, eyebrow, btn, nn } from "@/components/AppShell";
 import { PrintButton } from "@/components/PrintButton";
+import { WCAG22, scSort, wcagForFinding } from "@/pipeline/wcag";
+import type { RebuiltAudit } from "@/pipeline/audit";
 
 export const dynamic = "force-dynamic";
 
-type Finding = { ref: string; page: string; slug: string; text: string; category: string };
+type Finding = { ref: string; page: string; slug: string; text: string; category: string; sc: string[] };
 
 const A11Y_CATEGORIES: [string, RegExp][] = [
   ["Colour contrast", /contrast|legib/i],
@@ -32,7 +34,7 @@ const categorize = (text: string, cats: [string, RegExp][]) => cats.find(([, re]
 
 function collect(pages: { title: string; slug: string }[], pick: (p: { slug: string }) => string[], prefix: string, cats: [string, RegExp][]): Finding[] {
   const out: Finding[] = [];
-  for (const p of pages) for (const text of pick(p)) out.push({ ref: `${prefix}-${String(out.length + 1).padStart(2, "0")}`, page: p.title, slug: p.slug, text, category: categorize(text, cats) });
+  for (const p of pages) for (const text of pick(p)) out.push({ ref: `${prefix}-${String(out.length + 1).padStart(2, "0")}`, page: p.title, slug: p.slug, text, category: categorize(text, cats), sc: prefix === "A" ? wcagForFinding(text) : [] });
   return out;
 }
 
@@ -52,6 +54,53 @@ function Sec({ n, title, aside, children }: { n: number; title: string; aside?: 
       </div>
       <div className="min-w-0">{children}</div>
     </section>
+  );
+}
+
+/** WCAG 2.2 A/AA view: what failed on the original, what the rebuild measured, what still needs a person. */
+function WcagSection({ n, a11y, before, after }: { n: number; a11y: Finding[]; before: { sc: string[]; nodes: number }[]; after: RebuiltAudit | null }) {
+  const found = new Map<string, number>();
+  for (const f of a11y) for (const sc of f.sc) found.set(sc, (found.get(sc) ?? 0) + 1);
+  const axeBefore = new Map<string, number>();
+  for (const v of before) for (const sc of v.sc) axeBefore.set(sc, (axeBefore.get(sc) ?? 0) + v.nodes);
+  const afterFail = new Map<string, number>();
+  for (const p of after?.pages ?? []) for (const v of p.violations) for (const sc of v.sc) afterFail.set(sc, (afterFail.get(sc) ?? 0) + v.nodes);
+  const afterPass = new Set((after?.pages ?? []).flatMap((p) => p.sc_passed));
+  const rows = [...new Set([...found.keys(), ...axeBefore.keys(), ...afterFail.keys()])].filter((sc) => WCAG22[sc]).sort(scSort);
+  const violations = (after?.pages ?? []).reduce((t, p) => t + p.violations.length, 0);
+  const untagged = a11y.filter((f) => f.sc.length === 0).length;
+  const figures: [string | number, string][] = [
+    [rows.length, "WCAG 2.2 criteria failed on the original"],
+    [after ? after.pages.length : "–", "rebuilt pages tested with axe-core"],
+    [after ? violations : "–", "automated violations on the rebuild"],
+    [after ? [...afterPass].filter((sc) => !afterFail.has(sc)).length : "–", "criteria passing automated checks"],
+  ];
+  return (
+    <Sec n={n} title="WCAG 2.2 AA" aside="Mapped to the current W3C accessibility standard">
+      <p className="max-w-3xl text-neutral-700 print:text-[10pt]">Each accessibility finding on the original site is tagged with the WCAG 2.2 success criterion it breaks.{before.length > 0 ? " The original pages were also scanned with axe-core during the crawl." : ""} {after ? `Every rebuilt page was then tested with axe-core ${after.axe_version} against the WCAG 2.0, 2.1 and 2.2 Level A and AA rules.` : "The rebuilt pages have not been tested yet."}</p>
+      <dl className="mt-6 grid grid-cols-2 md:grid-cols-4 border-t border-l border-kapwa-brand-900 print:grid-cols-4 print:break-inside-avoid">
+        {figures.map(([v, l]) => <div key={l} className="border-r border-b border-kapwa-brand-900 p-4 print:p-2.5"><dd className="text-3xl font-display font-normal tracking-tight tabular-nums text-neutral-900 print:text-[18pt]">{v}</dd><dt className="mt-1 text-[13px] text-neutral-600 print:text-[8pt]">{l}</dt></div>)}
+      </dl>
+      {rows.length > 0 && (
+        <table className="mt-6 w-full text-sm print:text-[8.5pt]">
+          <thead><tr className="border-b-2 border-kapwa-brand-900 text-left"><th className="py-2 pr-3 font-semibold">Criterion</th><th className="py-2 px-3 font-semibold">Level</th><th className="py-2 px-3 font-semibold">Original site</th><th className="py-2 pl-3 font-semibold">Rebuild</th></tr></thead>
+          <tbody>
+            {rows.map((sc) => {
+              const bad = afterFail.get(sc), pass = afterPass.has(sc) && !bad;
+              return (
+                <tr key={sc} className="border-b border-neutral-200 align-top print:break-inside-avoid">
+                  <td className="py-2 pr-3"><span className="font-semibold tabular-nums">{sc}</span> {WCAG22[sc].name}</td>
+                  <td className="py-2 px-3 tabular-nums">{WCAG22[sc].level}</td>
+                  <td className="py-2 px-3 text-kapwa-red-700">{[found.get(sc) ? `${found.get(sc)} ${found.get(sc) === 1 ? "finding" : "findings"}` : "", axeBefore.get(sc) ? `${axeBefore.get(sc)} elements (axe)` : ""].filter(Boolean).join(" · ")}</td>
+                  <td className={`py-2 pl-3 font-semibold ${bad ? "text-kapwa-red-700" : pass ? "text-kapwa-green-800" : "text-neutral-600"}`}>{!after ? "Not tested" : bad ? `${bad} elements fail` : pass ? "Passes automated check" : "Needs manual check"}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+      <p className="mt-4 max-w-3xl text-[13px] text-neutral-600 print:text-[8pt]">Automated tools catch roughly a third of WCAG issues. Criteria marked &ldquo;Needs manual check&rdquo; (for example keyboard use, focus order, captions and meaningful link text) need a person with a keyboard and a screen reader before the agency can claim conformance.{untagged ? ` ${untagged} ${untagged === 1 ? "finding is" : "findings are"} good practice without a specific WCAG criterion.` : ""}</p>
+    </Sec>
   );
 }
 
@@ -97,7 +146,7 @@ function Register({ n, title, deck, items, cats, jobId, tone }: { n: number; tit
                 {g.map((it) => (
                   <li key={it.ref} className="grid grid-cols-[3.25rem_1fr] gap-x-3 py-2 text-[14px] leading-snug">
                     <span className="font-semibold tabular-nums text-neutral-500">{it.ref}</span>
-                    <span className="text-neutral-800">{it.text} <span className="whitespace-nowrap text-xs text-neutral-400">· {it.category}</span></span>
+                    <span className="text-neutral-800">{it.text} <span className="whitespace-nowrap text-xs text-neutral-500">· {it.sc.length ? it.sc.map((sc) => `WCAG ${sc}`).join(", ") : it.category}</span></span>
                   </li>
                 ))}
               </ol>
@@ -122,6 +171,9 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
   const site = await loadSite(jobId);
   if (!site) notFound();
   const crawl = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "crawl.json"), "utf8")) as CrawlResult;
+  let wcag: RebuiltAudit | null = null;
+  try { wcag = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/wcag.json"), "utf8")); } catch {}
+  const axeBefore = crawl.pages.flatMap((p) => p.axe?.violations ?? []);
   let segments: Box[] = [];
   try { segments = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/segments.json"), "utf8")); } catch {}
   const home = crawl.pages[0];
@@ -200,6 +252,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
               </ol>
             )}
           </Sec>
+
+          <WcagSection n={n++} a11y={a11y} before={axeBefore} after={wcag} />
 
           <Sec n={n++} title="Source analysis" aside="What SAM 3.1 saw on the old homepage">
             <div className="grid gap-8 xl:grid-cols-[1fr_260px] print:grid-cols-[1fr_38mm] print:gap-5">

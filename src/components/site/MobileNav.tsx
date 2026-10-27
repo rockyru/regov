@@ -131,7 +131,7 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
                             <span className="block font-semibold">{item.label}</span>
                             {item.description && <span className="block text-[13px] text-neutral-500 truncate">{item.description}</span>}
                           </span>
-                          <span className="text-[11px] font-semibold tabular-nums text-neutral-400">{String(i + 1).padStart(2, "0")}</span>
+                          <span className="text-[11px] font-semibold tabular-nums text-neutral-500">{String(i + 1).padStart(2, "0")}</span>
                           <Caret className="size-4 text-neutral-500 transition group-open:rotate-180" />
                         </summary>
                         <ul className="bg-neutral-50 border-t border-neutral-200 py-2">
@@ -146,7 +146,7 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
                           <span className="block font-semibold">{item.label}</span>
                           {item.description && <span className="block text-[13px] text-neutral-500 truncate">{item.description}</span>}
                         </span>
-                        <span className="text-[11px] font-semibold tabular-nums text-neutral-400">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="text-[11px] font-semibold tabular-nums text-neutral-500">{String(i + 1).padStart(2, "0")}</span>
                       </Link>
                     )}
                   </li>
