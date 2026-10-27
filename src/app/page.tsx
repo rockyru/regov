@@ -28,6 +28,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
     <>
       <AppHeader />
       <main className="flex-1">
+        {(active.length > 0 || failed.length > 0) && (
+          <section className="border-b border-kapwa-yellow-400/60 bg-kapwa-yellow-50">
+            <ul className="container-gov py-3 flex flex-wrap gap-x-8 gap-y-2 text-sm">
+              {active.map((j) => <li key={j.id}><Link href={`/jobs/${j.id}`} className="inline-flex items-center gap-2 font-semibold text-kapwa-brand-900 hover:underline"><span className="size-2 bg-kapwa-brand-600 animate-pulse" />{j.status!.phase === "queued" ? "Queued" : "Reimagining"} {new URL(j.status!.url).host}{j.status!.phase !== "queued" && ` · ${j.status!.phase}`} →</Link></li>)}
+              {failed.map((j) => <li key={j.id}><Link href={`/jobs/${j.id}`} className="inline-flex items-center gap-2 font-semibold text-kapwa-red-800 hover:underline"><span className="size-2 bg-kapwa-red-600" />{new URL(j.status!.url).host} stopped →</Link></li>)}
+            </ul>
+          </section>
+        )}
+
         {/* Masthead */}
         <section className="relative flex min-h-[calc(100dvh-3.5rem)] flex-col overflow-hidden">
           {/* Muse Image: a Philippine civic panorama pinned to the bottom of the viewport (public/hero.jpg) */}
@@ -47,14 +56,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
           </Reveal>
         </section>
 
-        {(active.length > 0 || failed.length > 0) && (
-          <section className="border-b border-neutral-200 bg-kapwa-yellow-50">
-            <ul className="container-gov py-3 flex flex-wrap gap-x-8 gap-y-2 text-sm">
-              {active.map((j) => <li key={j.id}><Link href={`/jobs/${j.id}`} className="inline-flex items-center gap-2 font-semibold text-kapwa-brand-900 hover:underline"><span className="size-2 bg-kapwa-brand-600 animate-pulse" />{j.status!.phase === "queued" ? "Queued" : "Reimagining"} {new URL(j.status!.url).host}{j.status!.phase !== "queued" && ` · ${j.status!.phase}`} →</Link></li>)}
-              {failed.map((j) => <li key={j.id}><Link href={`/jobs/${j.id}`} className="inline-flex items-center gap-2 font-semibold text-kapwa-red-800 hover:underline"><span className="size-2 bg-kapwa-red-600" />{new URL(j.status!.url).host} stopped →</Link></li>)}
-            </ul>
-          </section>
-        )}
 
         {/* How it works */}
         <section className="container-gov pt-10">
