@@ -28,6 +28,8 @@ function describe(e: Ev): { text: string; tag?: string } {
     case "wp-rest": return { text: `WordPress REST API found: ${e.pages} pages, ${e.posts} posts`, tag: "crawl" };
     case "done": return { text: `Crawl finished with ${e.count} pages`, tag: "crawl" };
     case "blocked": return { text: `Blocked by bot protection (${e.reason}). Looking for an archived copy…`, tag: "warn" };
+    case "unreachable": return { text: `The site did not answer (${String(e.reason).replace(/^page\.goto: /, "")}). Looking for an archived copy…`, tag: "warn" };
+    case "redirect": return { text: String(e.note ?? `Using ${e.to}`), tag: "crawl" };
     case "archive": return { text: `Using the Wayback Machine snapshot of ${String(e.timestamp).slice(0, 4)}-${String(e.timestamp).slice(4, 6)}-${String(e.timestamp).slice(6, 8)} · ${e.captures} archived pages`, tag: "archive" };
     case "phase": return { text: `${STEPS.find((s) => s.key === e.phase)?.label ?? e.phase}${e.detail ? ` · ${e.detail}` : ""}`, tag: "phase" };
     case "plan": return { text: `Site plan for ${e.agency}: ${(e.nav as string[]).join(" · ")}`, tag: "spark" };

@@ -3,11 +3,13 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { crawl, BlockedError } from "../src/pipeline/crawl";
+import { pickReachable } from "../src/pipeline/reach";
 import { findSnapshot } from "../src/pipeline/archive";
 import { pushJob, pushFile } from "./sync-jobs";
 import { buildSite } from "../src/pipeline/build";
 
-const [url, jobId, max = "20"] = process.argv.slice(2);
+const [inputUrl, jobId, max = "20"] = process.argv.slice(2);
+let url = inputUrl;
 if (!url || !jobId) { console.error("usage: pipeline.ts <url> <jobId> [maxPages]"); process.exit(1); }
 const dir = join("jobs", jobId);
 const status = { url, jobId, startedAt: new Date().toISOString(), phase: "crawl", events: [] as unknown[], done: false, error: "" };
@@ -27,16 +29,29 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
   await mkdir(dir, { recursive: true });
   await flush();
   try {
+    // Bare domain vs www., transient DNS misses: start from the variant that answers.
+    const reach = await pickReachable(url);
+    if (new URL(reach.url).hostname !== new URL(url).hostname) { log({ type: "redirect", from: url, to: reach.url, note: reach.note }); url = reach.url; status.url = url; }
+    const runCrawl = (archiveTimestamp?: string) => crawl(url, { jobId, maxPages: Number(max), onEvent: log, archiveTimestamp });
+    let why = "";
     try {
-      await crawl(url, { jobId, maxPages: Number(max), onEvent: log });
+      const r = await runCrawl();
+      if (r.pages.length === 0) {
+        why = `The site could not be fetched (${r.skipped[0]?.reason ?? "no pages"})`;
+        log({ type: "unreachable", reason: r.skipped[0]?.reason ?? "no pages" });
+      }
     } catch (e) {
       if (!(e instanceof BlockedError)) throw e;
       log({ type: "blocked", url: e.url, reason: e.reason });
+      why = e.message;
+    }
+    if (why) {
+      // Dead, firewalled or bot-protected: rebuild from the Wayback Machine instead.
       status.phase = "archive";
       const snap = await findSnapshot(url);
-      if (!snap) throw new Error(`${e.message}. No Wayback Machine copy found either.`);
+      if (!snap) throw new Error(`${why}. No Wayback Machine copy found either.`);
       log({ type: "archive", timestamp: snap.timestamp, captures: snap.captures });
-      await crawl(url, { jobId, maxPages: Number(max), onEvent: log, archiveTimestamp: snap.timestamp });
+      await runCrawl(snap.timestamp);
     }
     status.phase = "build";
     await buildSite(jobId, (e) => { if (e.type === "phase") status.phase = e.phase; log(e); });
