@@ -33,18 +33,24 @@ Judge only substance: facts, names, positions, numbers, fees, dates, addresses, 
 Content marked "[transcribed from an image on the original]" comes from pictures: check it against the screenshot if there is one; without a screenshot, do not judge it. Links to the original's linked files (listed) are supported.`;
 
 // Image blocks carry a marker so the checker knows they were transcribed from a picture, not from the page text.
+const MAX_PAGES = Number(process.env.VERIFY_MAX_PAGES) || 10;
+
 const rebuiltText = (p: SitePage) => [`# ${p.title}`, p.summary, p.hero.heading !== p.title ? p.hero.heading : "", p.hero.subheading, pageText({ ...p, blocks: p.blocks.map((b) => (b.type === "image" ? { ...b, heading: `[transcribed from an image on the original] ${b.heading}` } : b)) })].filter(Boolean).join("\n\n");
 
 export async function verifySite(jobDir: string, site: SiteModel, onPage: (slug: string, c: Check) => void = () => {}): Promise<VerifyFile> {
   const crawl = JSON.parse(await readFile(join(jobDir, "crawl.json"), "utf8")) as CrawlResult;
   const byUrl = new Map(crawl.pages.map((p) => [p.url, p]));
-  const pages = site.pages.filter((p) => !p.document && byUrl.has(p.source_url)).slice(0, 40);
+  // The homepage, then the pages with the most content (where a lost or changed fact matters most), up to VERIFY_MAX_PAGES.
+  const size = (p: SitePage) => pageText(p).length;
+  const pages = site.pages.filter((p) => !p.document && byUrl.has(p.source_url))
+    .sort((a, b) => Number(b.slug === "home") - Number(a.slug === "home") || size(b) - size(a))
+    .slice(0, MAX_PAGES);
   const results = await pmap(pages, 3, async (p) => {
     const orig = byUrl.get(p.source_url)!;
     const shotFile = join(jobDir, orig.screenshotFile);
     const shot = existsSync(shotFile) ? await toDataUrl(shotFile, 3200, 60) : null;
     const files = orig.attachments.map((a) => decodeURIComponent(a.split("/").pop() ?? a)).slice(0, 40).join(", ");
-    const prompt = `ORIGINAL page ${orig.url}\nTitle: ${orig.title}\n${shot ? "Screenshot attached." : "No screenshot available."}\nLinked files: ${files || "none"}\nVisible text:\n${orig.text.slice(0, 12000)}\n\n---\nREBUILT page:\n${rebuiltText(p).slice(0, 12000)}`;
+    const prompt = `ORIGINAL page ${orig.url}\nTitle: ${orig.title}\n${shot ? "Screenshot attached." : "No screenshot available."}\nLinked files: ${files || "none"}\nVisible text:\n${orig.text.slice(0, 8000)}\n\n---\nREBUILT page:\n${rebuiltText(p).slice(0, 8000)}`;
     try {
       const c = await cached(jobDir, ["verify-v2", MUSE, p.slug, prompt.length, !!shot], async () => {
         const r = await meta.responses.create({
