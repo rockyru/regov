@@ -19,7 +19,7 @@ export const LIMITS = {
   windowMs: num("RUN_RATE_WINDOW_MIN", 10) * 60_000,
   dedupeMs: num("RUN_DEDUPE_HOURS", 24) * 3_600_000,
   stallMs: num("RUN_STALL_MIN", 20) * 60_000,
-  dailyMax: num("RUN_DAILY_MAX", 20),
+  dailyMax: num("RUN_DAILY_MAX", 15),
 };
 
 const ROOT = process.cwd();
