@@ -7,4 +7,4 @@ RUN npm ci --include=dev --no-audit --no-fund
 COPY . .
 RUN npm run build
 EXPOSE 3000
-CMD ["sh", "-c", "node node_modules/tsx/dist/cli.mjs scripts/sync-jobs.ts pull core; exec npx next start -p 3000 -H 0.0.0.0"]
+CMD ["sh", "-c", "timeout 120 node node_modules/tsx/dist/cli.mjs scripts/sync-jobs.ts pull core; exec npx next start -p 3000 -H 0.0.0.0"]

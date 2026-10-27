@@ -12,7 +12,8 @@ const SKIP = /^(html|models)\//; // regenerable, keeps uploads small
 
 function client() {
   if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY) return null;
-  return new S3Client({ region: "auto", endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`, credentials: { accessKeyId: R2_ACCESS_KEY_ID, secretAccessKey: R2_SECRET_ACCESS_KEY } });
+  // Timeouts matter at boot: one hung request would otherwise hold the web server back forever.
+  return new S3Client({ region: "auto", endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`, credentials: { accessKeyId: R2_ACCESS_KEY_ID, secretAccessKey: R2_SECRET_ACCESS_KEY }, requestHandler: { connectionTimeout: 5000, requestTimeout: 20000 } });
 }
 async function walk(dir: string): Promise<string[]> {
   const out: string[] = [];
