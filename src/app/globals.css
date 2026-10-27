@@ -51,3 +51,13 @@ body { @apply bg-white text-neutral-900; }
   main { padding-top: 0 !important; }
   a { text-decoration: none; color: inherit; }
 }
+
+/* Scroll reveal (see components/Reveal.tsx) */
+[data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity .7s ease-out, transform .8s cubic-bezier(.2,.7,.2,1); }
+[data-reveal].is-visible { opacity: 1; transform: none; }
+[data-reveal][data-stagger] > * { opacity: 0; transform: translateY(18px); transition: opacity .6s ease-out, transform .7s cubic-bezier(.2,.7,.2,1); transition-delay: calc(var(--i, 0) * 90ms); }
+[data-reveal][data-stagger] { transform: none; opacity: 1; }
+[data-reveal][data-stagger].is-visible > * { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal], [data-reveal][data-stagger] > * { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
