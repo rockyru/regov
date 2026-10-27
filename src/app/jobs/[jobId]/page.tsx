@@ -109,7 +109,7 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
                 <div>
                   <p className={`${eyebrow} text-neutral-500`}>Queue</p>
                   <p className="mt-2 text-3xl sm:text-4xl font-black tracking-tight text-neutral-900">{queued.position === 1 ? "Next up" : `${queued.position - 1} ahead of you`}</p>
-                  <p className="mt-2 max-w-xl text-neutral-700">The agent rebuilds a few sites at a time so each run gets the whole machine. Keep this page open; it starts on its own and usually takes four to eight minutes once it begins.</p>
+                  <p className="mt-2 max-w-xl text-neutral-700">The agent rebuilds a few sites at a time so each run gets the whole machine. You can leave and come back: it starts on its own, this page keeps refreshing, and the home page lists it until it is done. A run usually takes four to eight minutes once it begins.</p>
                 </div>
                 <dl className="grid grid-cols-3 gap-6">
                   {[[queued.position, "your place"], [queued.of, "in line"], [queued.running, "running now"]].map(([v, l]) => <div key={String(l)}><dd className="text-2xl font-bold tabular-nums">{v}</dd><dt className="text-[12px] text-neutral-500">{l}</dt></div>)}
