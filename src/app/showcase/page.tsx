@@ -60,6 +60,7 @@ export default async function Showcase() {
             <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-semibold">
               <Link href={`/preview/${j.id}`} className="border-b-2 border-kapwa-brand-900 hover:text-kapwa-brand-900">Open the site →</Link>
               <Link href={`/report/${j.id}`} className="text-neutral-600 hover:text-kapwa-brand-900">Report</Link>
+              <a href={`/api/jobs/${j.id}/export`} download className="text-neutral-600 hover:text-kapwa-brand-900">Download</a>
               <a href={crawl.origin} target="_blank" rel="noreferrer" className="text-xs font-medium text-neutral-400 hover:text-neutral-700">Original ↗</a>
             </div>
           </div>

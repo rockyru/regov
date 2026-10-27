@@ -47,6 +47,13 @@ URL ─▶ crawl.ts ─▶ segment.ts ─▶ understand.ts ─▶ plan.ts ─▶
 | Render | — | Next.js renders `site.json` live on Kapwa tokens/components. No per-job build. |
 | Report | — | Coverage, SAM overlay, accessibility findings, "needs a human" list, page-by-page mapping. |
 
+After the rebuild:
+
+- **Before and after.** Both homepages are loaded in a fresh browser, and the report and showcase compare speed, page weight, requests and axe-core WCAG errors (`src/pipeline/scores.ts`, backfill with `scripts/score.ts`).
+- **Filipino edition.** The language switch in the top strip asks Muse Spark to translate each page the first time someone reads it in Filipino. The translation is cached and streams in over the English page (`src/pipeline/translate.ts`).
+- **Ask this site.** The search box answers questions with Muse Spark, using only the site's own pages, and cites them. It is rate-limited (`src/pipeline/ask.ts`).
+- **Handoff export.** "Download the site (.zip)" gives static HTML that runs without JavaScript, plus assets, `site.json`, an old-to-new redirect map and a README for the agency (`src/lib/exportSite.ts`).
+
 Sites behind bot protection (Cloudflare challenges) fall back to the Wayback Machine: the crawler picks the archive month with the most real pages and rebuilds from that. Dead sites get a second life literally.
 
 Every model response is cached on disk under `jobs/<id>/models`, so reruns are free and demos are deterministic.
