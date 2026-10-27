@@ -80,7 +80,7 @@ export function Header({ site }: { site: SiteModel }) {
             ) : (
               <span className="size-16 bg-kapwa-brand-900 text-white grid place-items-center font-bold shrink-0 text-xl">{site.agency.short_name.slice(0, 3)}</span>
             )}
-            <span className="leading-tight min-w-0 md:border-l md:border-neutral-900/20 md:pl-5">
+            <span className="leading-tight min-w-0">
               <span className={`block ${eyebrow} text-neutral-600`}>{site.agency.parent}</span>
               <span className="block font-bold text-neutral-900 text-xl sm:text-[28px] leading-[1.1] tracking-tight line-clamp-2 mt-1">{site.agency.name}</span>
               {site.agency.tagline && <span className="hidden sm:block text-[15px] text-neutral-600 mt-1.5 italic">{site.agency.tagline}</span>}
