@@ -225,7 +225,7 @@ export function Footer({ site }: { site: SiteModel }) {
 
           {/* Pills */}
           <div className="flex flex-col items-start gap-3">
-            <div className="inline-flex items-center gap-2 border-l-4 border-kapwa-green-500 bg-white/5 px-4 py-2 text-sm text-neutral-100">Pages migrated by the agent = <span className="font-mono font-bold text-kapwa-green-400">{site.pages.length}</span></div>
+            <div className="inline-flex items-center gap-2 border-l-4 border-kapwa-green-500 bg-white/5 px-4 py-2 text-sm text-neutral-100">Pages migrated by the agent = <span className="font-bold tabular-nums text-kapwa-green-400">{site.pages.length}</span></div>
             <a href={`mailto:${footer.email || "helpdesk@" + host}`} className={pill}>{Icon.flag} Report an issue</a>
             <a href="https://github.com/rockyru/regov" target="_blank" rel="noreferrer" className={pill}>{Icon.github} Contribute code on RE:GOV</a>
             <div className={`mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 ${eyebrow} text-neutral-500`}>

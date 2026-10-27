@@ -17,7 +17,7 @@ function A({ href, jobId, origin, className, children, label }: { href: string; 
 }
 
 export function Block({ block, jobId, origin }: { block: Block; jobId: string; origin: string }) {
-  const H = ({ children }: { children: React.ReactNode }) => children ? <h2 className="text-2xl sm:text-[28px] font-bold tracking-tight leading-tight text-neutral-900 mb-4 pt-4 border-t-2 border-neutral-900">{children}</h2> : null;
+  const H = ({ children }: { children: React.ReactNode }) => children ? <h2 className="text-2xl sm:text-[28px] font-bold tracking-tight leading-tight text-neutral-900 mb-4 pt-4 border-t-2 border-neutral-900 [[data-blocks]>:first-child_&]:border-t-0 [[data-blocks]>:first-child_&]:pt-0">{children}</h2> : null;
   const md = <Markdown text={block.body_markdown} jobId={jobId} origin={origin} />;
   const items: Item[] = (block.items ?? []).filter((it) => !/^(Protected|Private):/i.test(it.title));
 
@@ -70,7 +70,7 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
             <div className="mt-4 grid gap-x-10 gap-y-8 sm:grid-cols-2 xl:grid-cols-3">
               {ordered.map(([g, its]) => (
                 <div key={g || "_"} className={its.length > 10 ? "sm:col-span-2 xl:col-span-3" : ""}>
-                  <h3 className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-500 border-b border-neutral-900 pb-2">{g || (ordered.length > 1 ? "More" : "Directory")} <span className="font-mono tracking-normal text-neutral-400">{its.length}</span></h3>
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-500 border-b border-neutral-900 pb-2">{g || (ordered.length > 1 ? "More" : "Directory")} <span className="font-semibold tabular-nums text-neutral-400">{its.length}</span></h3>
                   <ul className={its.length > 10 ? "sm:columns-2 gap-x-10" : ""}>
                     {its.map((it, i) => (
                       <li key={i} className="break-inside-avoid border-b border-neutral-200">
@@ -127,7 +127,7 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
           <ol className="mt-4 divide-y divide-neutral-200 border-y border-neutral-200">
             {items.map((it, i) => (
               <li key={i} className="flex gap-4 py-4">
-                <span className="size-9 shrink-0 bg-kapwa-brand-950 text-white grid place-items-center font-mono text-sm font-bold">{String(i + 1).padStart(2, "0")}</span>
+                <span className="size-9 shrink-0 bg-kapwa-brand-950 text-white grid place-items-center text-sm font-bold tabular-nums">{String(i + 1).padStart(2, "0")}</span>
                 <div><div className="font-semibold text-neutral-900">{it.title}</div>{it.description && <p className="text-neutral-700 text-[15px]">{it.description}</p>}{it.meta && <div className="text-sm text-neutral-500 mt-0.5">{it.meta}</div>}</div>
               </li>
             ))}
@@ -154,7 +154,7 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
             {items.map((it, i) => (
               <li key={i} className="pl-6 relative">
                 <span className="absolute -left-[5px] top-2 size-[9px] bg-neutral-900" />
-                <div className="font-mono text-xs font-bold text-kapwa-brand-800">{it.meta || it.title}</div>
+                <div className="text-xs font-bold tabular-nums text-kapwa-brand-800">{it.meta || it.title}</div>
                 <div className="font-medium text-neutral-900">{it.meta ? it.title : ""}</div>
                 {it.description && <p className="text-[15px] text-neutral-700">{it.description}</p>}
               </li>

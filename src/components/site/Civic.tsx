@@ -15,8 +15,8 @@ export async function CivicStrip({ site }: { site: SiteModel }) {
   const cell = "flex flex-col justify-between gap-3 p-4 min-h-24 bg-kapwa-red-700 hover:bg-kapwa-red-800";
   return (
     <section aria-label="Emergency hotlines and local conditions" className={`grid ${weather ? "lg:grid-cols-[1fr_minmax(300px,24%)]" : ""}`}>
-      <div className="bg-kapwa-red-700 text-white">
-        <div className={`${weather ? "pl-5 sm:pl-8 lg:pl-12 pr-0" : "container-gov"} grid grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(13rem,1fr))] border-l border-white/20 *:border-r *:border-b *:border-white/20`}>
+      <div className="bg-kapwa-red-700 text-white h-full">
+        <div className={`${weather ? "pl-5 sm:pl-8 lg:pl-12 pr-0" : "container-gov"} h-full grid auto-rows-fr grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(13rem,1fr))] border-l border-white/20 *:border-r *:border-b *:border-white/20`}>
           <a href="tel:911" className="flex flex-col justify-between gap-3 p-4 min-h-24 bg-kapwa-red-800 hover:bg-kapwa-red-900 col-span-2 md:col-span-1">
             <span className={`${eyebrow} text-white/80`}>{lgu ? "Emergency" : "In an emergency"}</span>
             <span className="text-4xl font-extrabold tracking-tight leading-none">911 <span className="text-base font-semibold text-white/70">24/7</span></span>
@@ -45,7 +45,7 @@ function WeatherPanel({ w }: { w: NonNullable<Awaited<ReturnType<typeof getWeath
     <aside className="bg-kapwa-brand-950 text-white p-5 lg:pr-12 border-t lg:border-t-0 lg:border-l border-white/15">
       <div className="flex items-baseline justify-between gap-3">
         <h2 className={`${eyebrow} text-white/70`}>Weather · {w.place}</h2>
-        <span className="font-mono text-[11px] text-white/40">{w.current.time.slice(11, 16)}</span>
+        <span className="text-[11px] font-medium tabular-nums text-white/40">{w.current.time.slice(11, 16)}</span>
       </div>
       <div className="mt-3 flex items-end gap-4">
         <span className="text-5xl font-extrabold tracking-tight leading-none tabular-nums">{Math.round(w.current.temp)}°</span>
@@ -85,7 +85,7 @@ export function TransparencySection({ site, n }: { site: SiteModel; n: number })
           <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>Published by {site.agency.short_name || "this office"}</h3>
           {pages.length > 0 ? (
             <ol className="divide-y divide-neutral-200">
-              {pages.map((p, i) => <li key={p.slug}><Link href={navHref(site.jobId, p.slug)} className="flex gap-3 py-3 font-medium text-neutral-900 hover:text-kapwa-brand-900"><span className="font-mono text-xs text-neutral-400 pt-1">{nn(i)}</span>{p.label}</Link></li>)}
+              {pages.map((p, i) => <li key={p.slug}><Link href={navHref(site.jobId, p.slug)} className="flex gap-3 py-3 font-medium text-neutral-900 hover:text-kapwa-brand-900"><span className="text-xs font-semibold tabular-nums text-neutral-400 pt-1">{nn(i)}</span>{p.label}</Link></li>)}
             </ol>
           ) : (
             <p className="py-3 text-sm text-neutral-500">The agent found no transparency pages on the original site. Under the Transparency Seal every agency should publish its mandate, officials, budget, procurement plan and reports.</p>

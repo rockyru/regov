@@ -81,12 +81,12 @@ export async function HomePage({ site, page }: { site: SiteModel; page: SitePage
             )}
           </div>
           <div className="py-10 lg:py-20 lg:pl-16 border-t border-white/15 lg:border-t-0">
-            <h2 className={`${eyebrow} text-white/70 flex items-center justify-between`}>{servicesLabel}<span className="font-mono tracking-normal text-white/40">{site.popular_services.slice(0, 6).length} entries</span></h2>
+            <h2 className={`${eyebrow} text-white/70 flex items-center justify-between`}>{servicesLabel}<span className="font-semibold tabular-nums text-white/40">{site.popular_services.slice(0, 6).length} entries</span></h2>
             <ol className="mt-4 border-t border-white/20">
               {site.popular_services.slice(0, 6).map((s, i) => (
                 <li key={s.slug + s.title} className="border-b border-white/15">
                   <Link href={navHref(jobId, s.slug)} className="group grid grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 py-3.5 hover:bg-white/5 -mx-3 px-3">
-                    <span className="font-mono text-sm text-kapwa-yellow-400">{nn(i)}</span>
+                    <span className="text-sm font-semibold tabular-nums text-kapwa-yellow-400">{nn(i)}</span>
                     <span className="min-w-0">
                       <span className="block font-semibold leading-snug text-[17px]">{s.title}</span>
                       {s.description && <span className="mt-0.5 block text-sm text-white/65 line-clamp-1">{s.description}</span>}
@@ -108,7 +108,7 @@ export async function HomePage({ site, page }: { site: SiteModel; page: SitePage
             <SectionHead n={n++} title={isLgu ? "Your local officials" : "Leadership"} deck={isLgu ? `The people elected and appointed to serve ${agency.short_name || agency.name}.` : `The people who lead ${agency.short_name || agency.name}.`} />
             <ul className="mt-8 grid border-t border-l border-neutral-200 *:border-r *:border-b *:border-neutral-200 sm:grid-cols-2 lg:grid-cols-4">
               {officials.slice(0, 8).map((o, i) => {
-                const inner = (<><span className="flex items-baseline justify-between"><span className="size-12 bg-kapwa-brand-950 text-white grid place-items-center font-bold text-base">{initialsOf(o.name)}</span><span className="font-mono text-xs text-neutral-400">{nn(i)}</span></span><span className="block mt-5 font-semibold text-neutral-900 leading-tight text-[17px]">{o.name}</span><span className={`block mt-1.5 ${eyebrow} text-kapwa-brand-800`}>{o.detail}</span></>);
+                const inner = (<><span className="flex items-baseline justify-between"><span className="size-12 bg-kapwa-brand-950 text-white grid place-items-center font-bold text-base">{initialsOf(o.name)}</span><span className="text-xs font-semibold tabular-nums text-neutral-400">{nn(i)}</span></span><span className="block mt-5 font-semibold text-neutral-900 leading-tight text-[17px]">{o.name}</span><span className={`block mt-1.5 ${eyebrow} text-kapwa-brand-800`}>{o.detail}</span></>);
                 const cls = "block bg-white p-5 h-full hover:bg-kapwa-brand-50";
                 return <li key={o.name + o.detail}>{o.slug ? <Link href={navHref(jobId, o.slug)} className={cls}>{inner}</Link> : <div className={cls}>{inner}</div>}</li>;
               })}
@@ -121,7 +121,7 @@ export async function HomePage({ site, page }: { site: SiteModel; page: SitePage
             <SectionHead n={n++} title="Programs offered" deck={`${programs.length} programs across ${units.length || "our"} colleges and units.`} />
             <ul className="mt-8 grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
               {programs.slice(0, 18).map((p, i) => {
-                const inner = (<><span className="font-mono text-xs text-neutral-400 w-7 shrink-0 pt-1">{nn(i)}</span><span><span className="block font-medium text-neutral-900">{p.name}</span>{p.detail && <span className="block text-sm text-neutral-500">{p.detail}</span>}</span></>);
+                const inner = (<><span className="text-xs font-semibold tabular-nums text-neutral-400 w-7 shrink-0 pt-1">{nn(i)}</span><span><span className="block font-medium text-neutral-900">{p.name}</span>{p.detail && <span className="block text-sm text-neutral-500">{p.detail}</span>}</span></>);
                 const cls = "flex gap-2 py-3 border-b border-neutral-200 hover:text-kapwa-brand-900";
                 return <li key={p.name + p.detail}>{p.slug ? <Link href={navHref(jobId, p.slug)} className={cls}>{inner}</Link> : <div className={cls}>{inner}</div>}</li>;
               })}
@@ -142,7 +142,7 @@ export async function HomePage({ site, page }: { site: SiteModel; page: SitePage
             <div className="mt-8 grid border-t border-l border-neutral-200 *:border-r *:border-b *:border-neutral-200 sm:grid-cols-2 lg:grid-cols-3">
               {sec.slugs.map((slug, i) => (
                 <Link key={slug} href={navHref(jobId, slug)} className="group flex flex-col bg-white p-6 min-h-56 hover:bg-kapwa-brand-50">
-                  <span className="font-mono text-xs text-neutral-400">{nn(i)}</span>
+                  <span className="text-xs font-semibold tabular-nums text-neutral-400">{nn(i)}</span>
                   <h3 className="mt-6 text-xl font-bold leading-tight tracking-tight text-neutral-900 group-hover:text-kapwa-brand-900">{slugTitle(site, slug)}</h3>
                   <p className="mt-3 text-[15px] leading-relaxed text-neutral-600 line-clamp-3">{slugSummary(site, slug)}</p>
                   <span className="mt-auto pt-6 inline-flex items-center gap-1 text-sm font-semibold text-kapwa-brand-800 border-b border-kapwa-brand-800 w-max">Read <span aria-hidden className="transition group-hover:translate-x-0.5">→</span></span>
@@ -166,7 +166,7 @@ export async function HomePage({ site, page }: { site: SiteModel; page: SitePage
               {site.news.slice(0, 5).map((nw) => (
                 <li key={nw.href} className="border-b border-neutral-200">
                   <a href={nw.href} className="group grid gap-2 py-5 md:grid-cols-[9rem_1fr_auto] md:gap-8 items-baseline hover:bg-kapwa-brand-50 -mx-3 px-3">
-                    <time className="font-mono text-xs text-neutral-500">{nw.date.slice(0, 10)}</time>
+                    <time className="text-xs font-medium tabular-nums text-neutral-500">{nw.date.slice(0, 10)}</time>
                     <span className="min-w-0">{newsTitle(nw.title).kicker && <span className={`${eyebrow} text-kapwa-red-700 block mb-1`}>{newsTitle(nw.title).kicker}</span>}<h3 className="text-lg font-semibold leading-snug text-neutral-900 group-hover:text-kapwa-brand-900">{newsTitle(nw.title).title}</h3><p className="mt-1.5 text-[15px] leading-relaxed text-neutral-600 line-clamp-2">{nw.excerpt.normalize("NFKC")}</p></span>
                     <span aria-hidden className="hidden md:inline text-neutral-400 group-hover:text-kapwa-brand-900">→</span>
                   </a>
@@ -179,7 +179,7 @@ export async function HomePage({ site, page }: { site: SiteModel; page: SitePage
         <TransparencySection site={site} n={n++} />
 
         <div className="py-14 grid gap-12 lg:grid-cols-[1fr_360px] border-t-2 border-neutral-900">
-          <div className="space-y-14">{mainBlocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} />)}</div>
+          <div data-blocks className="space-y-14">{mainBlocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} />)}</div>
           <aside className="space-y-6 lg:sticky lg:top-24 self-start">
             {contact && <Block block={contact} jobId={jobId} origin={site.origin} />}
             <div className="border-t-2 border-neutral-900 pt-4">
@@ -200,6 +200,11 @@ export function ContentPage({ site, page }: { site: SiteModel; page: SitePage })
   const headings = page.blocks.map((b) => b.heading).filter(Boolean);
   const hub = (site.hubs ?? []).find((h) => h.slug === page.slug);
   const contact = site.pages.find((p) => p.slug === "home")?.blocks.find((b) => b.type === "contact");
+  // Pages that were empty on the original site ("under construction", a lone sentence) get an honest notice instead of the stub.
+  const bodyText = page.blocks.map((b) => [b.heading, b.body_markdown, ...b.items.flatMap((it) => [it.title, it.description, it.meta])].join(" ")).join(" ").replace(/\s+/g, " ").trim();
+  const stub = /under\s*constr?[au]ction|coming soon|page (is )?(not available|under development)/i.test(bodyText) || bodyText.length < 60;
+  const stubText = bodyText.length <= 80 ? bodyText : bodyText.slice(0, 77) + "…";
+  const isArchive = /web\.archive\.org/.test(page.source_url ?? "");
   return (
     <>
       <div className="border-b-2 border-neutral-900 bg-white">
@@ -222,20 +227,30 @@ export function ContentPage({ site, page }: { site: SiteModel; page: SitePage })
               {siblings.map((s) => <li key={s.slug}><Link href={navHref(jobId, s.slug)} aria-current={s.slug === page.slug ? "page" : undefined} className={`block py-2 text-sm ${s.slug === page.slug ? "text-kapwa-brand-900 font-semibold pl-3 border-l-2 border-kapwa-brand-900" : "text-neutral-600 hover:text-neutral-900 hover:pl-1 transition-[padding]"}`}>{s.label}</Link></li>)}
             </ul></>)}
         </aside>
-        <article className="min-w-0 space-y-12">
+        <article data-blocks className="min-w-0 space-y-12">
           {hub && hub.slugs.length > 0 && (
             <section>
               <h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2 mb-4`}>{hub.heading || "In this section"}</h2>
               <ul className="grid border-t border-l border-neutral-200 *:border-r *:border-b *:border-neutral-200 sm:grid-cols-2 xl:grid-cols-3">
-                {hub.slugs.map((s, i) => <li key={s}><Link href={navHref(jobId, s)} className="flex gap-3 bg-white px-4 py-4 h-full font-medium text-neutral-900 hover:bg-kapwa-brand-50 hover:text-kapwa-brand-900"><span className="font-mono text-xs text-neutral-400 pt-1">{nn(i)}</span>{slugTitle(site, s)}</Link></li>)}
+                {hub.slugs.map((s, i) => <li key={s}><Link href={navHref(jobId, s)} className="flex gap-3 bg-white px-4 py-4 h-full font-medium text-neutral-900 hover:bg-kapwa-brand-50 hover:text-kapwa-brand-900"><span className="text-xs font-semibold tabular-nums text-neutral-400 pt-1">{nn(i)}</span>{slugTitle(site, s)}</Link></li>)}
               </ul>
             </section>
           )}
-          {page.blocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} />)}
-          {page.blocks.length === 0 && <Markdown text={page.summary} jobId={jobId} origin={site.origin} />}
+          {stub ? (
+            <section className="border-l-4 border-kapwa-yellow-400 bg-kapwa-yellow-50 p-6">
+              <h2 className={`${eyebrow} text-neutral-600`}>Not yet migrated</h2>
+              <p className="mt-2 text-[17px] leading-relaxed text-neutral-800">The original page had no real content{isArchive ? " in the archived copy the agent rebuilt from" : ""}{stubText && <> (it read &ldquo;{stubText}&rdquo;)</>}. The page is kept so the site structure stays complete; an editor can write it in a few minutes.</p>
+              {page.source_url && <a className="mt-4 inline-block border-b-2 border-neutral-900 font-semibold text-neutral-900 hover:text-kapwa-brand-900" href={page.source_url} target="_blank" rel="noreferrer">Check the original page ↗</a>}
+            </section>
+          ) : (
+            <>
+              {page.blocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} />)}
+              {page.blocks.length === 0 && <Markdown text={page.summary} jobId={jobId} origin={site.origin} />}
+            </>
+          )}
         </article>
         <aside className="space-y-8 self-start lg:sticky lg:top-24">
-          {headings.length > 1 && (<div><h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>On this page</h2><ol className="mt-2 divide-y divide-neutral-100 text-sm text-neutral-600">{headings.map((h, i) => <li key={h} className="flex gap-3 py-2"><span className="font-mono text-xs text-neutral-400 pt-0.5">{nn(i)}</span>{h}</li>)}</ol></div>)}
+          {headings.length > 1 && (<div><h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>On this page</h2><ol className="mt-2 divide-y divide-neutral-100 text-sm text-neutral-600">{headings.map((h, i) => <li key={h} className="flex gap-3 py-2"><span className="text-xs font-semibold tabular-nums text-neutral-400 pt-0.5">{nn(i)}</span>{h}</li>)}</ol></div>)}
           {contact && <Block block={contact} jobId={jobId} origin={site.origin} />}
         </aside>
       </div>
