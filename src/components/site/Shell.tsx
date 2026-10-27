@@ -75,7 +75,7 @@ export function Header({ site }: { site: SiteModel }) {
   const items = site.nav.filter((n) => n.slug !== "home" && (n.slug || n.children.length > 0));
   // A refined site keeps its own look, so the header stays clean instead of carrying our illustrated band.
   const band = site.assets.band && site.design?.mode !== "refine" ? `/api/jobs/${jobId}/${site.assets.band}?v=${encodeURIComponent(site.generated_at)}` : null;
-  const tab = "flex h-14 items-center gap-1.5 px-3 xl:px-5 font-semibold border-b-4 border-transparent group-hover:bg-white/10 group-hover:border-kapwa-yellow-400 whitespace-nowrap";
+  const tab = "flex h-14 items-center gap-1.5 px-3 xl:px-4 2xl:px-5 font-semibold border-b-4 border-transparent group-hover:bg-white/10 group-hover:border-kapwa-yellow-400 whitespace-nowrap";
   return (
     <header>
       {/* Row 1: identity, with the Muse Image band fading in behind it */}
@@ -108,8 +108,8 @@ export function Header({ site }: { site: SiteModel }) {
       {/* Row 2: full-bleed primary navigation with mega menus */}
       <nav aria-label="Primary" className="sticky top-0 z-40 bg-kapwa-brand-900 text-white relative border-b border-black/20">
         <div className="container-gov flex items-stretch">
-          <Link href={navHref(jobId, "home")} className="hidden lg:flex shrink-0 items-center px-3 xl:px-5 h-14 font-semibold whitespace-nowrap border-b-4 border-transparent hover:bg-white/10 hover:border-kapwa-yellow-400">{t(site.lang, "Home")}</Link>
-          <div className="hidden lg:flex flex-wrap items-stretch flex-1 min-w-0">
+          <Link href={navHref(jobId, "home")} className="hidden lg:flex shrink-0 items-center px-3 xl:px-4 2xl:px-5 h-14 font-semibold whitespace-nowrap border-b-4 border-transparent hover:bg-white/10 hover:border-kapwa-yellow-400">{t(site.lang, "Home")}</Link>
+          <div className="hidden lg:flex flex-wrap items-stretch flex-initial min-w-0">
             {items.map((item) => {
               const cols = columns(item.children);
               return (
@@ -147,10 +147,11 @@ export function Header({ site }: { site: SiteModel }) {
               );
             })}
           </div>
-          <form role="search" action={navHref(jobId, "search")} className="flex flex-1 lg:flex-none lg:shrink-0 items-center lg:ml-auto py-2">
+          {/* The search box gives up width before the menu wraps: a button alone below xl, then 208–400px. */}
+          <form role="search" action={navHref(jobId, "search")} className="flex flex-1 lg:flex-none xl:flex-[1_1_13rem] xl:min-w-52 xl:max-w-[25rem] items-center lg:ml-auto py-2">
             <label className="sr-only" htmlFor="site-search">{t(site.lang, "Search this site")}</label>
-            <input id="site-search" name="q" maxLength={200} placeholder={t(site.lang, "Search or ask a question…")} className="h-10 w-full lg:w-40 xl:w-80 border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
-            <button type="submit" className="h-10 bg-kapwa-yellow-400 px-4 text-sm font-bold text-kapwa-brand-950 hover:bg-kapwa-yellow-300">{t(site.lang, "Search")}</button>
+            <input id="site-search" name="q" maxLength={200} placeholder={t(site.lang, "Search or ask a question…")} className="h-10 w-full min-w-0 lg:hidden xl:block border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
+            <button type="submit" className="h-10 shrink-0 bg-kapwa-yellow-400 px-4 lg:px-3 xl:px-4 text-sm font-bold text-kapwa-brand-950 hover:bg-kapwa-yellow-300"><span className="lg:sr-only xl:not-sr-only">{t(site.lang, "Search")}</span><svg aria-hidden viewBox="0 0 24 24" className="hidden lg:block xl:hidden size-5" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg></button>
           </form>
         </div>
       </nav>
