@@ -34,6 +34,8 @@ html { scroll-behavior: smooth; }
 
 /* Reimagined sites are editorial: square corners everywhere, Kapwa components included */
 .editorial, .editorial *, .editorial *::before, .editorial *::after { border-radius: 0 !important; }
+/* Refined sites keep the softer shapes of their original design. */
+.editorial .refined, .editorial .refined * { border-radius: revert-layer !important; }
 body { @apply bg-white text-neutral-900; }
 
 /* Markdown content */

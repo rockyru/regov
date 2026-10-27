@@ -3,6 +3,7 @@ import { loadSite, findPage } from "@/lib/jobs";
 import { GovStrip, Header, Footer, PreviewBar } from "@/components/site/Shell";
 import { HomePage, ContentPage } from "@/components/site/Pages";
 import { HotlinesPage } from "@/components/site/Civic";
+import { brandScale } from "@/components/site/theme";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,7 @@ export default async function Preview({ params }: { params: Promise<{ jobId: str
   const page = path === "hotlines" ? undefined : findPage(site, path);
   if (!page && path !== "hotlines") notFound();
   return (
-    <div className="editorial site-shell flex flex-1 flex-col">
+    <div className="editorial site-shell flex flex-1 flex-col" style={site.design?.mode === "refine" ? brandScale(site.design.primary) : undefined}>
       <PreviewBar site={site} currentSource={page?.source_url} />
       <GovStrip jobId={jobId} />
       <Header site={site} />

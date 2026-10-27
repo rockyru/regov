@@ -9,6 +9,8 @@ interface Env {
   R2_BUCKET: string;
   /** "open" or "paused". Edit in the dashboard (Settings > Variables) to stop new runs without touching the container. */
   SUBMISSIONS?: string;
+  /** Operator token for /admin and /api/rerun. Set with `wrangler secret put ADMIN_TOKEN`; unset disables both. */
+  ADMIN_TOKEN?: string;
 }
 
 /** One always-warm instance runs the Next.js app and the pipeline. Jobs sync to R2. */
@@ -24,6 +26,7 @@ export class RegovContainer extends Container<Env> {
     R2_ACCESS_KEY_ID: this.env.R2_ACCESS_KEY_ID,
     R2_SECRET_ACCESS_KEY: this.env.R2_SECRET_ACCESS_KEY,
     R2_BUCKET: this.env.R2_BUCKET ?? "regov-jobs",
+    ADMIN_TOKEN: this.env.ADMIN_TOKEN ?? "",
   };
 }
 

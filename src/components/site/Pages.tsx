@@ -40,6 +40,55 @@ function Tags({ items, jobId }: { items: { name: string; detail?: string; slug?:
   );
 }
 
+/** Masthead for sites that were already modern: light, their colour and hero picture, services as cards. */
+function RefinedMasthead({ site, hero, parentLine, servicesLabel }: { site: SiteModel; hero: SitePage["hero"]; parentLine: string; servicesLabel: string }) {
+  const { jobId, agency } = site;
+  const v = encodeURIComponent(site.generated_at);
+  const art = site.design?.hero ? `/api/jobs/${jobId}/${site.design.hero}?v=${v}` : site.assets.cover ? `/api/jobs/${jobId}/${site.assets.cover}?v=${v}` : null;
+  const services = site.popular_services.slice(0, 6);
+  const first = services[0];
+  const heading = hero.heading && hero.heading.length <= 70 ? hero.heading : agency.name;
+  return (
+    <section className="refined bg-[linear-gradient(180deg,var(--color-kapwa-brand-50)_0%,#fff_70%)]">
+      <div className="container-gov grid items-center gap-10 py-14 lg:grid-cols-[1.1fr_1fr] lg:py-20">
+        <div>
+          <p className="inline-flex items-center gap-2 rounded-full border border-kapwa-brand-200 bg-white px-3.5 py-1 text-[13px] font-semibold text-kapwa-brand-900"><span className="size-1.5 rounded-full bg-kapwa-brand-900" aria-hidden />{parentLine}</p>
+          <h1 className="mt-6 max-w-[16ch] text-[2.6rem] font-extrabold leading-[1.02] tracking-[-0.025em] text-neutral-900 sm:text-6xl">{heading}</h1>
+          <p className="mt-5 max-w-xl text-xl leading-snug text-neutral-600">{hero.subheading || agency.tagline}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            {hero.primary_cta_label && hero.primary_cta_href ? (
+              <a href={hero.primary_cta_href} className="inline-flex h-12 items-center rounded-full bg-kapwa-brand-900 px-6 font-semibold text-white shadow-sm hover:bg-kapwa-brand-950">{hero.primary_cta_label} →</a>
+            ) : first && <Link href={navHref(jobId, first.slug)} className="inline-flex h-12 items-center rounded-full bg-kapwa-brand-900 px-6 font-semibold text-white shadow-sm hover:bg-kapwa-brand-950">{first.title} →</Link>}
+            {first && <a href="#services" className="inline-flex h-12 items-center rounded-full border border-neutral-300 bg-white px-6 font-semibold text-neutral-900 hover:border-kapwa-brand-900">{servicesLabel}</a>}
+          </div>
+        </div>
+        {art && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={art} alt="" className="mx-auto max-h-[460px] w-auto max-w-full rounded-3xl object-contain mix-blend-multiply" />
+        )}
+      </div>
+      {services.length > 0 && (
+        <div id="services" className="container-gov pb-14">
+          <h2 className={`${eyebrow} text-neutral-500`}>{servicesLabel}</h2>
+          <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {services.map((s, i) => (
+              <li key={s.slug + s.title}>
+                <Link href={navHref(jobId, s.slug)} className="group flex h-full gap-4 rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-kapwa-brand-300 hover:shadow-md">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-kapwa-brand-50 text-sm font-bold tabular-nums text-kapwa-brand-900">{nn(i)}</span>
+                  <span className="min-w-0">
+                    <span className="block font-semibold leading-snug text-neutral-900 group-hover:text-kapwa-brand-900">{s.title}</span>
+                    {s.description && <span className="mt-1 block text-sm text-neutral-600 line-clamp-2">{s.description}</span>}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
+  );
+}
+
 export async function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
   const { jobId, agency } = site;
   const hero = page.hero;
@@ -63,7 +112,8 @@ export async function HomePage({ site, page }: { site: SiteModel; page: SitePage
 
   return (
     <>
-      {/* Masthead: flat, ruled, typographic */}
+      {site.design?.mode === "refine" ? <RefinedMasthead site={site} hero={hero} parentLine={parentLine} servicesLabel={servicesLabel} /> : (
+      /* Masthead: flat, ruled, typographic */
       <section className="bg-kapwa-brand-950 text-white">
         <div className="container-gov grid lg:grid-cols-[1.15fr_1fr]">
           <div className="py-14 lg:py-20 lg:pr-16 lg:border-r lg:border-white/15">
@@ -99,6 +149,7 @@ export async function HomePage({ site, page }: { site: SiteModel; page: SitePage
           </div>
         </div>
       </section>
+      )}
 
       <CivicStrip site={site} />
 

@@ -28,6 +28,7 @@ function describe(e: Ev): { text: string; tag?: string } {
     case "phase": return { text: `${STEPS.find((s) => s.key === e.phase)?.label ?? e.phase}${e.detail ? ` · ${e.detail}` : ""}`, tag: "phase" };
     case "plan": return { text: `Site plan for ${e.agency}: ${(e.nav as string[]).join(" · ")}`, tag: "spark" };
     case "segment": return { text: `SAM 3.1 found ${e.regions} regions${e.logo ? " and cut out the seal" : ""}`, tag: "sam" };
+    case "design": return { text: e.mode === "refine" ? `Design check ${e.score}/10: already modern, keeping its look and upgrading it. ${e.reason}` : `Design check ${e.score}/10: rebuilding on the RE:GOV design. ${e.reason}`, tag: "spark" };
     case "band": return { text: `Muse Image brief: ${String(e.brief).slice(0, 160)}…`, tag: "image" };
     case "built": return { text: `Assembled ${e.pages} pages in ${((e.ms as number) / 1000).toFixed(0)}s · ${e.tokens} tokens`, tag: "phase" };
     default: return { text: e.type };
@@ -174,6 +175,13 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
               <h2 className="font-bold text-neutral-900">RE:GOV could not finish this site</h2>
               <p className="mt-1 text-neutral-800">{status.error}</p>
               <p className="mt-2 text-sm text-neutral-600">If the site is behind bot protection and has no archived copy, there is nothing public to rebuild from. Try another address.</p>
+              {status.url && (
+                <form method="post" action="/api/run" className="mt-4 flex flex-wrap items-center gap-3">
+                  <input type="hidden" name="url" value={status.url} />
+                  <button type="submit" className={btn.primary}>Try again →</button>
+                  <Link href="/#reimagine" className="text-sm font-semibold text-kapwa-brand-900 hover:underline">Try another address</Link>
+                </form>
+              )}
             </section>
           )}
 

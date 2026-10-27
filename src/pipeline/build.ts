@@ -6,6 +6,7 @@ import type { SiteModel, SitePage } from "./schema";
 import { understandPage } from "./understand";
 import { planSite } from "./plan";
 import { segmentHome } from "./segment";
+import { assessDesign, type Design } from "./assess";
 import { makeBand } from "./band";
 import { pmap } from "./cache";
 
@@ -14,6 +15,7 @@ export type BuildEvent =
   | { type: "page"; index: number; title: string; page_type: string; blocks: number; ms: number }
   | { type: "plan"; agency: string; nav: string[] }
   | { type: "segment"; regions: number; logo: boolean }
+  | { type: "design"; mode: Design["mode"]; score: number; reason: string }
   | { type: "band"; brief: string }
   | { type: "built"; pages: number; tokens: number; ms: number };
 
@@ -51,6 +53,16 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
   onEvent({ type: "phase", phase: "segment" });
   const seg = await segmentHome(jobDir, crawl.pages[0].viewportShotFile);
   onEvent({ type: "segment", regions: seg.segments.length, logo: !!seg.logo });
+  // Keep the old look and upgrade it, or replace it with ours (see assess.ts).
+  let design: Design | undefined;
+  try {
+    const a = await assessDesign(jobDir, crawl.pages[0].viewportShotFile);
+    design = a.design;
+    tokens += a.usage;
+    onEvent({ type: "design", mode: design.mode, score: design.score, reason: design.reason });
+  } catch (e) {
+    console.warn("[assess] skipped:", (e as Error).message);
+  }
 
   const news = (crawl.wp?.posts ?? []).map((p) => {
     const x = p as { title?: { rendered?: string }; date?: string; excerpt?: { rendered?: string }; link?: string };
@@ -68,7 +80,7 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
   }
 
   onEvent({ type: "phase", phase: "write" });
-  const site: SiteModel = { ...plan, jobId, origin: crawl.origin, generated_at: new Date().toISOString(), pages: unique, news, assets: { logo: seg.logo, logo_box: seg.logo_box, band: band.band, cover: band.cover, band_brief: band.brief }, tokens };
+  const site: SiteModel = { ...plan, jobId, origin: crawl.origin, generated_at: new Date().toISOString(), pages: unique, news, design, assets: { logo: seg.logo, logo_box: seg.logo_box, band: band.band, cover: band.cover, band_brief: band.brief }, tokens };
   await writeFile(join(jobDir, "site.json"), JSON.stringify(site, null, 2));
   onEvent({ type: "built", pages: unique.length, tokens, ms: Date.now() - t0 });
   return site;

@@ -93,6 +93,8 @@ export interface SiteModel extends SitePlan {
   pages: SitePage[];
   news: { title: string; date: string; excerpt: string; href: string }[];
   assets: { logo: string; logo_box: number[]; band?: string; cover?: string; band_brief?: string };
+  /** From assess.ts. Missing on sites built before the design check: treated as redesign. */
+  design?: { mode: "redesign" | "refine"; score: number; reason: string; primary: string; hero?: string };
   tokens?: number;
 }
 

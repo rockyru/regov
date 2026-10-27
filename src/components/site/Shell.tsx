@@ -59,7 +59,8 @@ export function Header({ site }: { site: SiteModel }) {
   const { jobId } = site;
   const logo = site.assets.logo ? `/api/jobs/${jobId}/${site.assets.logo}?v=${encodeURIComponent(site.generated_at)}` : null;
   const items = site.nav.filter((n) => n.slug !== "home" && (n.slug || n.children.length > 0));
-  const band = site.assets.band ? `/api/jobs/${jobId}/${site.assets.band}?v=${encodeURIComponent(site.generated_at)}` : null;
+  // A refined site keeps its own look, so the header stays clean instead of carrying our illustrated band.
+  const band = site.assets.band && site.design?.mode !== "refine" ? `/api/jobs/${jobId}/${site.assets.band}?v=${encodeURIComponent(site.generated_at)}` : null;
   const tab = "flex h-14 items-center gap-1.5 px-5 font-semibold border-b-4 border-transparent group-hover:bg-white/10 group-hover:border-kapwa-yellow-400 whitespace-nowrap";
   return (
     <header>
@@ -82,8 +83,8 @@ export function Header({ site }: { site: SiteModel }) {
               <span className="size-16 bg-kapwa-brand-900 text-white grid place-items-center font-bold shrink-0 text-xl">{site.agency.short_name.slice(0, 3)}</span>
             )}
             <span className="leading-tight min-w-0">
-              <span className={`block ${eyebrow} text-kapwa-yellow-400 md:text-neutral-600`}>{site.agency.parent}</span>
-              <span className="block font-bold text-white md:text-neutral-900 text-xl sm:text-[28px] leading-[1.1] tracking-tight line-clamp-2 mt-1">{site.agency.name}</span>
+              <span className={`block ${eyebrow} ${band ? "text-kapwa-yellow-400 md:text-neutral-600" : "text-neutral-600"}`}>{site.agency.parent}</span>
+              <span className={`block font-bold ${band ? "text-white md:text-neutral-900" : "text-neutral-900"} text-xl sm:text-[28px] leading-[1.1] tracking-tight line-clamp-2 mt-1`}>{site.agency.name}</span>
               {site.agency.tagline && <span className="hidden sm:block text-[15px] text-neutral-600 mt-1.5 italic">{site.agency.tagline}</span>}
             </span>
           </Link>
