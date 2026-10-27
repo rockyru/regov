@@ -16,6 +16,7 @@ import { CHARTER_SLUG, unshout } from "@/lib/charterPages";
 import type { CharterFile } from "@/pipeline/charter";
 import type { PortraitFile } from "@/pipeline/portraits";
 import type { VerifyFile } from "@/pipeline/verify";
+import type { EvidenceFile } from "@/pipeline/evidence";
 
 export const dynamic = "force-dynamic";
 
@@ -182,6 +183,39 @@ function VerifySection({ n, v, href }: { n: number; v: VerifyFile; href: (slug: 
   );
 }
 
+/** The old homepage with its visible accessibility problems outlined: Muse Spark chose them, SAM 3.1 found them. */
+function EvidenceSection({ n, e, jobId }: { n: number; e: EvidenceFile; jobId: string }) {
+  const pct = (v: number, of: number) => `${(v / of) * 100}%`;
+  return (
+    <Sec n={n} title="On the old page" aside="Problems outlined by SAM 3.1">
+      <p className="max-w-3xl text-neutral-700 print:text-[10pt]">Muse Spark looked at the original homepage with its accessibility findings and picked the ones you can see; SAM 3.1 found each element on the screenshot. The rebuilt site replaces every one of them.</p>
+      <div className="mt-6 grid gap-8 xl:grid-cols-[1fr_340px] print:grid-cols-[1fr_60mm] print:gap-5">
+        <div className="relative self-start overflow-hidden border border-kapwa-brand-900 bg-white print:break-inside-avoid" style={{ aspectRatio: `${e.width}/${e.height}` }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`/api/jobs/${jobId}/${e.shot}?v=${encodeURIComponent(e.generated_at)}`} alt="The original homepage with numbered outlines on its accessibility problems" className="absolute inset-0 h-full w-full" />
+          {e.items.map((x) => (
+            <div key={x.n} aria-hidden className="absolute border-[3px] border-kapwa-red-600 [print-color-adjust:exact]" style={{ left: pct(x.box.left, e.width), top: pct(x.box.top, e.height), width: pct(x.box.right - x.box.left, e.width), height: pct(x.box.bottom - x.box.top, e.height) }}>
+              <span className="absolute -left-[3px] -top-[3px] grid size-7 place-items-center bg-kapwa-red-600 text-sm font-bold text-white tabular-nums">{x.n}</span>
+            </div>
+          ))}
+        </div>
+        <ol className="space-y-4 self-start">
+          {e.items.map((x) => (
+            <li key={x.n} className="grid grid-cols-[1.75rem_1fr] gap-x-3 print:break-inside-avoid">
+              <span className="grid size-7 place-items-center bg-kapwa-red-600 text-sm font-bold text-white tabular-nums [print-color-adjust:exact]">{x.n}</span>
+              <span>
+                <span className="block font-semibold leading-snug text-neutral-900">{x.label}</span>
+                <span className="mt-0.5 block text-[13px] leading-snug text-neutral-600">{x.finding}</span>
+                <span className="mt-1 block text-[12px] font-semibold text-kapwa-red-700">{x.sc.length ? x.sc.map((sc) => `WCAG ${sc}${WCAG22[sc] ? ` ${WCAG22[sc].name}` : ""}`).join(" · ") : "Good practice"}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </Sec>
+  );
+}
+
 /** WikiBayan's community record of public projects for this place or office, against what the original site publishes. */
 function ProjectsSection({ n, rows, lgu, publishes, jobId }: { n: number; rows: Matched[]; lgu: boolean; publishes: boolean; jobId: string }) {
   const total = rows.reduce((t, p) => t + p.budget, 0);
@@ -287,6 +321,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
   try { wcag = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/wcag.json"), "utf8")); } catch {}
   const axeBefore = crawl.pages.flatMap((p) => p.axe?.violations ?? []);
   const scores = await loadScores(join(JOBS_ROOT, jobId));
+  let evidence: EvidenceFile | null = null;
+  try { evidence = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/evidence.json"), "utf8")); } catch {}
   let verify: VerifyFile | null = null;
   try { verify = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/verify.json"), "utf8")); } catch {}
   let portraits: PortraitFile | null = null;
@@ -374,6 +410,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
           </Sec>
 
           {scores?.rebuilt && <ScoresSection n={n++} s={scores} />}
+
+          {evidence && evidence.items.length > 0 && <EvidenceSection n={n++} e={evidence} jobId={jobId} />}
 
           {verify && verify.pages.length > 0 && <VerifySection n={n++} v={verify} href={pageHref} />}
 
