@@ -16,8 +16,9 @@ function A({ href, jobId, origin, className, children, label }: { href: string; 
   return <a href={h} className={className} {...(ext ? { target: "_blank", rel: "noreferrer" } : {})}>{children}</a>;
 }
 
+const H = ({ children }: { children: React.ReactNode }) => children ? <h2 className="text-2xl sm:text-[28px] font-bold tracking-tight leading-tight text-neutral-900 mb-4 pt-4 border-t-2 border-neutral-900 [[data-blocks]>:first-child_&]:border-t-0 [[data-blocks]>:first-child_&]:pt-0">{children}</h2> : null;
+
 export function Block({ block, jobId, origin }: { block: Block; jobId: string; origin: string }) {
-  const H = ({ children }: { children: React.ReactNode }) => children ? <h2 className="text-2xl sm:text-[28px] font-bold tracking-tight leading-tight text-neutral-900 mb-4 pt-4 border-t-2 border-neutral-900 [[data-blocks]>:first-child_&]:border-t-0 [[data-blocks]>:first-child_&]:pt-0">{children}</h2> : null;
   const md = <Markdown text={block.body_markdown} jobId={jobId} origin={origin} />;
   const items: Item[] = (block.items ?? []).filter((it) => !/^(Protected|Private):/i.test(it.title));
 
