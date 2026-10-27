@@ -20,6 +20,8 @@ export async function POST(req: Request) {
   const url = parsed.toString();
   const host = parsed.hostname;
 
+  if (process.env.SUBMISSIONS === "paused") return go(`/?error=paused&url=${encodeURIComponent(host)}`);
+
   // Same site already in flight, waiting, or rebuilt recently: show that run instead of starting another.
   const existing = runQueue.existing(host);
   if (existing) return go(`/jobs/${existing.jobId}?existing=${existing.state}`);

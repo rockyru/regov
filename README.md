@@ -81,7 +81,7 @@ through environment variables:
 | `RUN_STALL_MIN` | `20` | A run whose status has not changed for this long is killed and reported as stalled, freeing its slot. |
 | `RUN_DEDUPE_HOURS` | `24` | A host that is running, waiting, or finished within this window is not rebuilt again; the visitor is sent to that run. |
 
-`GET /api/run` reports the live counts.
+`GET /api/run` reports the live counts. To stop accepting new runs without a deploy, set the Worker variable `SUBMISSIONS` to `paused` in the Cloudflare dashboard (Workers > regov > Settings > Variables); the edge answers the form with a friendly notice while runs in flight finish. Set it back to `open` to resume.
 
 ## Layout
 

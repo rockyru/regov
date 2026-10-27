@@ -14,5 +14,5 @@
   ],
   "durable_objects": { "bindings": [{ "name": "REGOV", "class_name": "RegovContainer" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["RegovContainer"] }],
-  "vars": { "R2_BUCKET": "regov-jobs" }
+  "vars": { "R2_BUCKET": "regov-jobs", "SUBMISSIONS": "open" }
 }

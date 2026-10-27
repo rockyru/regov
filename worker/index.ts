@@ -7,6 +7,8 @@ interface Env {
   R2_ACCESS_KEY_ID: string;
   R2_SECRET_ACCESS_KEY: string;
   R2_BUCKET: string;
+  /** "open" or "paused". Edit in the dashboard (Settings > Variables) to stop new runs without touching the container. */
+  SUBMISSIONS?: string;
 }
 
 /** One always-warm instance runs the Next.js app and the pipeline. Jobs sync to R2. */
@@ -28,6 +30,10 @@ export class RegovContainer extends Container<Env> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+    // Kill switch for new runs: answered at the edge, so runs already in flight keep going.
+    if (request.method === "POST" && url.pathname === "/api/run" && env.SUBMISSIONS === "paused") {
+      return Response.redirect(new URL("/?error=paused", url.origin).toString(), 303);
+    }
     const headers = new Headers(request.headers);
     headers.set("x-forwarded-host", url.host);
     headers.set("x-forwarded-proto", url.protocol.replace(":", ""));
