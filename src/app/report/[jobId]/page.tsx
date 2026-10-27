@@ -149,7 +149,7 @@ function ScoresSection({ n, s }: { n: number; s: Scores }) {
 }
 
 /** Muse Spark's page-by-page comparison of the rebuild with the original: what was kept, lost or added. */
-function VerifySection({ n, v, href }: { n: number; v: VerifyFile; href: (slug: string) => string }) {
+function VerifySection({ n, v, href, total }: { n: number; v: VerifyFile; href: (slug: string) => string; total: number }) {
   const faithful = v.pages.filter((p) => p.verdict === "faithful").length;
   const unsupported = v.pages.reduce((t, p) => t + p.unsupported.length, 0);
   const flagged = v.pages.filter((p) => p.verdict !== "faithful" || p.unsupported.length).sort((a, b) => b.unsupported.length - a.unsupported.length || a.coverage - b.coverage);
@@ -158,7 +158,7 @@ function VerifySection({ n, v, href }: { n: number; v: VerifyFile; href: (slug: 
   const chip = (verdict: string) => verdict === "faithful" ? "bg-kapwa-green-50 text-kapwa-green-800" : verdict === "minor_gaps" ? "bg-kapwa-yellow-50 text-kapwa-orange-800" : "bg-kapwa-red-50 text-kapwa-red-700";
   return (
     <Sec n={n} title="Self-check" aside="Muse Spark compared each rebuilt page with its original">
-      <p className="max-w-3xl text-neutral-700 print:text-[10pt]">After rebuilding, the agent checked its own work: Muse Spark read every original page (its text, and its screenshot where available) next to the rebuilt page, and listed anything lost and any statement the original does not support. Rewording is expected; changed facts are not.</p>
+      <p className="max-w-3xl text-neutral-700 print:text-[10pt]">After rebuilding, the agent checked its own work: Muse Spark read {v.pages.length >= total ? "every original page" : `the homepage and the ${v.pages.length - 1} pages with the most content`} (text, and screenshot where available) next to the rebuilt page, and listed anything lost and any statement the original does not support. Rewording is expected; changed facts are not.</p>
       <dl className="mt-6 grid grid-cols-2 md:grid-cols-4 border-t border-l border-kapwa-brand-900 print:grid-cols-4 print:break-inside-avoid">
         {figures.map(([val, l]) => <div key={l} className="border-r border-b border-kapwa-brand-900 p-4 print:p-2.5"><dd className="text-3xl font-display font-normal tracking-tight tabular-nums text-neutral-900 print:text-[18pt]">{val}</dd><dt className="mt-1 text-[13px] text-neutral-600 print:text-[8pt]">{l}</dt></div>)}
       </dl>
@@ -413,7 +413,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
 
           {evidence && evidence.items.length > 0 && <EvidenceSection n={n++} e={evidence} jobId={jobId} />}
 
-          {verify && verify.pages.length > 0 && <VerifySection n={n++} v={verify} href={pageHref} />}
+          {verify && verify.pages.length > 0 && <VerifySection n={n++} v={verify} href={pageHref} total={site.pages.length} />}
 
           {charter && charter.docs.length > 0 && (
             <Sec n={n++} title="Citizen's Charter" aside="Read from PDFs by Muse Spark">

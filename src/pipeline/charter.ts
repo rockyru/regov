@@ -36,7 +36,8 @@ Extract every external and internal service exactly as written: requirements (an
 Copy fees, times, names and legal references verbatim. Never invent or estimate a value; use an empty string when the document does not say.
 Summaries are one plain sentence for citizens. If the document is not a services charter, return an empty services list.`;
 
-const MAX_DOCS = Number(process.env.CHARTER_MAX_DOCS) || 20;
+/** Charters are read most-relevant first; 8 covers the main offices of most LGUs at a fraction of the cost of all of them. */
+const MAX_DOCS = Number(process.env.CHARTER_MAX_DOCS) || 8;
 const MAX_BYTES = 20 * 1024 * 1024;
 
 /** Linked PDFs that look like a charter or a services list, charters first. */
