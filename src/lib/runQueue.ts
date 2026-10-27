@@ -4,7 +4,7 @@
 // (by IP) gets RUN_RATE_LIMIT submissions per RUN_RATE_WINDOW_MIN minutes. A host that is running,
 // queued, or finished within RUN_DEDUPE_HOURS is not rebuilt again; callers redirect to that job.
 import { spawn, type ChildProcess } from "node:child_process";
-import { existsSync, mkdirSync, openSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, openSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 export interface QueueInfo { position: number; of: number; running: number }
@@ -18,6 +18,7 @@ export const LIMITS = {
   perIp: num("RUN_RATE_LIMIT", 3),
   windowMs: num("RUN_RATE_WINDOW_MIN", 10) * 60_000,
   dedupeMs: num("RUN_DEDUPE_HOURS", 24) * 3_600_000,
+  stallMs: num("RUN_STALL_MIN", 20) * 60_000,
 };
 
 const ROOT = process.cwd();
@@ -30,8 +31,20 @@ class RunQueue {
   waiting: Job[] = [];
   running = new Map<string, { job: Job; child: ChildProcess }>();
   hits = new Map<string, number[]>();
+  stalled = new Set<string>();
 
   constructor() {
+    // Watchdog: a child that has not touched its status file for stallMs is killed so it
+    // cannot hold a slot forever (hung browser, stuck network call). The exit handler reports it.
+    const tick = Math.max(1000, Math.min(60_000, LIMITS.stallMs / 2));
+    setInterval(() => {
+      const now = Date.now();
+      for (const [jobId, { child }] of this.running) {
+        let last = 0;
+        try { last = statSync(resolve(JOBS, jobId, "status.json")).mtimeMs; } catch { continue; }
+        if (now - last > LIMITS.stallMs && !this.stalled.has(jobId)) { this.stalled.add(jobId); child.kill("SIGKILL"); }
+      }
+    }, tick).unref();
     // A "queued" status on disk that this process does not know about belonged to a previous
     // process (restart mid-queue). Close it out so the job page does not wait forever.
     // Production only: `next dev` renders in recycled worker processes, so there the queue
@@ -127,8 +140,10 @@ class RunQueue {
         // A pipeline that dies (out of memory, killed) never writes a terminal status itself.
         try {
           const s = JSON.parse(readFileSync(resolve(dir, "status.json"), "utf8")) as RunStatusFile;
-          if (!s.done && !s.error) writeFileSync(resolve(dir, "status.json"), JSON.stringify({ ...s, phase: "error", error: `The agent stopped unexpectedly (${signal ? `signal ${signal}` : `exit code ${code}`}). Please start it again.` }));
+          const why = this.stalled.has(job.jobId) ? `The agent made no progress for ${Math.round(LIMITS.stallMs / 60_000)} minutes and was stopped.` : `The agent stopped unexpectedly (${signal ? `signal ${signal}` : `exit code ${code}`}).`;
+          if (!s.done && !s.error) writeFileSync(resolve(dir, "status.json"), JSON.stringify({ ...s, phase: "error", error: `${why} Please start it again.` }));
         } catch { /* no status yet */ }
+        this.stalled.delete(job.jobId);
         release();
       });
     } catch (e) {
