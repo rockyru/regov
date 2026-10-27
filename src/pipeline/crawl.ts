@@ -24,7 +24,7 @@ export interface CrawlOptions {
   archiveTimestamp?: string;
 }
 
-const UA = "Mozilla/5.0 (compatible; SiteResurrectionBot/0.1; +https://github.com/rockyru) Chrome/120";
+export const UA = "Mozilla/5.0 (compatible; SiteResurrectionBot/0.1; +https://github.com/rockyru) Chrome/120";
 const FILE_RE = /\.(pdf|docx?|xlsx?|pptx?|zip|rar|jpe?g|png|gif|webp|svg|mp4|mp3|csv|txt)(\?.*)?$/i;
 const TRACKING = /^(utm_|fbclid|gclid|_ga)/;
 

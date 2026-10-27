@@ -6,6 +6,7 @@ import { runQueue, LIMITS, type QueueInfo } from "@/lib/runQueue";
 import { AppHeader, AppFooter, SectionHead, eyebrow, btn, nn } from "@/components/AppShell";
 import { LiveRefresh } from "@/components/LiveRefresh";
 import { STEPS, progressOf } from "@/lib/progress";
+import { fmtMs, fmtBytes } from "@/lib/scores";
 
 export const dynamic = "force-dynamic";
 type Ev = { t: number; type: string; [k: string]: unknown };
@@ -29,6 +30,7 @@ function describe(e: Ev): { text: string; tag?: string } {
     case "plan": return { text: `Site plan for ${e.agency}: ${(e.nav as string[]).join(" · ")}`, tag: "spark" };
     case "segment": return { text: `SAM 3.1 found ${e.regions} regions${e.logo ? " and cut out the seal" : ""}`, tag: "sam" };
     case "wcag": return { text: Number(e.violations) === 0 ? `WCAG 2.2 AA check: no automated violations on ${e.pages} rebuilt pages` : `WCAG 2.2 AA check: ${e.violations} automated issues on ${e.pages} rebuilt pages`, tag: "phase" };
+    case "scores": { const b = e.before as { load_ms: number; bytes: number } | null, a = e.after as { load_ms: number; bytes: number } | null; return { text: a ? `Homepage ${b ? `${fmtMs(b.load_ms)}, ${fmtBytes(b.bytes)} before → ` : ""}${fmtMs(a.load_ms)}, ${fmtBytes(a.bytes)} rebuilt` : "Speed check skipped", tag: "phase" }; }
     case "design": return { text: e.mode === "refine" ? `Design check ${e.score}/10: already modern, keeping its look and upgrading it. ${e.reason}` : `Design check ${e.score}/10: rebuilding on the RE:GOV design. ${e.reason}`, tag: "spark" };
     case "band": return { text: `Muse Image brief: ${String(e.brief).slice(0, 160)}…`, tag: "image" };
     case "built": return { text: `Assembled ${e.pages} pages in ${((e.ms as number) / 1000).toFixed(0)}s · ${e.tokens} tokens`, tag: "phase" };

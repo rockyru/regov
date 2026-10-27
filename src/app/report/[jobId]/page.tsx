@@ -11,6 +11,7 @@ import { WCAG22, scSort, wcagForFinding } from "@/pipeline/wcag";
 import type { RebuiltAudit } from "@/pipeline/audit";
 import { projectsFor, projectUrl, peso, statusLabel, type Matched } from "@/lib/wikibayan";
 import { isLgu } from "@/lib/civic";
+import { loadScores, fmtMs, fmtBytes, change, type Scores } from "@/lib/scores";
 
 export const dynamic = "force-dynamic";
 
@@ -102,6 +103,42 @@ function WcagSection({ n, a11y, before, after }: { n: number; a11y: Finding[]; b
         </table>
       )}
       <p className="mt-4 max-w-3xl text-[13px] text-neutral-600 print:text-[8pt]">Automated tools catch roughly a third of WCAG issues. Criteria marked &ldquo;Needs manual check&rdquo; (for example keyboard use, focus order, captions and meaningful link text) need a person with a keyboard and a screen reader before the agency can claim conformance.{untagged ? ` ${untagged} ${untagged === 1 ? "finding is" : "findings are"} good practice without a specific WCAG criterion.` : ""}</p>
+    </Sec>
+  );
+}
+
+/** Homepage speed, weight and automated accessibility, original against rebuild, measured the same way. */
+function ScoresSection({ n, s }: { n: number; s: Scores }) {
+  const o = s.original, r = s.rebuilt!;
+  const rows: { label: string; before?: string; after: string; delta?: { text: string; good: boolean } }[] = [
+    { label: "Largest content visible", before: o?.lcp_ms != null ? fmtMs(o.lcp_ms) : undefined, after: r.lcp_ms != null ? fmtMs(r.lcp_ms) : "–", delta: o?.lcp_ms != null && r.lcp_ms != null ? change(o.lcp_ms, r.lcp_ms, ["faster", "slower"]) : undefined },
+    { label: "Fully loaded", before: o ? fmtMs(o.load_ms) : undefined, after: fmtMs(r.load_ms), delta: o ? change(o.load_ms, r.load_ms, ["faster", "slower"]) : undefined },
+    { label: "Page weight", before: o ? fmtBytes(o.bytes) : undefined, after: fmtBytes(r.bytes), delta: o ? change(o.bytes, r.bytes, ["lighter", "heavier"]) : undefined },
+    { label: "Requests", before: o ? String(o.requests) : undefined, after: String(r.requests), delta: o ? change(o.requests, r.requests, ["fewer", "more"]) : undefined },
+    { label: "WCAG violations (axe-core)", before: o ? `${o.axe_violations} rules · ${o.axe_elements} elements` : undefined, after: `${r.axe_violations} rules · ${r.axe_elements} elements`, delta: o ? change(o.axe_elements, r.axe_elements, ["fewer", "more"]) : undefined },
+  ];
+  const head = rows.filter((x) => x.delta?.good).slice(0, 3);
+  return (
+    <Sec n={n} title="Before and after" aside="Homepage, measured the same way">
+      {o && head.length > 0 && (
+        <dl className="grid grid-cols-1 sm:grid-cols-3 border-t border-l border-kapwa-brand-900 print:grid-cols-3 print:break-inside-avoid">
+          {head.map((x) => <div key={x.label} className="border-r border-b border-kapwa-brand-900 p-4 print:p-2.5"><dd className="text-3xl font-display font-normal tracking-tight tabular-nums text-kapwa-green-800 print:text-[18pt]">{x.delta!.text}</dd><dt className="mt-1 text-[13px] text-neutral-600 print:text-[8pt]">{x.label.toLowerCase()}: {x.before} → {x.after}</dt></div>)}
+        </dl>
+      )}
+      <table className="mt-6 w-full text-sm print:text-[8.5pt]">
+        <thead><tr className="border-b-2 border-kapwa-brand-900 text-left"><th className="py-2 pr-3 font-semibold">Measure</th><th className="py-2 px-3 font-semibold text-right">Original</th><th className="py-2 px-3 font-semibold text-right">Rebuild</th><th className="py-2 pl-3 font-semibold text-right">Change</th></tr></thead>
+        <tbody>
+          {rows.map((x) => (
+            <tr key={x.label} className="border-b border-neutral-200 print:break-inside-avoid">
+              <td className="py-2 pr-3">{x.label}</td>
+              <td className="py-2 px-3 text-right tabular-nums text-neutral-700">{x.before ?? "–"}</td>
+              <td className="py-2 px-3 text-right tabular-nums font-semibold text-neutral-900">{x.after}</td>
+              <td className={`py-2 pl-3 text-right tabular-nums font-semibold ${!x.delta ? "text-neutral-500" : x.delta.good ? "text-kapwa-green-800" : "text-kapwa-red-700"}`}>{x.delta?.text ?? "–"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="mt-4 max-w-3xl text-[13px] text-neutral-600 print:text-[8pt]">{s.original_note ? `${s.original_note} ` : ""}Each homepage was opened in a fresh browser with no cache at 1280 × 900, twice, keeping the faster time. Both were measured from the RE:GOV server on {new Date(s.generated_at).toLocaleDateString("en-PH", { dateStyle: "long", timeZone: "Asia/Manila" })}; the rebuild is served through {new URL(s.rebuilt_base).host}. Speed on a phone or a slow connection will differ, but the gap in weight and requests holds.</p>
     </Sec>
   );
 }
@@ -205,6 +242,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
   let wcag: RebuiltAudit | null = null;
   try { wcag = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/wcag.json"), "utf8")); } catch {}
   const axeBefore = crawl.pages.flatMap((p) => p.axe?.violations ?? []);
+  const scores = await loadScores(join(JOBS_ROOT, jobId));
   let segments: Box[] = [];
   try { segments = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/segments.json"), "utf8")); } catch {}
   const home = crawl.pages[0];
@@ -285,6 +323,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
               </ol>
             )}
           </Sec>
+
+          {scores?.rebuilt && <ScoresSection n={n++} s={scores} />}
 
           <WcagSection n={n++} a11y={a11y} before={axeBefore} after={wcag} />
 
