@@ -1,5 +1,6 @@
 import type { SitePage } from "@/pipeline/schema";
 import { t, type Lang } from "./i18n";
+import { portraitOf, type PortraitMap } from "@/lib/people";
 import { previewHref } from "@/lib/jobs";
 import { Markdown, hrefText, isBlank } from "./Markdown";
 import { knownGovUrl } from "@/lib/civic";
@@ -19,7 +20,7 @@ function A({ href, jobId, origin, className, children, label }: { href: string; 
 
 const H = ({ children }: { children: React.ReactNode }) => children ? <h2 className="text-2xl sm:text-[28px] font-bold tracking-tight leading-tight text-neutral-900 mb-4 pt-4 border-t-2 border-neutral-900 [[data-blocks]>:first-child_&]:border-t-0 [[data-blocks]>:first-child_&]:pt-0">{children}</h2> : null;
 
-export function Block({ block, jobId, origin, lang }: { block: Block; jobId: string; origin: string; lang?: Lang }) {
+export function Block({ block, jobId, origin, lang, portraits }: { block: Block; jobId: string; origin: string; lang?: Lang; portraits?: PortraitMap }) {
   const md = <Markdown text={block.body_markdown} jobId={jobId} origin={origin} />;
   const items: Item[] = (block.items ?? []).filter((it) => !/^(Protected|Private):/i.test(it.title));
 
@@ -44,7 +45,10 @@ export function Block({ block, jobId, origin, lang }: { block: Block; jobId: str
           <ul className="mt-4 grid border-t border-l border-neutral-200 *:border-r *:border-b *:border-neutral-200 sm:grid-cols-2">
             {items.map((p, i) => (
               <li key={i} className="flex gap-4 bg-white p-4">
-                <span className="size-14 shrink-0 bg-kapwa-brand-950 text-white grid place-items-center font-bold">{initials(p.title) || "•"}</span>
+                {portraitOf(portraits, p.title)
+                  // eslint-disable-next-line @next/next/no-img-element
+                  ? <img src={portraitOf(portraits, p.title)!.src} alt={portraitOf(portraits, p.title)!.alt} lang={lang === "fil" ? "en" : undefined} loading="lazy" className="size-14 shrink-0 object-cover bg-neutral-100" />
+                  : <span className="size-14 shrink-0 bg-kapwa-brand-950 text-white grid place-items-center font-bold">{initials(p.title) || "•"}</span>}
                 <div className="min-w-0">
                   <A href={p.href} jobId={jobId} origin={origin} className="font-semibold text-neutral-900 hover:text-kapwa-brand-900">{p.title}</A>
                   {p.meta && <div className="mt-0.5 text-[11px] font-bold uppercase tracking-[0.18em] text-kapwa-brand-800">{p.meta}</div>}
