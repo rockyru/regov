@@ -44,7 +44,7 @@ URL ─▶ crawl.ts ─▶ segment.ts ─▶ understand.ts ─▶ plan.ts ─▶
 | Understand | **Muse Spark 1.3** | Screenshot + text → strict-schema `PageModel`: typed content blocks (people, steps, FAQ, tables, timelines, contact…), accessibility issues, migration notes. Image-only content is transcribed. |
 | Plan | **Muse Spark 1.3** | All page models → citizen-first `SitePlan`: nav, popular services, homepage sections, footer, redirects. |
 | Identity band | **Muse Image** | Muse Spark writes an art brief from the site plan; Muse Image paints a wide header illustration in the Kapwa palette, unique to each agency or LGU. |
-| Render | — | Next.js renders `site.json` live on Kapwa tokens/components. No per-job build. |
+| Render | — | Next.js renders `site.json` live on Kapwa tokens and styles. No per-job build. |
 | Report | — | Coverage, SAM overlay, accessibility findings, "needs a human" list, page-by-page mapping. |
 
 After the rebuild:
@@ -105,9 +105,11 @@ jobs/           per-job artifacts (gitignored)
 ## Design baseline
 
 [Kapwa](https://github.com/bettergovph/kapwa) is the design system BetterGov.ph built for
-Philippine government portals. Generated sites import its tokens and components and layer on
-a stronger hero, service-first navigation, sticky header with search, WCAG AA contrast and
-semantic structure.
+Philippine government portals. Generated sites load its tokens, type scale and base styles
+(`@bettergov/kapwa/kapwa.css`) and render their own blocks on top in an editorial layout:
+square corners, ruled sections, numbered indexes, a stronger hero, service-first navigation,
+sticky header with search, WCAG AA contrast and semantic structure. Kapwa's React components
+(Button, Card, Banner, OfficialBiography…) are not used yet.
 
 ## Contributing
 
