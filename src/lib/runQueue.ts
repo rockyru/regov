@@ -24,6 +24,7 @@ const ROOT = process.cwd();
 export const IS_PROD = process.env.NODE_ENV === "production";
 const JOBS = resolve(ROOT, "jobs");
 const hostKey = (h: string) => h.toLowerCase().replace(/^www\./, "");
+export const LOST = "The agent restarted while this run was in progress, so the run was lost. Please start it again.";
 
 class RunQueue {
   waiting: Job[] = [];
@@ -42,9 +43,10 @@ class RunQueue {
         if (!existsSync(f)) continue;
         try {
           const s = JSON.parse(readFileSync(f, "utf8")) as RunStatusFile;
-          if (s.phase === "queued" && !s.done && !s.error) {
-            writeFileSync(f, JSON.stringify({ ...s, phase: "error", error: "The agent restarted before this run started. Please start it again." }));
-          }
+          if (s.done || s.error) continue;
+          // Nothing can be running in a process that has just started, so every live-looking status is a lost run.
+          const error = s.phase === "queued" ? "The agent restarted before this run started. Please start it again." : LOST;
+          writeFileSync(f, JSON.stringify({ ...s, phase: "error", error }));
         } catch { /* mid-write or foreign file */ }
       }
     } catch { /* no jobs dir yet */ }
@@ -121,7 +123,14 @@ class RunQueue {
       this.running.set(job.jobId, { job, child });
       const release = () => { if (this.running.delete(job.jobId)) this.pump(); };
       child.on("error", (e) => { fail(`could not start the agent: ${e.message}`); release(); });
-      child.on("exit", release);
+      child.on("exit", (code, signal) => {
+        // A pipeline that dies (out of memory, killed) never writes a terminal status itself.
+        try {
+          const s = JSON.parse(readFileSync(resolve(dir, "status.json"), "utf8")) as RunStatusFile;
+          if (!s.done && !s.error) writeFileSync(resolve(dir, "status.json"), JSON.stringify({ ...s, phase: "error", error: `The agent stopped unexpectedly (${signal ? `signal ${signal}` : `exit code ${code}`}). Please start it again.` }));
+        } catch { /* no status yet */ }
+        release();
+      });
     } catch (e) {
       fail(`could not start the agent: ${(e as Error).message}`);
     }

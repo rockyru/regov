@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { JOBS_ROOT, loadSite } from "@/lib/jobs";
+import { JOBS_ROOT, loadSite, settle } from "@/lib/jobs";
 import { runQueue, type QueueInfo } from "@/lib/runQueue";
 import { AppHeader, AppFooter, SectionHead, eyebrow, btn, nn } from "@/components/AppShell";
 
@@ -60,6 +60,7 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
     status.error = "The agent restarted before this run started. Please start it again.";
     status.phase = "error";
   }
+  if (status) status = settle(status);
   // No record anywhere: a mistyped reference, or a queued run that never got far enough to be saved.
   if (!status) status = { url: "", phase: "error", events: [], done: false, error: "There is no run with this reference. If you just started it, the agent may have restarted before it began. Please start it again.", startedAt: new Date().toISOString() };
   const queued = status?.phase === "queued" && !status.error ? status.queue : undefined;

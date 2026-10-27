@@ -8,6 +8,15 @@ export const JOBS_ROOT = resolve(process.cwd(), "jobs");
 
 export interface JobStatus { url: string; phase: string; done: boolean; error: string; startedAt: string; events: { t: number; type: string }[] }
 
+/** A run that has written nothing for this long is treated as lost, whatever its file says. */
+export const STALL_MS = 15 * 60 * 1000;
+export function settle<T extends JobStatus>(s: T, now = Date.now()): T {
+  if (s.done || s.error || s.phase === "queued") return s;
+  const last = s.events.length ? s.events[s.events.length - 1].t : new Date(s.startedAt).getTime();
+  if (now - last < STALL_MS) return s;
+  return { ...s, phase: "error", error: "The agent went quiet for more than 15 minutes, so this run is considered lost. It usually means the agent restarted. Please start it again." };
+}
+
 // Restore jobs from R2 once per process if the local jobs dir is empty (container cold start).
 let restoring: Promise<void> | null = null;
 async function ensureRestored() {
@@ -37,7 +46,7 @@ export async function listJobs() {
     let crawl: CrawlResult | null = null, site: SiteModel | null = null, status: JobStatus | null = null;
     if (hasCrawl) crawl = JSON.parse(await readFile(join(dir, "crawl.json"), "utf8"));
     if (hasSite) site = scrubOfficial(JSON.parse(await readFile(join(dir, "site.json"), "utf8")));
-    if (hasStatus) try { status = JSON.parse(await readFile(join(dir, "status.json"), "utf8")); } catch { /* mid-write */ }
+    if (hasStatus) try { status = settle(JSON.parse(await readFile(join(dir, "status.json"), "utf8"))); } catch { /* mid-write */ }
     return { id, crawl, site, status, mtime: (await stat(dir)).mtimeMs };
   }));
   return jobs.filter((j) => j.crawl || j.status).sort((a, b) => b.mtime - a.mtime);
