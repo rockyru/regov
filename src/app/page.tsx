@@ -28,16 +28,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
       <main className="flex-1">
         {/* Masthead */}
         <section className="relative overflow-hidden">
-          {/* Soft civic glow rising from the bottom: Kapwa blue with a touch of sun yellow and red */}
-          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[70%]">
-            <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_100%,rgba(0,56,168,0.16),transparent_70%),radial-gradient(40%_45%_at_12%_100%,rgba(252,209,22,0.20),transparent_70%),radial-gradient(40%_45%_at_88%_100%,rgba(206,18,38,0.10),transparent_70%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,56,168,0.10)_1px,transparent_1px)] bg-[size:22px_22px] [mask-image:linear-gradient(to_top,black_0%,transparent_70%)]" />
-            <svg className="absolute bottom-0 left-0 w-[160%] -translate-x-[18%] text-kapwa-brand-900/[0.06]" viewBox="0 0 1440 220" fill="currentColor" preserveAspectRatio="none" aria-hidden>
-              <path d="M0 140c160-60 320-80 480-60s320 80 480 60 320-100 480-80v160H0z" />
-              <path d="M0 190c200-40 400-60 600-30s400 70 600 40 240-60 240-60v100H0z" opacity=".7" />
-            </svg>
+          {/* Muse Image: a Philippine civic panorama rising from the bottom of the hero (public/hero.jpg) */}
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/hero.jpg" srcSet="/hero-sm.jpg 1280w, /hero.jpg 2560w" sizes="100vw" alt="" className="block w-full h-64 sm:h-auto object-cover object-[50%_100%]" />
+            <div className="absolute inset-x-0 top-0 h-1/2 bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.75)_45%,rgba(255,255,255,0)_100%)]" />
           </div>
-          <div className="container-gov pt-14 pb-20 lg:pt-24 lg:pb-28 text-center">
+          <div className="container-gov pt-14 pb-56 sm:pb-[22vw] lg:pt-24 text-center">
           <p className={`${eyebrow} text-kapwa-brand-900`}>Autonomous civic technology</p>
           <h1 className="mt-5 text-5xl sm:text-6xl xl:text-[84px] font-black tracking-tight leading-[0.95] text-neutral-900">Reimagine <span className="text-kapwa-brand-900">Government</span>.</h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-neutral-600 leading-snug">Public websites deserve a second life. Paste a Philippine government site and an agent crawls it, understands it, and rebuilds it on the BetterGov Kapwa standard.</p>
