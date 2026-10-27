@@ -106,7 +106,7 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
             <div className="flex items-center justify-between px-5 h-14 border-b-2 border-neutral-900 shrink-0">
               <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-600">All sections</span>
               <button type="button" onClick={() => setOpen(false)} className="inline-flex h-9 items-center gap-1.5 px-3 text-sm font-semibold border border-neutral-900 hover:bg-neutral-900 hover:text-white">
-                Close <Caret className="rotate-180" />
+                Close <Caret />
               </button>
             </div>
 
