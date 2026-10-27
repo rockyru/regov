@@ -7,11 +7,12 @@ export const STEPS: { key: string; label: string; tool: string }[] = [
   { key: "segment", label: "Segment", tool: "SAM 3.1" },
   { key: "band", label: "Illustrate", tool: "Muse Image" },
   { key: "write", label: "Assemble", tool: "RE:GOV" },
+  { key: "charter", label: "Documents", tool: "Muse Spark" },
   { key: "audit", label: "Audit", tool: "axe-core WCAG 2.2" },
 ];
 
 // Share of a typical run spent in each step, for progress percentages.
-const WEIGHT: Record<string, number> = { crawl: 0.25, archive: 0.05, understand: 0.45, plan: 0.08, segment: 0.04, band: 0.12, write: 0.06, audit: 0.05 };
+const WEIGHT: Record<string, number> = { crawl: 0.25, archive: 0.05, understand: 0.45, plan: 0.08, segment: 0.04, band: 0.12, write: 0.06, charter: 0.08, audit: 0.05 };
 
 type Ev = { type: string; [k: string]: unknown };
 export function progressOf(status: { phase: string; done: boolean; events: Ev[] }) {
@@ -30,6 +31,7 @@ export function progressOf(status: { phase: string; done: boolean; events: Ev[] 
     : cur === "plan" ? "site map and navigation"
     : cur === "segment" ? "reading the old homepage"
     : cur === "band" ? "painting the header"
+    : cur === "charter" ? "reading Citizen's Charter PDFs"
     : cur === "audit" ? "WCAG 2.2 AA and speed"
     : "writing pages";
   const frac = cur === "crawl" ? (crawlDone ? 1 : Math.min(0.95, fetched / 20)) : cur === "understand" ? (toUnderstand ? Math.min(1, understood / toUnderstand) : 0) : 0.4;

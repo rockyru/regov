@@ -12,6 +12,8 @@ import type { RebuiltAudit } from "@/pipeline/audit";
 import { projectsFor, projectUrl, peso, statusLabel, type Matched } from "@/lib/wikibayan";
 import { isLgu } from "@/lib/civic";
 import { loadScores, fmtMs, fmtBytes, change, type Scores } from "@/lib/scores";
+import { CHARTER_SLUG, unshout } from "@/lib/charterPages";
+import type { CharterFile } from "@/pipeline/charter";
 
 export const dynamic = "force-dynamic";
 
@@ -236,8 +238,13 @@ const COLORS: Record<string, string> = { logo: "#fcd116", "navigation menu": "#3
 
 export default async function Report({ params }: { params: Promise<{ jobId: string }> }) {
   const { jobId } = await params;
-  const site = await loadSite(jobId);
-  if (!site) notFound();
+  const loaded = await loadSite(jobId);
+  if (!loaded) notFound();
+  // Counts and the inventory describe the crawled site; pages built from charter PDFs get their own section.
+  const site = { ...loaded, pages: loaded.pages.filter((p) => !p.document) };
+  const services = loaded.pages.filter((p) => p.document && p.slug !== CHARTER_SLUG);
+  let charter: CharterFile | null = null;
+  try { charter = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/charter.json"), "utf8")); } catch {}
   const crawl = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "crawl.json"), "utf8")) as CrawlResult;
   let wcag: RebuiltAudit | null = null;
   try { wcag = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/wcag.json"), "utf8")); } catch {}
@@ -326,6 +333,25 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
           </Sec>
 
           {scores?.rebuilt && <ScoresSection n={n++} s={scores} />}
+
+          {charter && charter.docs.length > 0 && (
+            <Sec n={n++} title="Citizen's Charter" aside="Read from PDFs by Muse Spark">
+              <p className="max-w-3xl text-neutral-700 print:text-[10pt]">The original site links its services only as PDF documents. Muse Spark read <strong className="font-semibold tabular-nums">{charter.docs.length}</strong> of them and rebuilt <strong className="font-semibold tabular-nums">{services.length}</strong> services as pages with requirements, steps, fees, processing time and the person responsible, copied as written. They are listed on the rebuilt site&rsquo;s <Link href={`/preview/${jobId}/${CHARTER_SLUG}`} className="underline decoration-neutral-300 underline-offset-4 hover:decoration-kapwa-brand-900">services and requirements page</Link> and answer questions in &ldquo;Ask this site&rdquo;.</p>
+              <table className="mt-6 w-full text-sm print:text-[8.5pt]">
+                <thead><tr className="border-b-2 border-kapwa-brand-900 text-left"><th className="py-2 pr-3 font-semibold">Office</th><th className="py-2 px-3 font-semibold text-right">Services</th><th className="py-2 pl-3 font-semibold">Document</th></tr></thead>
+                <tbody>
+                  {charter.docs.map((d) => (
+                    <tr key={d.url} className="border-b border-neutral-200 align-top print:break-inside-avoid">
+                      <td className="py-2 pr-3">{unshout(d.office)}</td>
+                      <td className="py-2 px-3 text-right tabular-nums">{d.services.length}</td>
+                      <td className="py-2 pl-3 break-all"><a href={d.url} target="_blank" rel="noreferrer" className="text-kapwa-brand-800 hover:underline">{decodeURIComponent(d.url.split("/").pop() ?? d.url)}</a></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="mt-4 max-w-3xl text-[13px] text-neutral-600 print:text-[8pt]">{charter.skipped.length ? `${charter.skipped.length} linked ${charter.skipped.length === 1 ? "document was" : "documents were"} skipped (unreachable, not a PDF, or no services in it). ` : ""}Charters are updated yearly; every service page links its PDF so a person can check the figures.</p>
+            </Sec>
+          )}
 
           <WcagSection n={n++} a11y={a11y} before={axeBefore} after={wcag} />
 

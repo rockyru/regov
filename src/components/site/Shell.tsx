@@ -75,7 +75,7 @@ export function Header({ site }: { site: SiteModel }) {
   const items = site.nav.filter((n) => n.slug !== "home" && (n.slug || n.children.length > 0));
   // A refined site keeps its own look, so the header stays clean instead of carrying our illustrated band.
   const band = site.assets.band && site.design?.mode !== "refine" ? `/api/jobs/${jobId}/${site.assets.band}?v=${encodeURIComponent(site.generated_at)}` : null;
-  const tab = "flex h-14 items-center gap-1.5 px-3 xl:px-5 font-semibold border-b-4 border-transparent group-hover:bg-white/10 group-hover:border-kapwa-yellow-400 whitespace-nowrap";
+  const tab = "flex h-14 items-center gap-1.5 px-3 xl:px-4 2xl:px-5 font-semibold border-b-4 border-transparent group-hover:bg-white/10 group-hover:border-kapwa-yellow-400 whitespace-nowrap";
   return (
     <header>
       {/* Row 1: identity, with the Muse Image band fading in behind it */}
@@ -108,8 +108,8 @@ export function Header({ site }: { site: SiteModel }) {
       {/* Row 2: full-bleed primary navigation with mega menus */}
       <nav aria-label="Primary" className="sticky top-0 z-40 bg-kapwa-brand-900 text-white relative border-b border-black/20">
         <div className="container-gov flex items-stretch">
-          <Link href={navHref(jobId, "home")} className="hidden lg:flex shrink-0 items-center px-3 xl:px-5 h-14 font-semibold whitespace-nowrap border-b-4 border-transparent hover:bg-white/10 hover:border-kapwa-yellow-400">{t(site.lang, "Home")}</Link>
-          <div className="hidden lg:flex flex-wrap items-stretch flex-1 min-w-0">
+          <Link href={navHref(jobId, "home")} className="hidden lg:flex shrink-0 items-center px-3 xl:px-4 2xl:px-5 h-14 font-semibold whitespace-nowrap border-b-4 border-transparent hover:bg-white/10 hover:border-kapwa-yellow-400">{t(site.lang, "Home")}</Link>
+          <div className="hidden lg:flex flex-wrap items-stretch flex-initial min-w-0">
             {items.map((item) => {
               const cols = columns(item.children);
               return (
@@ -147,10 +147,11 @@ export function Header({ site }: { site: SiteModel }) {
               );
             })}
           </div>
-          <form role="search" action={navHref(jobId, "search")} className="flex flex-1 lg:flex-none lg:shrink-0 items-center lg:ml-auto py-2">
+          {/* The search box gives up width before the menu wraps: a button alone below xl, then 240–400px. */}
+          <form role="search" action={navHref(jobId, "search")} className="flex flex-1 lg:flex-none xl:flex-[1_1_13rem] xl:min-w-52 xl:max-w-[25rem] items-center lg:ml-auto py-2">
             <label className="sr-only" htmlFor="site-search">{t(site.lang, "Search this site")}</label>
-            <input id="site-search" name="q" maxLength={200} placeholder={t(site.lang, "Search or ask a question…")} className="h-10 w-full lg:w-40 xl:w-80 border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
-            <button type="submit" className="h-10 bg-kapwa-yellow-400 px-4 text-sm font-bold text-kapwa-brand-950 hover:bg-kapwa-yellow-300">{t(site.lang, "Search")}</button>
+            <input id="site-search" name="q" maxLength={200} placeholder={t(site.lang, "Search or ask a question…")} className="h-10 w-full min-w-0 lg:hidden xl:block border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
+            <button type="submit" className="h-10 shrink-0 bg-kapwa-yellow-400 px-4 lg:px-3 xl:px-4 text-sm font-bold text-kapwa-brand-950 hover:bg-kapwa-yellow-300"><span className="lg:sr-only xl:not-sr-only">{t(site.lang, "Search")}</span><svg aria-hidden viewBox="0 0 24 24" className="hidden lg:block xl:hidden size-5" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg></button>
           </form>
         </div>
       </nav>
@@ -242,7 +243,7 @@ export function Footer({ site }: { site: SiteModel }) {
 
           {/* Pills */}
           <div className="flex flex-col items-start gap-3">
-            <div className="inline-flex items-center gap-2 border-l-4 border-kapwa-green-500 bg-white/5 px-4 py-2 text-sm text-neutral-100">{t(site.lang, "Pages migrated by the agent")} = <span className="font-bold tabular-nums text-kapwa-green-400">{site.pages.length}</span></div>
+            <div className="inline-flex items-center gap-2 border-l-4 border-kapwa-green-500 bg-white/5 px-4 py-2 text-sm text-neutral-100">{t(site.lang, "Pages migrated by the agent")} = <span className="font-bold tabular-nums text-kapwa-green-400">{site.pages.filter((p) => !p.document).length}</span></div>
             <a href={`mailto:${footer.email || "helpdesk@" + host}`} className={pill}>{Icon.flag} {t(site.lang, "Report an issue")}</a>
             <a href="https://github.com/rockyru/regov" target="_blank" rel="noreferrer" className={pill}>{Icon.github} {t(site.lang, "Contribute code on RE:GOV")}</a>
             <div className={`mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 ${eyebrow} text-neutral-400`}>
@@ -294,7 +295,7 @@ export function PreviewBar({ site, currentSource }: { site: SiteModel; currentSo
           <img src="/brand/mark-ink.svg" alt="" className="h-4 w-auto" /><span>RE<span className="text-kapwa-red-700">:</span>GOV</span>
         </Link>
         <span className="shrink-0 border border-amber-950/40 px-1.5 py-px text-[10px] font-bold uppercase tracking-[0.14em]">Unofficial concept</span>
-        <span className="truncate"><span className="hidden md:inline">{site.pages.length} pages reimagined from {host} by an AI agent · </span>not affiliated with {site.agency.short_name || "the agency"}{site.lang === "fil" && <span lang="en"> · Filipino text machine-translated by Muse Spark</span>}</span>
+        <span className="truncate"><span className="hidden md:inline">{site.pages.filter((p) => !p.document).length} pages reimagined from {host} by an AI agent · </span>not affiliated with {site.agency.short_name || "the agency"}{site.lang === "fil" && <span lang="en"> · Filipino text machine-translated by Muse Spark</span>}</span>
         <span className="ml-auto flex items-center gap-4 shrink-0">
           {currentSource && <a className="underline" href={currentSource} target="_blank" rel="noreferrer">Official site ↗</a>}
           <Link className="underline" href={`/report/${site.jobId}`}>Report</Link>

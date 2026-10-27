@@ -85,6 +85,8 @@ export interface SitePage extends PageModel {
   slug: string;
   source_url: string;
   source_screenshot: string;
+  /** Set on pages built from a linked document (a Citizen's Charter PDF) rather than a crawled page. */
+  document?: string;
 }
 export interface SiteModel extends SitePlan {
   jobId: string;
