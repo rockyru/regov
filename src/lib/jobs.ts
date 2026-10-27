@@ -56,7 +56,11 @@ export function scrubOfficial(site: SiteModel): SiteModel {
   const fix = (t: string) => (OFFICIAL_LEAD.test(t) ? fallback : t.replace(OFFICIAL_ANY, "website"));
   site.agency.tagline = fix(site.agency.tagline ?? "");
   site.agency.description = (site.agency.description ?? "").replace(OFFICIAL_ANY, "website");
-  for (const p of site.pages) { if (p.hero?.subheading) p.hero.subheading = fix(p.hero.subheading); }
+  for (const p of site.pages) {
+    if (p.hero?.subheading) p.hero.subheading = fix(p.hero.subheading);
+    if (OFFICIAL_LEAD.test(p.title)) p.title = p.slug === "home" ? site.agency.name : p.title.replace(OFFICIAL_LEAD, "");
+    if (p.hero?.heading && OFFICIAL_LEAD.test(p.hero.heading)) p.hero.heading = site.agency.name;
+  }
   return site;
 }
 

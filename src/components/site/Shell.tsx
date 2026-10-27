@@ -30,7 +30,7 @@ export function GovStrip({ jobId }: { jobId?: string }) {
           </span>
           GOVPH <span className="font-normal text-white/60 hidden sm:inline">· Republic of the Philippines</span>
         </div>
-        <nav aria-label="Government links" className="hidden md:flex items-center gap-5">
+        <nav aria-label="Government links" className="hidden lg:flex items-center gap-5 whitespace-nowrap">
           {links.map((l) => <a key={l.label} href={l.href} className="hover:text-white">{l.label}</a>)}
           <span className="text-white/40">|</span>
           <button className="hover:text-white" type="button">Filipino</button>
