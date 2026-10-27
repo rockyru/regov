@@ -4,6 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
+    "deploy:vps": "ssh root@72.62.255.82 'bash -s' < scripts/vps/deploy.sh",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

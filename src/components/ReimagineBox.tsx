@@ -39,12 +39,12 @@ export function ReimagineBox({ done = [], initialError = "", initialUrl = "", in
         <input type="hidden" name="max" value="30" />
       </div>
       {error && <p id="url-error" role="alert" className="mt-2 text-center text-sm font-medium text-kapwa-red-700">{error}</p>}
-      <p className="mt-3 text-center text-sm text-neutral-500">
+      {examples.length > 0 && <p className="mt-3 text-center text-sm text-neutral-500">
         <span className="font-semibold text-neutral-700">Try</span>{" "}
         {examples.map((e, i) => (
           <span key={e}>{i > 0 && <span className="text-neutral-300"> / </span>}<button type="button" onClick={() => setUrl(`https://${e}`)} className="underline decoration-neutral-300 underline-offset-4 hover:text-kapwa-brand-900 hover:decoration-kapwa-brand-900">{e}</button></span>
         ))}
-      </p>
+      </p>}
     </form>
   );
 }

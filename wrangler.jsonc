@@ -5,10 +5,9 @@
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
-  "routes": [
-    { "pattern": "regov.app", "custom_domain": true },
-    { "pattern": "www.regov.app", "custom_domain": true }
-  ],
+  // regov.app moved to the VPS on Oct 27 2026 (see scripts/vps/deploy.sh). No custom domains here,
+  // so a stray `wrangler deploy` cannot take the domain back from the server.
+  "routes": [],
   "containers": [
     { "class_name": "RegovContainer", "image": "./Dockerfile", "max_instances": 1, "instance_type": "standard-2" }
   ],
