@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { JOBS_ROOT, loadSite, settle } from "@/lib/jobs";
 import { runQueue, type QueueInfo } from "@/lib/runQueue";
 import { AppHeader, AppFooter, SectionHead, eyebrow, btn, nn } from "@/components/AppShell";
+import { LiveRefresh } from "@/components/LiveRefresh";
 
 export const dynamic = "force-dynamic";
 type Ev = { t: number; type: string; [k: string]: unknown };
@@ -84,13 +85,13 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
 
   return (
     <>
-      {live && <meta httpEquiv="refresh" content={queued ? "4" : "2"} />}
+      {live && <LiveRefresh ms={queued ? 4000 : 2000} />}
       <AppHeader crumb={host} />
       <main className="flex-1">
         <div className="container-gov pt-10 pb-16">
           {/* Title block */}
           <p className={`${eyebrow} flex items-center gap-3 ${status?.error ? "text-kapwa-red-700" : "text-kapwa-brand-900"}`}>
-            {live && <span className="size-2 bg-kapwa-brand-600 animate-pulse" />}{state}{live && <span className="font-medium normal-case tracking-normal text-neutral-500 tabular-nums">· {elapsed}s</span>}
+            {live && <span className="size-2 bg-kapwa-brand-600 animate-pulse" />}{state}{live && <span className="font-medium normal-case tracking-normal text-neutral-500 tabular-nums">· {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, "0")}{!queued && " · usually 4 to 8 minutes"}</span>}
           </p>
           <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 pb-2">
             <div className="min-w-0">
@@ -135,6 +136,11 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
                 );
               })}
             </ol>
+            {live && !queued && (
+              <div className="relative h-1 overflow-hidden bg-neutral-200" role="progressbar" aria-label="Agent working" aria-valuetext={`${STEPS.find((s) => s.key === status?.phase)?.label ?? "Working"}`}>
+                <div className="absolute inset-y-0 left-0 w-2/5 bg-kapwa-brand-900 motion-safe:animate-sweep motion-reduce:w-full" />
+              </div>
+            )}
           </section>
 
           {site && (

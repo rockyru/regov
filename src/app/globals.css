@@ -14,6 +14,20 @@
   --color-gov-yellow: var(--color-kapwa-yellow-400);
 }
 
+/* Indeterminate progress sweep (job page). Keyframes must live inside @theme for Tailwind to emit them. */
+@theme {
+  --animate-sweep: sweep 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  @keyframes sweep {
+    0% { transform: translateX(-100%); }
+    60% { transform: translateX(260%); }
+    100% { transform: translateX(260%); }
+  }
+}
+
+/* Reimagined sites: no single unbreakable string (emails, URLs, long codes) may widen the page */
+.site-shell { overflow-x: clip; }
+.site-shell :is(h1, h2, h3, h4, p, a, li, dd, dt, td, th, figcaption, span) { overflow-wrap: anywhere; }
+
 html { scroll-behavior: smooth; }
 
 /* Reimagined sites are editorial: square corners everywhere, Kapwa components included */

@@ -1,3 +1,4 @@
+import { fixPage } from "./titles";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { CrawlResult } from "./types";
@@ -35,7 +36,7 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
     const { model, usage } = await understandPage(jobDir, p, crawl.archive?.note ?? "");
     tokens += usage;
     onEvent({ type: "page", index: i, title: model.title, page_type: model.page_type, blocks: model.blocks.length, ms: Date.now() - t });
-    return { ...model, slug: slugOf(p.url), source_url: p.url, source_screenshot: p.screenshotFile };
+    return fixPage({ ...model, slug: slugOf(p.url), source_url: p.url, source_screenshot: p.screenshotFile });
   });
   // de-duplicate slugs (http/https or trailing variants)
   const seen = new Set<string>();

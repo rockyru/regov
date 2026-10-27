@@ -3,6 +3,7 @@ import { join, resolve } from "node:path";
 import type { SiteModel, SitePage } from "@/pipeline/schema";
 import type { CrawlResult } from "@/pipeline/types";
 import { slugOf } from "@/pipeline/slug";
+import { fixPageTitles } from "@/pipeline/titles";
 
 export const JOBS_ROOT = resolve(process.cwd(), "jobs");
 
@@ -70,7 +71,7 @@ export function scrubOfficial(site: SiteModel): SiteModel {
     if (OFFICIAL_LEAD.test(p.title)) p.title = p.slug === "home" ? site.agency.name : p.title.replace(OFFICIAL_LEAD, "");
     if (p.hero?.heading && OFFICIAL_LEAD.test(p.hero.heading)) p.hero.heading = site.agency.name;
   }
-  return site;
+  return fixPageTitles(site);
 }
 
 export async function loadSite(jobId: string): Promise<SiteModel | null> {

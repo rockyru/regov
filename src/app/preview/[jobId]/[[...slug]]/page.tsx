@@ -14,7 +14,7 @@ export default async function Preview({ params }: { params: Promise<{ jobId: str
   const page = path === "hotlines" ? undefined : findPage(site, path);
   if (!page && path !== "hotlines") notFound();
   return (
-    <div className="editorial flex flex-1 flex-col">
+    <div className="editorial site-shell flex flex-1 flex-col">
       <PreviewBar site={site} currentSource={page?.source_url} />
       <GovStrip jobId={jobId} />
       <Header site={site} />
