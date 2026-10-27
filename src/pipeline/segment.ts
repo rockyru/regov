@@ -13,8 +13,9 @@ import { pngDataUrl } from "./images";
 export interface Box { prompt: string; objectId: string; left: number; top: number; right: number; bottom: number; confidence: number }
 export const REGION_PROMPTS = ["logo", "search box", "map", "infographic", "photograph"];
 
-async function samBoxes(jobDir: string, file: string, prompt: string) {
-  const dataUrl = await pngDataUrl(file);
+/** SAM 3.1 boxes and masks for one noun-phrase prompt; `image` is a file path or an image data URL. */
+export async function samBoxes(jobDir: string, image: string, prompt: string) {
+  const dataUrl = image.startsWith("data:") ? image : await pngDataUrl(image);
   const stream = await meta.responses.create({
     model: SAM,
     input: [{ type: "message", role: "user", content: [{ type: "input_text", text: prompt }, { type: "input_image", image_url: dataUrl, detail: "auto" }] }],

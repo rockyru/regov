@@ -5,6 +5,7 @@ import { Markdown } from "./Markdown";
 import { navHref, eyebrow } from "./Shell";
 import { CivicStrip, TransparencySection } from "./Civic";
 import { t } from "./i18n";
+import { portraitOf } from "@/lib/people";
 
 const slugTitle = (site: SiteModel, slug: string) => site.pages.find((p) => p.slug === slug)?.title ?? slug;
 const initialsOf = (n: string) => n.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 2).map((w) => w[0]).join("") || "•";
@@ -161,7 +162,10 @@ export async function HomePage({ site, page }: { site: SiteModel; page: SitePage
             <SectionHead n={n++} title={t(site.lang, isLgu ? "Your local officials" : "Leadership")} deck={fil ? (isLgu ? `Ang mga inihalal at itinalaga para maglingkod sa ${agency.short_name || agency.name}.` : `Ang mga namumuno sa ${agency.short_name || agency.name}.`) : isLgu ? `The people elected and appointed to serve ${agency.short_name || agency.name}.` : `The people who lead ${agency.short_name || agency.name}.`} />
             <ul className="mt-8 grid border-t border-l border-neutral-200 *:border-r *:border-b *:border-neutral-200 sm:grid-cols-2 lg:grid-cols-4">
               {officials.slice(0, 8).map((o, i) => {
-                const inner = (<><span className="flex items-baseline justify-between"><span className="size-12 bg-kapwa-brand-950 text-white grid place-items-center font-bold text-base">{initialsOf(o.name)}</span><span className="text-xs font-semibold tabular-nums text-neutral-500">{nn(i)}</span></span><span className="block mt-5 font-semibold text-neutral-900 leading-tight text-[17px]">{o.name}</span><span className={`block mt-1.5 ${eyebrow} text-kapwa-brand-800`}>{o.detail}</span></>);
+                const inner = (<><span className="flex items-baseline justify-between">{portraitOf(site.portraits, o.name)
+                  // eslint-disable-next-line @next/next/no-img-element
+                  ? <img src={portraitOf(site.portraits, o.name)!.src} alt={portraitOf(site.portraits, o.name)!.alt} lang={site.lang === "fil" ? "en" : undefined} loading="lazy" className="size-20 object-cover bg-neutral-100" />
+                  : <span className="size-12 bg-kapwa-brand-950 text-white grid place-items-center font-bold text-base">{initialsOf(o.name)}</span>}<span className="text-xs font-semibold tabular-nums text-neutral-500">{nn(i)}</span></span><span className="block mt-5 font-semibold text-neutral-900 leading-tight text-[17px]">{o.name}</span><span className={`block mt-1.5 ${eyebrow} text-kapwa-brand-800`}>{o.detail}</span></>);
                 const cls = "block bg-white p-5 h-full hover:bg-kapwa-brand-50";
                 return <li key={o.name + o.detail}>{o.slug ? <Link href={navHref(jobId, o.slug)} className={cls}>{inner}</Link> : <div className={cls}>{inner}</div>}</li>;
               })}
@@ -232,9 +236,9 @@ export async function HomePage({ site, page }: { site: SiteModel; page: SitePage
         <TransparencySection site={site} n={n++} />
 
         <div className="py-14 grid gap-12 lg:grid-cols-[1fr_360px] border-t-2 border-neutral-900">
-          <div data-blocks className="space-y-14">{mainBlocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} lang={site.lang} />)}</div>
+          <div data-blocks className="space-y-14">{mainBlocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} lang={site.lang} portraits={site.portraits} />)}</div>
           <aside className="space-y-6 lg:sticky lg:top-24 self-start">
-            {contact && <Block block={contact} jobId={jobId} origin={site.origin} lang={site.lang} />}
+            {contact && <Block block={contact} jobId={jobId} origin={site.origin} lang={site.lang} portraits={site.portraits} />}
             <div className="border-t-2 border-neutral-900 pt-4">
               <h2 className={`${eyebrow} text-neutral-500`}>{t(site.lang, "About")} {agency.short_name}</h2>
               <p className="mt-3 text-[15px] leading-relaxed text-neutral-700">{agency.description}</p>
@@ -298,14 +302,14 @@ export function ContentPage({ site, page }: { site: SiteModel; page: SitePage })
             </section>
           ) : (
             <>
-              {page.blocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} lang={site.lang} />)}
+              {page.blocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} lang={site.lang} portraits={site.portraits} />)}
               {page.blocks.length === 0 && <Markdown text={page.summary} jobId={jobId} origin={site.origin} />}
             </>
           )}
         </article>
         <aside className="space-y-8 self-start lg:sticky lg:top-24">
           {headings.length > 1 && (<div><h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{t(site.lang, "On this page")}</h2><ol className="mt-2 divide-y divide-neutral-100 text-sm text-neutral-600">{headings.map((h, i) => <li key={h} className="flex gap-3 py-2"><span className="text-xs font-semibold tabular-nums text-neutral-500 pt-0.5">{nn(i)}</span>{h}</li>)}</ol></div>)}
-          {contact && <Block block={contact} jobId={jobId} origin={site.origin} lang={site.lang} />}
+          {contact && <Block block={contact} jobId={jobId} origin={site.origin} lang={site.lang} portraits={site.portraits} />}
         </aside>
       </div>
     </>

@@ -14,6 +14,7 @@ import { isLgu } from "@/lib/civic";
 import { loadScores, fmtMs, fmtBytes, change, type Scores } from "@/lib/scores";
 import { CHARTER_SLUG, unshout } from "@/lib/charterPages";
 import type { CharterFile } from "@/pipeline/charter";
+import type { PortraitFile } from "@/pipeline/portraits";
 
 export const dynamic = "force-dynamic";
 
@@ -250,6 +251,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
   try { wcag = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/wcag.json"), "utf8")); } catch {}
   const axeBefore = crawl.pages.flatMap((p) => p.axe?.violations ?? []);
   const scores = await loadScores(join(JOBS_ROOT, jobId));
+  let portraits: PortraitFile | null = null;
+  try { portraits = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/portraits.json"), "utf8")); } catch {}
   let segments: Box[] = [];
   try { segments = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/segments.json"), "utf8")); } catch {}
   const home = crawl.pages[0];
@@ -385,6 +388,22 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
               </div>
             </div>
           </Sec>
+
+          {portraits && portraits.people.length > 0 && (
+            <Sec n={n++} title="People" aside="Found by SAM 3.1, named by Muse Spark">
+              <p className="max-w-3xl text-neutral-700 print:text-[10pt]">SAM 3.1 found <span className="tabular-nums">{portraits.checked}</span> portrait {portraits.checked === 1 ? "photo" : "photos"} on the pages that list officials. Muse Spark read the caption printed with each one and named <strong className="font-semibold tabular-nums">{portraits.people.length}</strong> from the page&rsquo;s own list (never from the face), and wrote the alt text the original site was missing. The rebuilt site shows them in place of initials.</p>
+              <ul className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-6 print:grid-cols-6 print:gap-2">
+                {portraits.people.map((p) => (
+                  <li key={p.file} className="print:break-inside-avoid">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={`/api/jobs/${jobId}/${p.file}?v=${encodeURIComponent(portraits!.generated_at)}`} alt={p.alt} loading="lazy" className="aspect-square w-full object-cover border border-neutral-300 bg-neutral-100" />
+                    <div className="mt-1.5 text-[13px] font-semibold leading-tight text-neutral-900 print:text-[7.5pt]">{p.name}</div>
+                    <div className="mt-0.5 text-[12px] leading-snug text-neutral-600 print:text-[7pt]">alt: &ldquo;{p.alt}&rdquo;</div>
+                  </li>
+                ))}
+              </ul>
+            </Sec>
+          )}
 
           <Sec n={n++} title="Page inventory" aside={<span className="tabular-nums">{site.pages.length} pages · blocks / a11y / human</span>}>
             <ol className="grid 2xl:grid-cols-2 gap-x-12">

@@ -98,6 +98,8 @@ export interface SiteModel extends SitePlan {
   /** From assess.ts. Missing on sites built before the design check: treated as redesign. */
   design?: { mode: "redesign" | "refine"; score: number; reason: string; primary: string; hero?: string };
   tokens?: number;
+  /** Officials' photos found by SAM 3.1 and named by Muse Spark (src/pipeline/portraits.ts), keyed by personKey; added by loadSite. */
+  portraits?: Record<string, { src: string; alt: string }>;
   /** Set at render time on the Filipino edition (src/pipeline/translate.ts). */
   lang?: "en" | "fil";
 }

@@ -1,6 +1,6 @@
 // End-to-end: crawl + build, writing jobs/<id>/status.json for the UI to poll.
 // npx tsx --env-file=.env scripts/pipeline.ts <url> <jobId> [maxPages]
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { crawl, BlockedError } from "../src/pipeline/crawl";
 import { pickReachable } from "../src/pipeline/reach";
@@ -10,6 +10,7 @@ import { buildSite } from "../src/pipeline/build";
 import { auditRebuilt } from "../src/pipeline/audit";
 import { scoreSite } from "../src/pipeline/scores";
 import { readCharters } from "../src/pipeline/charter";
+import { findPortraits } from "../src/pipeline/portraits";
 
 const [inputUrl, jobId, max = "20"] = process.argv.slice(2);
 let url = inputUrl;
@@ -65,6 +66,14 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
       log({ type: "charter", docs: c.docs.length, services: c.docs.reduce((n, d) => n + d.services.length, 0) });
     } catch (e) {
       console.warn("[charter] skipped:", (e as Error).message);
+    }
+    // Officials' photos: SAM 3.1 finds them on the crawled pages, Muse Spark names them (never fails the run).
+    status.phase = "portraits"; await flush();
+    try {
+      const p = await findPortraits(dir, JSON.parse(await readFile(join(dir, "site.json"), "utf8")));
+      log({ type: "portraits", found: p.checked, named: p.people.length });
+    } catch (e) {
+      console.warn("[portraits] skipped:", (e as Error).message);
     }
     // WCAG 2.2 check of the rebuilt pages through the running app (free; never fails the run).
     status.phase = "audit"; await flush();
