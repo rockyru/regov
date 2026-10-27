@@ -6,6 +6,7 @@
 /* Site-wide aliases on top of Kapwa (BetterGov.ph) tokens */
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-src), Georgia, serif;
   --color-gov: var(--color-kapwa-brand-900);
   --color-gov-deep: var(--color-kapwa-brand-950);
   --color-gov-mid: var(--color-kapwa-brand-700);
@@ -23,6 +24,9 @@
     100% { transform: translateX(260%); }
   }
 }
+
+/* Display headings: Fraunces at its soft, slightly wonky, large-optical-size setting */
+.font-display { font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144; }
 
 /* Reimagined sites: no single unbreakable string (emails, URLs, long codes) may widen the page */
 .site-shell { overflow-x: clip; }

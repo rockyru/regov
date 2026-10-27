@@ -18,7 +18,7 @@ export default async function Showcase() {
           <p className={`${eyebrow} text-kapwa-brand-900`}>Showcase</p>
           <div className="mt-2 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end border-b-2 border-kapwa-brand-900 pb-8">
             <div>
-              <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-[0.95]">Before and after.</h1>
+              <h1 className="text-4xl sm:text-6xl font-display font-medium tracking-tight leading-[0.95]">Before and after.</h1>
               <p className="mt-4 max-w-2xl text-lg text-neutral-600">Every site below was rebuilt by the agent from its public pages or Wayback Machine capture. The old homepage on the left is a real screenshot; the new one on the right is the live, clickable concept.</p>
             </div>
             <dl className="grid grid-cols-3 gap-6 text-right lg:text-left">
@@ -46,7 +46,7 @@ export default async function Showcase() {
                     ) : <span className="size-16 shrink-0 bg-kapwa-brand-900" />}
                     <div className="min-w-0">
                       <p className={`${eyebrow} text-neutral-500`}><span className="text-kapwa-brand-900 tabular-nums mr-3">{nn(i)}</span>{(site.site_kind ?? "").replace(/_/g, " ")}{site.locality?.province ? ` · ${site.locality.province}` : ""}</p>
-                      <h2 className="mt-2 text-3xl sm:text-4xl font-black tracking-tight leading-tight"><Link href={`/preview/${j.id}`} className="hover:text-kapwa-brand-900">{site.agency.name}</Link></h2>
+                      <h2 className="mt-2 text-3xl sm:text-4xl font-display font-medium tracking-tight leading-tight"><Link href={`/preview/${j.id}`} className="hover:text-kapwa-brand-900">{site.agency.name}</Link></h2>
                       <p className="mt-2 text-neutral-600 max-w-2xl">{site.agency.description}</p>
                     </div>
                   </div>

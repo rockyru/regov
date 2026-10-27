@@ -97,7 +97,7 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
           </p>
           <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 pb-2">
             <div className="min-w-0">
-              <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-900 break-words">{site?.agency.name ?? host}</h1>
+              <h1 className="text-4xl sm:text-5xl font-display font-medium tracking-tight text-neutral-900 break-words">{site?.agency.name ?? host}</h1>
               <p className="mt-2 text-neutral-500 break-all">{status?.url}</p>
             </div>
             {site && <div className="flex flex-wrap gap-3"><Link href={`/preview/${jobId}`} className={btn.yellow}>View site →</Link><Link href={`/report/${jobId}`} className={btn.ghost}>Migration report</Link></div>}
@@ -112,7 +112,7 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
               <div className="flex flex-wrap items-end justify-between gap-6">
                 <div>
                   <p className={`${eyebrow} text-neutral-500`}>Queue</p>
-                  <p className="mt-2 text-3xl sm:text-4xl font-black tracking-tight text-neutral-900">{queued.position === 1 ? "Next up" : `${queued.position - 1} ahead of you`}</p>
+                  <p className="mt-2 text-3xl sm:text-4xl font-display font-medium tracking-tight text-neutral-900">{queued.position === 1 ? "Next up" : `${queued.position - 1} ahead of you`}</p>
                   <p className="mt-2 max-w-xl text-neutral-700">The agent rebuilds a few sites at a time so each run gets the whole machine. You can leave and come back: it starts on its own, this page keeps refreshing, and the home page lists it until it is done. A run usually takes four to eight minutes once it begins.</p>
                 </div>
                 <dl className="grid grid-cols-3 gap-6">
@@ -154,7 +154,7 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,35,101,0.97)_0%,rgba(6,35,101,0.9)_45%,rgba(6,35,101,0.3)_100%)]" aria-hidden />
               <div className="relative p-8 sm:p-10 max-w-2xl">
                 <p className={`${eyebrow} text-kapwa-yellow-400`}>{(site.site_kind ?? "").replace(/_/g, " ")} · Unofficial concept</p>
-                <h2 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight">{site.agency.name}</h2>
+                <h2 className="mt-3 text-3xl sm:text-4xl font-display font-medium tracking-tight">{site.agency.name}</h2>
                 <p className="mt-2 text-white/80 text-lg">{site.agency.tagline}</p>
                 <dl className="mt-6 grid grid-cols-3 gap-4 border-t border-white/20 pt-4 max-w-md">
                   {[[site.pages.length, "pages"], [site.entities?.length ?? 0, "entities"], [((site.tokens ?? 0) / 1000).toFixed(0) + "k", "tokens"]].map(([v, l]) => <div key={String(l)}><dt className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/60">{l}</dt><dd className="text-2xl font-bold tabular-nums">{v}</dd></div>)}
