@@ -10,6 +10,15 @@ problems were fixed.
 
 Built solo for the Meta Global AI Developer Hackathon 2026 (Indie track).
 
+## Disclaimer
+
+Every site RE:GOV produces is an **unofficial, AI-generated concept** for demonstration. The
+output is not operated by, endorsed by, or affiliated with the agency whose public website it
+was built from, or with any government body. Content is migrated automatically and may be
+incomplete or out of date. Previews are marked unofficial in the top bar, the footer and the
+page metadata, and are excluded from search indexing. Use the agency's official website for
+services and official information.
+
 ## Why
 
 Thousands of `.gov.ph` and `.edu.ph` sites run on abandoned WordPress installs from the

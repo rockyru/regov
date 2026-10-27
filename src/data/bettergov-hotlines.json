@@ -1,0 +1,4079 @@
+{
+  "hotlines": [
+    {
+      "hotlineName": "Station 10 (Calumpang)",
+      "hotlineNumber": "09995489244",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Station 9 (Mabuhay)",
+      "hotlineNumber": "09488741661",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Station 8 (Tinagacan)",
+      "hotlineNumber": "09985987223",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Station 7 (Fatima)",
+      "hotlineNumber": "09985987220",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Station 6 (Bula)",
+      "hotlineNumber": "09985987218",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Station 5 (Makar-Siguel Road)",
+      "hotlineNumber": "09073134517",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Station 4 (San Isidro)",
+      "hotlineNumber": "09985987214",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Station 3 (Lagao)",
+      "hotlineNumber": "09985987212",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Station 2 (Makar Wharf)",
+      "hotlineNumber": "09189213580",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Station 1 (Dad. East)",
+      "hotlineNumber": "09985987208",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Mobile Patrol Unit",
+      "hotlineNumber": "822-0215",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Traffic Enforcement Unit",
+      "hotlineNumber": "09100436910",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "government_hotlines",
+      "alternateNumbers": ["825-3894"]
+    },
+    {
+      "hotlineName": "Bureau of Fire Protection (BFP)",
+      "hotlineNumber": "09433415561",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["160", "552-1160"]
+    },
+    {
+      "hotlineName": "GenSan - City Disaster Risk Reduction Management Office (CDRRMO)",
+      "hotlineNumber": "09434614548",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "government_hotlines",
+      "alternateNumbers": ["552-3939", "552-8861"]
+    },
+    {
+      "hotlineName": "Task Force Gensan",
+      "hotlineNumber": "09051443676",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "government_hotlines",
+      "alternateNumbers": ["887-0618"]
+    },
+    {
+      "hotlineName": "Dr. Jorge P. Royeca City Hospital",
+      "hotlineNumber": "09123762331",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["552-2811"]
+    },
+    {
+      "hotlineName": "Soccsargen Country Hospital",
+      "hotlineNumber": "09326924708",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["553-8906"]
+    },
+    {
+      "hotlineName": "Gensan Doctors Hospital",
+      "hotlineNumber": "09338217257",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["250-2777"]
+    },
+    {
+      "hotlineName": "St. Elizabeth Hospital",
+      "hotlineNumber": "09190719004",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["552-3162"]
+    },
+    {
+      "hotlineName": "Mindanao Medical Center",
+      "hotlineNumber": "553-8207",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["554-9640"]
+    },
+    {
+      "hotlineName": "Labella Hospital",
+      "hotlineNumber": "553-3509",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Auguis Clinic",
+      "hotlineNumber": "552-4911",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Sarangani Bay Specialists Medical Center",
+      "hotlineNumber": "09190678395",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["887-8888"]
+    },
+    {
+      "hotlineName": "Dadiangas Medical Center",
+      "hotlineNumber": "09171902561",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Gensan Medical Center",
+      "hotlineNumber": "887-9898",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Diagan Cooperative Hospital",
+      "hotlineNumber": "09238094705",
+      "regionName": "Region XII - SOCCSKSARGEN",
+      "province": "South Cotabato",
+      "city": "General Santos City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["552-3942"]
+    },
+    {
+      "hotlineName": "Aquino Medical Specialists Hospital, Inc.",
+      "hotlineNumber": "0842162156",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["09223692183"]
+    },
+    {
+      "hotlineName": "Davao Regional Medical Center - OPCEN",
+      "hotlineNumber": "09171044743",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["0848297120", "200"]
+    },
+    {
+      "hotlineName": "Davao Regional Medical Center - RPNRU Refferal Lines",
+      "hotlineNumber": "09190967660",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["0848297120", "210"]
+    },
+    {
+      "hotlineName": "Davao Regional Medical Center - HEDMU Office",
+      "hotlineNumber": "0848297120",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["253"]
+    },
+    {
+      "hotlineName": "Davao Regional Medical Center",
+      "hotlineNumber": "0848297120",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["09559801761", "09126417327"]
+    },
+    {
+      "hotlineName": "Medical Mission Group Hospital & Health Services Cooperative of Tagum",
+      "hotlineNumber": "0846556020",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["6556015", "6556009"]
+    },
+    {
+      "hotlineName": "Tagum Medical City",
+      "hotlineNumber": "09332047372",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "VITRUWASCO",
+      "hotlineNumber": "09264872188",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["0848225327"]
+    },
+    {
+      "hotlineName": "Tagum City Water District",
+      "hotlineNumber": "09639267303",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["09633419162"]
+    },
+    {
+      "hotlineName": "NORDECO (Northern Davao Electric Cooperative)",
+      "hotlineNumber": "09173763658",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["09955198727"]
+    },
+    {
+      "hotlineName": "Tagum City Traffic Management Unit",
+      "hotlineNumber": "09656570026",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "City Disaster Risk Reduction and Maintenance Office (CDRRMO) Providence Base",
+      "hotlineNumber": "09267171566",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "City Disaster Risk Reduction and Maintenance Office (CDRRMO) Rescue",
+      "hotlineNumber": "09275313199",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Tagum City Fire Station - La Filipina Sub-Station",
+      "hotlineNumber": "09369920576",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Tagum City Fire Station - Magugpo South Sub-Station",
+      "hotlineNumber": "09164619521",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Tagum City Fire Station - Central Station",
+      "hotlineNumber": "09267171538",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Tagum City Police Office",
+      "hotlineNumber": "09197485024",
+      "regionName": "Region XI - Davao Region",
+      "province": "Davao del Norte",
+      "city": "Tagum City",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09674501815"]
+    },
+    {
+      "hotlineName": "Civil Service",
+      "hotlineNumber": "09777202406",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Iligan Light and Power Incorporated",
+      "hotlineNumber": "221-5708",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["223-1188", "221-5709", "222-2777"]
+    },
+    {
+      "hotlineName": "Traffic Division - K9 Unit Tambo",
+      "hotlineNumber": "222-6275",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "government_hotlines",
+      "alternateNumbers": ["199"]
+    },
+    {
+      "hotlineName": "Tipanoy - City Disaster Risk Reduction and Management Office (PDEA)",
+      "hotlineNumber": "225-3216",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "City Disaster Risk Reduction and Management Office (CDRRMO)",
+      "hotlineNumber": "09977262692",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09294665777", "811", "812", "221-8459"]
+    },
+    {
+      "hotlineName": "Iligan City Police Office",
+      "hotlineNumber": "09177127411",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09985987004", "221-6699", "167"]
+    },
+    {
+      "hotlineName": "Iligan City Police Station 1 - Tambo",
+      "hotlineNumber": "09171663440",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "police_hotlines",
+      "alternateNumbers": ["221-9315"]
+    },
+    {
+      "hotlineName": "Iligan City Police Station 2 - Nunucan",
+      "hotlineNumber": "09177151844",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09985987008", "165"]
+    },
+    {
+      "hotlineName": "Iligan City Police Station 3 - Tag-ibo",
+      "hotlineNumber": "09354320803",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09177252854", "168"]
+    },
+    {
+      "hotlineName": "Iligan City Police Station 4 - Tubod",
+      "hotlineNumber": "09354847972",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "police_hotlines",
+      "alternateNumbers": ["224-4088", "162"]
+    },
+    {
+      "hotlineName": "Iligan City Police Station 5 - Poblacion",
+      "hotlineNumber": "09264251015",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09655390808", "225-5505", "166"]
+    },
+    {
+      "hotlineName": "Iligan City Police Station 6",
+      "hotlineNumber": "09558753213",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09273832181"]
+    },
+    {
+      "hotlineName": "Iligan City Mobile Force Company",
+      "hotlineNumber": "09559016880",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Iligan City Pnp Headquarters",
+      "hotlineNumber": "166",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "police_hotlines",
+      "alternateNumbers": ["221-6699"]
+    },
+    {
+      "hotlineName": "Pnp Crime Laboratory Tipanoy",
+      "hotlineNumber": "221-0499",
+      "regionName": "Region X - Northern Mindanao ",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Bureau of Fire Protection (BFP)",
+      "hotlineNumber": "160",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["161", "09678714388", "221-9055", "221-9056"]
+    },
+    {
+      "hotlineName": "Iligan City Fire Station",
+      "hotlineNumber": "09301165433",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["221-9055", "09678714388", "211-9056"]
+    },
+    {
+      "hotlineName": "Saray Sub-Station",
+      "hotlineNumber": "160",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["161"]
+    },
+    {
+      "hotlineName": "San Miguel Sub-Station",
+      "hotlineNumber": "221-7110",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Tubod Sub-Station",
+      "hotlineNumber": "221-3437",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Philippine Red Cross - Iligan City Chapter",
+      "hotlineNumber": "09177202291",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["229-1065", "222-2907"]
+    },
+    {
+      "hotlineName": "Philippine Red Cross - Iligan City Blood Center",
+      "hotlineNumber": "223-1064",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Iligan City Disaster Risk Reduction and Management Office (icdrrmo)",
+      "hotlineNumber": "09977262692",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["811", "09692337878", "221-8459"]
+    },
+    {
+      "hotlineName": "Dr. Uy Hospital Inc.",
+      "hotlineNumber": "225-4530",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Adventist Medical Center",
+      "hotlineNumber": "221-3029",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["221-7306", "221-3636"]
+    },
+    {
+      "hotlineName": "St Mary's Maternity & Children's Hospital",
+      "hotlineNumber": "221-3210",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Iligan Medical Center & Hospital",
+      "hotlineNumber": "221-4661",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Gregorio Lluch Memorial Hospital Ambulance",
+      "hotlineNumber": "223-0602",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["221-0081"]
+    },
+    {
+      "hotlineName": "E&r Hospital",
+      "hotlineNumber": "221-1207",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["223-4246"]
+    },
+    {
+      "hotlineName": "St. Anthony Maternity's and Child",
+      "hotlineNumber": "221-5748",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Mercy Community Hospitals Inc.",
+      "hotlineNumber": "221-8374",
+      "regionName": "Region X - Northern Mindanao",
+      "province": "Lanao del Norte",
+      "city": "Iligan City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["221-3762"]
+    },
+    {
+      "hotlineName": "Alfonso PNP",
+      "hotlineNumber": "09065366135",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Alfonso",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09989673364", "0465220800"]
+    },
+    {
+      "hotlineName": "Tagaytay Philippine National Police",
+      "hotlineNumber": "0464131282",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Tagaytay",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Tagaytay Bureau of Fire Protection",
+      "hotlineNumber": "0464831193",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Tagaytay",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Tagaytay Rescue",
+      "hotlineNumber": "0464830446",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Tagaytay",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Tagaytay City Health Office",
+      "hotlineNumber": "0464830604",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Tagaytay",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Ospital ng Tagaytay",
+      "hotlineNumber": "0464832160",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Tagaytay",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Unihealth Tagaytay & Medical Center",
+      "hotlineNumber": "0464131940",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Tagaytay",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Bureau of Fire Protection",
+      "hotlineNumber": "09156022113",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Alfonso",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["09296632424", "0465220480"]
+    },
+    {
+      "hotlineName": "Hospital",
+      "hotlineNumber": "09173062419",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Alfonso",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["4150190"]
+    },
+    {
+      "hotlineName": "Ambulance",
+      "hotlineNumber": "09178330206",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Alfonso",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "0464439083",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Alfonso",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Trece Martires City National Philippine Force",
+      "hotlineNumber": "09776801240",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Trece Martires",
+      "category": "police_hotlines",
+      "alternateNumbers": ["6863460"]
+    },
+    {
+      "hotlineName": "City Disaster Risk Reduction and Maintenance Office",
+      "hotlineNumber": "09776763491",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Trece Martires",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09496298026", "4193858"]
+    },
+    {
+      "hotlineName": "Municipal Command Center",
+      "hotlineNumber": "0464604708",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Indang",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0464604709"]
+    },
+    {
+      "hotlineName": "Indang Philippine National Police",
+      "hotlineNumber": "09491849145",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Indang",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Local Disaster Risk Reduction Management Office",
+      "hotlineNumber": "09152066929",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Indang",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09161831458"]
+    },
+    {
+      "hotlineName": "Bureau of Fire Protection",
+      "hotlineNumber": "09156034245",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Indang",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["4151217"]
+    },
+    {
+      "hotlineName": "Health Center",
+      "hotlineNumber": "4150286",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Indang",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["6839772"]
+    },
+    {
+      "hotlineName": "Department of Social Welfare and Development",
+      "hotlineNumber": "4439074",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Indang",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "SMART",
+      "hotlineNumber": "09286872839",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "General Mariano Alvarez",
+      "category": "utility_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "GLOBE",
+      "hotlineNumber": "09164473598",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "General Mariano Alvarez",
+      "category": "utility_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Municipal Health Office",
+      "hotlineNumber": "0469722093",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "General Mariano Alvarez",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "0464439389",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "General Mariano Alvarez",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Kawit Operation Center",
+      "hotlineNumber": "09972535503",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Kawit",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0462535503"]
+    },
+    {
+      "hotlineName": "Kawit Public Safety Office",
+      "hotlineNumber": "09989673356",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Kawit",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Kawit Bureau of Fire Protection",
+      "hotlineNumber": "4845250",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Kawit",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Kawit Municipal Police Station",
+      "hotlineNumber": "09268153057",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Kawit",
+      "category": "police_hotlines",
+      "alternateNumbers": ["0466867411"]
+    },
+    {
+      "hotlineName": "Kawit Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "0464382449",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Kawit",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Tanza Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09773455035",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Tanza",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09287579030"]
+    },
+    {
+      "hotlineName": "Tanza Philippines National Police",
+      "hotlineNumber": "09178502555",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Tanza",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09287579030"]
+    },
+    {
+      "hotlineName": "Tanza Bureau of Fire Protection",
+      "hotlineNumber": "09156021562",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Tanza",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["0465056084"]
+    },
+    {
+      "hotlineName": "Naic Emergency Response Unit",
+      "hotlineNumber": "4105725",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Naic",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Municipal Police Station",
+      "hotlineNumber": "09176371584",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Naic",
+      "category": "police_hotlines",
+      "alternateNumbers": ["4231434"]
+    },
+    {
+      "hotlineName": "Naic Bureau of Fire Protection",
+      "hotlineNumber": "09176797861",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Naic",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["4121481"]
+    },
+    {
+      "hotlineName": "Rosario Municipal Police Station",
+      "hotlineNumber": "0464381548",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Rosario",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Municipal Traffic Operations Center",
+      "hotlineNumber": "09396349527",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Rosario",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["09274534863"]
+    },
+    {
+      "hotlineName": "Silang COVID-19 Hotline",
+      "hotlineNumber": "09487145188",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Silang",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Carmona Bureau of Fire Protection",
+      "hotlineNumber": "0464301666",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Carmona",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Carmona Municipal Disaster Risk reduction and Management Office",
+      "hotlineNumber": "0464130188",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Carmona",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Carmona Municipal Health Office",
+      "hotlineNumber": "09153748460",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Carmona",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["09568976299", "0464302372", "0464435397"]
+    },
+    {
+      "hotlineName": "Pagamutang Bayan ng Carmona",
+      "hotlineNumber": "0464301644",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Carmona",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Municipal Social Welfare and Development Office",
+      "hotlineNumber": "0464303009",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Carmona",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "General Trias Bureau of Fire Protection",
+      "hotlineNumber": "09175931522",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "General Trias",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["0465137200", "4377625"]
+    },
+    {
+      "hotlineName": "General Trias Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09175968676",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "General Trias",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0465136986", "5095068"]
+    },
+    {
+      "hotlineName": "General Trias Philippine National Police",
+      "hotlineNumber": "09176223320",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "General Trias",
+      "category": "police_hotlines",
+      "alternateNumbers": ["0465138600", "4377306"]
+    },
+    {
+      "hotlineName": "Amadeo Rescue",
+      "hotlineNumber": "09175047419",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Amadeo",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Amadeo Municipal Police Station",
+      "hotlineNumber": "09651993111",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Amadeo",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Amadeo Bureau of Fire Protection",
+      "hotlineNumber": "09156016805",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Amadeo",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["4832490"]
+    },
+    {
+      "hotlineName": "Amadeo Rural Health Unit",
+      "hotlineNumber": "09658198686",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Amadeo",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Maragondon Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09656825414",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Maragondon",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09176049696", "09566685003"]
+    },
+    {
+      "hotlineName": "Maragondon Hospital",
+      "hotlineNumber": "0464120826",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Maragondon",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Maragondon Philippine National Police",
+      "hotlineNumber": "09989673369",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Maragondon",
+      "category": "police_hotlines",
+      "alternateNumbers": ["0464121161"]
+    },
+    {
+      "hotlineName": "Maragondon Bureau of Fire Protection",
+      "hotlineNumber": "0464121911",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Maragondon",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Noveleta Local Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "0464842564",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Noveleta",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Noveleta Municipal Police Station",
+      "hotlineNumber": "09433053100",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Noveleta",
+      "category": "police_hotlines",
+      "alternateNumbers": ["0464381669"]
+    },
+    {
+      "hotlineName": "Cavite City City Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09269707556",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Cavite City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Cavite City Bureau of Fire Protection",
+      "hotlineNumber": "4310308",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Cavite City",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "City Health Office",
+      "hotlineNumber": "09278787777",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Imus",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Overall Disease Surveillance Officer",
+      "hotlineNumber": "09190734977",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Imus",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "DSO - Health Office 1",
+      "hotlineNumber": "09983705428",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Imus",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "DSO - Health Office 2",
+      "hotlineNumber": "09178650427",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Imus",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "DSO - Health Office 3",
+      "hotlineNumber": "09323464248",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Imus",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Dasmariñas City Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "0465131766",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Dasmariñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pagamutan ng Dasmariñas",
+      "hotlineNumber": "09985665555",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Dasmariñas",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["0464814400"]
+    },
+    {
+      "hotlineName": "Dasmariñas Philippine National Police",
+      "hotlineNumber": "09568003329",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Dasmariñas",
+      "category": "police_hotlines",
+      "alternateNumbers": ["04641602545", "0464162924"]
+    },
+    {
+      "hotlineName": "Dasmariñas Bureau of Fire Protection",
+      "hotlineNumber": "0464160875",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Dasmariñas",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["0464242537"]
+    },
+    {
+      "hotlineName": "Bacoor Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "0464170727",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Bacoor",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Bacoor Bureau of Fire Protection",
+      "hotlineNumber": "0464176060",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Bacoor",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Mendez Local Government Unit",
+      "hotlineNumber": "09957240980",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Mendez",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09204601766", "0464130601"]
+    },
+    {
+      "hotlineName": "Mendez Bureau of Fire Protection",
+      "hotlineNumber": "0464132237",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Mendez",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Magallanes Local Government Unit",
+      "hotlineNumber": "09152759884",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Magallanes",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Magallanes Bureau of Fire Protection",
+      "hotlineNumber": "0465296245",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Magallanes",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Gen. Emilio Aguinaldo Rural Health Unit",
+      "hotlineNumber": "09985789793",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "General Emilio Aguinaldo",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["09175714422"]
+    },
+    {
+      "hotlineName": "Gen. Emilio Aguinaldo Bureau of Fire Protection",
+      "hotlineNumber": "09214585937",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "General Emilio Aguinaldo",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Office of the Mayor",
+      "hotlineNumber": "0464022309",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Ternate",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Ternate Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09201112811",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Ternate",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Ternate Bureau of Fire Protection",
+      "hotlineNumber": "09158851640",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Ternate",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Ternate Philippine National Police",
+      "hotlineNumber": "09776822553",
+      "regionName": "Region IV-A",
+      "province": "Cavite",
+      "city": "Ternate",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Antipolo City Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "0286894576",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Antipolo",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09277559911", "09178540842"]
+    },
+    {
+      "hotlineName": "Angono Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "0284511711",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Angono",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09178109640", "09173263399"]
+    },
+    {
+      "hotlineName": "Baras Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09209581070",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Baras",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Binangonan Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "0287139370",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Binangonan",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09656238674"]
+    },
+    {
+      "hotlineName": "Cainta Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "0285350131",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Cainta",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Cardona Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "0286331052",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Cardona",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09171307943"]
+    },
+    {
+      "hotlineName": "Jalajala Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09758556328",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Jalajala",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Montalban Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09696144825",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Montalban",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Morong Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09190817181",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Morong",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pililla Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09179398558",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Pililla",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "San Mateo Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "0282978100",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "San Mateo",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09543550707", "09853942424"]
+    },
+    {
+      "hotlineName": "Tanay Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09634733333",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Tanay",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Taytay Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09854883352",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Taytay",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09526199511", "09708843791"]
+    },
+    {
+      "hotlineName": "Teresa Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09451137077",
+      "regionName": "Region IV-A",
+      "province": "Rizal",
+      "city": "Teresa",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Caloocan City Disaster Risk Reduction and Management Department",
+      "hotlineNumber": "0288825664",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Caloocan",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Mandaluyong Police",
+      "hotlineNumber": "85322145",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Mandaluyong",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Mandaluyong Bureau of Fire Protection",
+      "hotlineNumber": "85322189",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Mandaluyong",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["85322402"]
+    },
+    {
+      "hotlineName": "Mandaluyong Hospital",
+      "hotlineNumber": "85395500",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Mandaluyong",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Mandaluyong Disaster/Rescue",
+      "hotlineNumber": "85332225",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Mandaluyong",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Mandaluyong City Health Office",
+      "hotlineNumber": "85340163",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Mandaluyong",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Mandaluyong City Health Office",
+      "hotlineNumber": "09162558130",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Mandaluyong",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["09615716959"]
+    },
+    {
+      "hotlineName": "Manila Station 1 Balut",
+      "hotlineNumber": "2536808",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": ["9967141", "5241852", "5134750", "7011561"]
+    },
+    {
+      "hotlineName": "Manila Station 2 Moriones",
+      "hotlineNumber": "2455002",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": ["82512594", "5464529", "257117"]
+    },
+    {
+      "hotlineName": "Manila Station 3 Sta. Cruz",
+      "hotlineNumber": "7360474",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": ["73699182", "2563374", "7419322", "7369861"]
+    },
+    {
+      "hotlineName": "Manila Station 4 Sampaloc",
+      "hotlineNumber": "09273685759",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": ["9855900", "4936681", "4930821"]
+    },
+    {
+      "hotlineName": "Manila Station 5 Ermita",
+      "hotlineNumber": "5219985",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": [
+        "3869006",
+        "3924873",
+        "5477856",
+        "3910359",
+        "5366712",
+        "4730541",
+        "4966972",
+        "4637319"
+      ]
+    },
+    {
+      "hotlineName": "Manila Station 6 Sta. Ana",
+      "hotlineNumber": "5634619",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": ["4850706", "5645805"]
+    },
+    {
+      "hotlineName": "Manila Station 7 J. Abad Santos",
+      "hotlineNumber": "2528450",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": ["5260090", "7039113"]
+    },
+    {
+      "hotlineName": "Manila Station 8 Sta. Mesa",
+      "hotlineNumber": "7154124",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": ["7166526", "4667346", "7350036", "4915752"]
+    },
+    {
+      "hotlineName": "Manila Station 9 Malate",
+      "hotlineNumber": "3100045",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": ["3030638", "2559684"]
+    },
+    {
+      "hotlineName": "Manila Station 10 Pandacan",
+      "hotlineNumber": "5640565",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": ["4469932", "4099198", "4671679"]
+    },
+    {
+      "hotlineName": "Manila Station 11 Meisic",
+      "hotlineNumber": "5166734",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": ["3099110", "2427322", "2437322"]
+    },
+    {
+      "hotlineName": "DTOC MPD",
+      "hotlineNumber": "0285233378",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "PIO MPD",
+      "hotlineNumber": "85245288",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Manila Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "85686909",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09326622322", "09507003710"]
+    },
+    {
+      "hotlineName": "Manila San Nicolas Fire Station",
+      "hotlineNumber": "70005887",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Manila Tanduay Fire Station",
+      "hotlineNumber": "09569426172",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Manila Paco Fire Station",
+      "hotlineNumber": "85254714",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["09764836353"]
+    },
+    {
+      "hotlineName": "Manila Intramuros Fire Station",
+      "hotlineNumber": "09569586301",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Manila Pandacan Fire Station",
+      "hotlineNumber": "85631074",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["09504292897"]
+    },
+    {
+      "hotlineName": "Manila Tondo Fire Station",
+      "hotlineNumber": "82453403",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["09467270166"]
+    },
+    {
+      "hotlineName": "Manila San Lazaro Fire Station",
+      "hotlineNumber": "87116924",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["09289406032"]
+    },
+    {
+      "hotlineName": "Manila Sta Mesa Fire Station",
+      "hotlineNumber": "09176358570",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Manila Gagalangin Fire Station",
+      "hotlineNumber": "09760457030",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Manila Sta Ana Fire Station",
+      "hotlineNumber": "53107667",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["09153127884"]
+    },
+    {
+      "hotlineName": "Manila Arroceros Fire Station",
+      "hotlineNumber": "09959870248",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Manila Sampaloc Fire Station",
+      "hotlineNumber": "87407480",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["87497194", "09056923584"]
+    },
+    {
+      "hotlineName": "Manila Malacanang Fire Station",
+      "hotlineNumber": "09760760636",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Manila Bacood Fire Station",
+      "hotlineNumber": "87146923",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["09463727530"]
+    },
+    {
+      "hotlineName": "Manila SRF Fire Station",
+      "hotlineNumber": "85232850",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["09205273346"]
+    },
+    {
+      "hotlineName": "Manila EMS San Lazaro/Comet Alpha",
+      "hotlineNumber": "87116970",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Manila EMS Intramuros/Comet Bravo",
+      "hotlineNumber": "09975602507",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Manila EMS Sampaloc/Comet Charlie",
+      "hotlineNumber": "09567884475",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Manila Commel",
+      "hotlineNumber": "53365138",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["53365139", "09664769700", "09693989700"]
+    },
+    {
+      "hotlineName": "Manila Commel",
+      "hotlineNumber": "53365138",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Manila",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["53365139", "09664769700", "09693989700"]
+    },
+    {
+      "hotlineName": "Helpline",
+      "hotlineNumber": "911",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Quezon City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "QC Helpline",
+      "hotlineNumber": "122",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Quezon City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Emergency Operations Center",
+      "hotlineNumber": "89884242",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Quezon City",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09478859929", "09770312892"]
+    },
+    {
+      "hotlineName": "Emergency Medical Services / Urban Search and Rescue",
+      "hotlineNumber": "89284396",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Quezon City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["09478847498"]
+    },
+    {
+      "hotlineName": "Pasig City DRRMO Emergency Hotline",
+      "hotlineNumber": "86430000",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Philippine National Police (PNP)",
+      "hotlineNumber": "84777953",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig - Bureau of Fire Protection (BFP)",
+      "hotlineNumber": "09327798621",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City Children's Hospital",
+      "hotlineNumber": "86432222",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City General Hospital",
+      "hotlineNumber": "86427379",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["86427381"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Bagong Ilog",
+      "hotlineNumber": "09361808499",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09128154041", "09159019134"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Bagong Katipunan",
+      "hotlineNumber": "84774262",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Bambang",
+      "hotlineNumber": "70032600",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Buting",
+      "hotlineNumber": "09166647744",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09682141115"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Caniogan",
+      "hotlineNumber": "09670393182",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09086436720"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Dela Paz",
+      "hotlineNumber": "09999988844",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Kapasigan",
+      "hotlineNumber": "87254023",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Kapitolyo",
+      "hotlineNumber": "09670984620",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": ["86327598"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Malinao",
+      "hotlineNumber": "86416672",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": ["86327605"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Manggahan",
+      "hotlineNumber": "09088653031",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09171729744"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Oranbo",
+      "hotlineNumber": "09154062290",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": ["86310254"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Palatiw",
+      "hotlineNumber": "83739234",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": ["83740082"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Pinagbuhatan",
+      "hotlineNumber": "09238574110",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09152661400", "88804609"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Pineda",
+      "hotlineNumber": "09937890331",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Rosario",
+      "hotlineNumber": "79565695",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Sagad",
+      "hotlineNumber": "86280227",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. San Antonio",
+      "hotlineNumber": "09186254428",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. San Joaquin",
+      "hotlineNumber": "09203065643",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. San Jose",
+      "hotlineNumber": "09670598674",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. San Miguel",
+      "hotlineNumber": "09569282660",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. San Nicolas",
+      "hotlineNumber": "09062748238",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": ["72397463"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Santolan - Brgy. Hall",
+      "hotlineNumber": "09173119756",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Santolan - Fire Rescue and Rescue Brigade",
+      "hotlineNumber": "09194500133",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["09104500133", "86821019"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Santolan - Brgy. Security Force",
+      "hotlineNumber": "09660641882",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "police_hotlines",
+      "alternateNumbers": ["86464627"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Santolan - Ambulance",
+      "hotlineNumber": "09513357000",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Santolan - Patient Transport Vehicle",
+      "hotlineNumber": "09127941722",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Sta. Cruz",
+      "hotlineNumber": "73430611",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Sta. Lucia",
+      "hotlineNumber": "09624964778",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Sta. Rosa",
+      "hotlineNumber": "09617625452",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": ["72560509"]
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Sto. Tomas",
+      "hotlineNumber": "71489575",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Sumilang",
+      "hotlineNumber": "09267283919",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pasig City - Brgy. Ugong",
+      "hotlineNumber": "09178164987",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Pasig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Makati City Hall Trunkline",
+      "hotlineNumber": "88701000",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Makati Command Control and Communications Center",
+      "hotlineNumber": "82365790",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "government_hotlines",
+      "alternateNumbers": ["168"]
+    },
+    {
+      "hotlineName": "Makati Police Department",
+      "hotlineNumber": "88871798",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09297936525"]
+    },
+    {
+      "hotlineName": "Bureau of Fire Protection",
+      "hotlineNumber": "88185150",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["88162553"]
+    },
+    {
+      "hotlineName": "Makati Anti Drug Abuse Council",
+      "hotlineNumber": "88701713",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "government_hotlines",
+      "alternateNumbers": ["88701715"]
+    },
+    {
+      "hotlineName": "Opistal ng Makati",
+      "hotlineNumber": "88826316",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Makati Health Department",
+      "hotlineNumber": "88701607",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["88701605"]
+    },
+    {
+      "hotlineName": "Makati Health Program",
+      "hotlineNumber": "88998930",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Veterinary Services Office",
+      "hotlineNumber": "88897949",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Public Safety Department",
+      "hotlineNumber": "88193270",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "utility_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Makati Action Center",
+      "hotlineNumber": "88701436",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["88963443"]
+    },
+    {
+      "hotlineName": "Department of Environmental Services",
+      "hotlineNumber": "88999057",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "utility_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Public Employment Service Office",
+      "hotlineNumber": "88701226",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["88701230"]
+    },
+    {
+      "hotlineName": "Makati Social Welfare Department",
+      "hotlineNumber": "88701639",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "utility_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Makatizen Card Office",
+      "hotlineNumber": "88701090",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Makati",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["88701093"]
+    },
+    {
+      "hotlineName": "Taguig Command Center",
+      "hotlineNumber": "87893200",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Taguig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Taguig Rescue",
+      "hotlineNumber": "09190703112",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Taguig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Doctor-on-Call",
+      "hotlineNumber": "09190799112",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Taguig",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Taguig Bureau of Fire Protection",
+      "hotlineNumber": "88370740",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Taguig",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Taguig Cit Hall Office Trunkline",
+      "hotlineNumber": "85557800",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Taguig",
+      "category": "government_hotlines",
+      "alternateNumbers": ["77958888"]
+    },
+    {
+      "hotlineName": "SM Aura Satellite Office",
+      "hotlineNumber": "77959999",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Taguig",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Taguig PNP",
+      "hotlineNumber": "86423582",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Taguig",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09985987932"]
+    },
+    {
+      "hotlineName": "Roadside Emergency Assistance",
+      "hotlineNumber": "86407006",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Taguig",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09296315924", "092127800569"]
+    },
+    {
+      "hotlineName": "City Disaster Risk Valenzuela Reduction & Management Office",
+      "hotlineNumber": "83525000",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Valenzuela",
+      "category": "government_hotlines",
+      "alternateNumbers": ["82921405", "09190094045", "0917881639"]
+    },
+    {
+      "hotlineName": "Valenzuela City Fire Station",
+      "hotlineNumber": "82923519",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Valenzuela",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Police Station - Main Station",
+      "hotlineNumber": "83524000",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Valenzuela",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09064197676", "09985987868"]
+    },
+    {
+      "hotlineName": "Valenzuela City Emergency Hospital",
+      "hotlineNumber": "83526000",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Valenzuela",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Valenzuela Medical Center",
+      "hotlineNumber": "82946711",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Valenzuela",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "City Hall Olongapo",
+      "hotlineNumber": "2222565",
+      "regionName": "Region III - Central Luzon",
+      "province": "Zambales",
+      "city": "Olongapo",
+      "category": "government_hotlines",
+      "alternateNumbers": ["6114800"]
+    },
+    {
+      "hotlineName": "DRRMO / Rescue",
+      "hotlineNumber": "09985937446",
+      "regionName": "Region III - Central Luzon",
+      "province": "Zambales",
+      "city": "Olongapo",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Fire & Rescue",
+      "hotlineNumber": "2231415",
+      "regionName": "Region III - Central Luzon",
+      "province": "Zambales",
+      "city": "Olongapo",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Disaster Management Office",
+      "hotlineNumber": "09985367121",
+      "regionName": "Region III - Central Luzon",
+      "province": "Zambales",
+      "city": "Olongapo",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "SBMA Fire Department",
+      "hotlineNumber": "2524830",
+      "regionName": "Region III - Central Luzon",
+      "province": "Zambales",
+      "city": "Olongapo",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["2524657"]
+    },
+    {
+      "hotlineName": "Sta Rita, Rescue, & Disaster Response",
+      "hotlineNumber": "09399560009",
+      "regionName": "Region III - Central Luzon",
+      "province": "Zambales",
+      "city": "Olongapo",
+      "category": "government_hotlines",
+      "alternateNumbers": ["2229225"]
+    },
+    {
+      "hotlineName": "Philippine RedCross",
+      "hotlineNumber": "09178892783",
+      "regionName": "Region III - Central Luzon",
+      "province": "Zambales",
+      "city": "Olongapo",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["2222181"]
+    },
+    {
+      "hotlineName": "New Cabalan Fire & Rescue",
+      "hotlineNumber": "2245414",
+      "regionName": "Region III - Central Luzon",
+      "province": "Zambales",
+      "city": "Olongapo",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Old Cabalan Quick Emergency Response",
+      "hotlineNumber": "6031700",
+      "regionName": "Region III - Central Luzon",
+      "province": "Zambales",
+      "city": "Olongapo",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Gordon Heights Fire & Rescue",
+      "hotlineNumber": "2235497",
+      "regionName": "Region III - Central Luzon",
+      "province": "Zambales",
+      "city": "Olongapo",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Barretto Fire & Rescue",
+      "hotlineNumber": "2224295",
+      "regionName": "Region III - Central Luzon",
+      "province": "Zambales",
+      "city": "Olongapo",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "East Bajac Bajac Fire & Rescue",
+      "hotlineNumber": "09174365998",
+      "regionName": "Region III - Central Luzon",
+      "province": "Zambales",
+      "city": "Olongapo",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["2225035"]
+    },
+    {
+      "hotlineName": "24/7 Health Hotline",
+      "hotlineNumber": "09992226626",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Mayor's Action Center",
+      "hotlineNumber": "7231511",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "BFP Batangas City",
+      "hotlineNumber": "4257163",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["3017996", "09156021984"]
+    },
+    {
+      "hotlineName": "PNP Batangas City",
+      "hotlineNumber": "7232030",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Batangas Medical Center",
+      "hotlineNumber": "7230911",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "St. Patrick’s Hospital & Medical Center",
+      "hotlineNumber": "7231605",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Jesus of Nazareth Hospital",
+      "hotlineNumber": "7234144",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Golden Gate General Hospital",
+      "hotlineNumber": "7232508",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Batangas Healthcare Specialists Medical Center",
+      "hotlineNumber": "4038642",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "United Doctors of St. Camillus de Lellis Hospital and Medical Center",
+      "hotlineNumber": "09189942074",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "City Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "7023902",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "MERALCO",
+      "hotlineNumber": "16211",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["16222847"]
+    },
+    {
+      "hotlineName": "National Power Corporation",
+      "hotlineNumber": "3003592",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "utility_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "PrimeWater Batangas City",
+      "hotlineNumber": "09494142633",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["9806928"]
+    },
+    {
+      "hotlineName": "LTO Batangas City",
+      "hotlineNumber": "7409738",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "VAWC Batangas City",
+      "hotlineNumber": "09568267017",
+      "regionName": "Region IV-A",
+      "province": "Batangas",
+      "city": "Batangas City",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "San Pablo City Disaster Risk Reduction and Management Office (CDRRMO)",
+      "hotlineNumber": "09985407171",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "San Pablo",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0498000405", "0495490500"]
+    },
+    {
+      "hotlineName": "San Pablo Bureau of Fire Protection (BFP)",
+      "hotlineNumber": "09995784943",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "San Pablo",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["0495627654", "0495723868"]
+    },
+    {
+      "hotlineName": "San Pablo Philippine National Police (PNP)",
+      "hotlineNumber": "09081930819",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "San Pablo",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09278377454", "0495626474"]
+    },
+    {
+      "hotlineName": "San Pablo Barangay Radio Control",
+      "hotlineNumber": "0495623086",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "San Pablo",
+      "category": "utility_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Lucena City Command Center",
+      "hotlineNumber": "09701285078",
+      "regionName": "Region IV-A",
+      "province": "Quezon",
+      "city": "Lucena",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09687195568", "0427316009"]
+    },
+    {
+      "hotlineName": "Lucena City Fire Station",
+      "hotlineNumber": "09996756455",
+      "regionName": "Region IV-A",
+      "province": "Quezon",
+      "city": "Lucena",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["0427972320", "0427100110"]
+    },
+    {
+      "hotlineName": "Lucena City Police Station",
+      "hotlineNumber": "09970658944",
+      "regionName": "Region IV-A",
+      "province": "Quezon",
+      "city": "Lucena",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09985985737", "0423737294", "0427884626"]
+    },
+    {
+      "hotlineName": "Municipal Disaster Risk Reduction and Management Office (MDRRMO)",
+      "hotlineNumber": "09476198376",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Ma-ayon",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Ma-ayon Fire Station",
+      "hotlineNumber": "09203916411",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Ma-ayon",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Ma-ayon Police Station",
+      "hotlineNumber": "09985986165",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Ma-ayon",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Roxas City Emergency Response Team",
+      "hotlineNumber": "09124722669",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09173066741", "0365227878"]
+    },
+    {
+      "hotlineName": "Roxas City Emergency Operation Center",
+      "hotlineNumber": "0365201086",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Roxas Memorial Provincial Hospital",
+      "hotlineNumber": "0366210823",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["0366210030"]
+    },
+    {
+      "hotlineName": "Roxas City Health Office",
+      "hotlineNumber": "0366215686",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["0366205103", "09219768315"]
+    },
+    {
+      "hotlineName": "Philippine Red Cross Roxas City Chapter",
+      "hotlineNumber": "0366211125",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["09171085615"]
+    },
+    {
+      "hotlineName": "Capiz Emergency Response Team",
+      "hotlineNumber": "0365201203",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09307012206", "09984773357"]
+    },
+    {
+      "hotlineName": "Roxas City Bureau of Fire Protection",
+      "hotlineNumber": "0366210221",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["09506085228"]
+    },
+    {
+      "hotlineName": "Roxas City Police",
+      "hotlineNumber": "0366200284",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09297617489"]
+    },
+    {
+      "hotlineName": "CACAG (Capiz Citizens Action Group Inc.)",
+      "hotlineNumber": "0366211221",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["09219069888", "09914884988"]
+    },
+    {
+      "hotlineName": "Coast Guard Station Capiz",
+      "hotlineNumber": "09638008443",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Federation Roxas City Fire and Rescue Volunteers",
+      "hotlineNumber": "09127350573",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["0366430096"]
+    },
+    {
+      "hotlineName": "Metro Roxas Water District",
+      "hotlineNumber": "0366210044",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "utility_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "CAPELCO (Capiz Electric Cooperative Inc.)",
+      "hotlineNumber": "0366204930",
+      "regionName": "Region VI",
+      "province": "Capiz",
+      "city": "Roxas",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["09630438339"]
+    },
+    {
+      "hotlineName": "Emergency Rescue Unit Foundation",
+      "hotlineNumber": "161",
+      "regionName": "Region VII",
+      "province": "Cebu",
+      "city": "Cebu City",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["0322339300", "0322557287"]
+    },
+    {
+      "hotlineName": "Bureau of Fire Protection",
+      "hotlineNumber": "160",
+      "regionName": "Region VII",
+      "province": "Cebu",
+      "city": "Cebu City",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["0322540200", "0322540300", "09189099785", "0323444747", "0323443364"]
+    },
+    {
+      "hotlineName": "Police",
+      "hotlineNumber": "166",
+      "regionName": "Region VII",
+      "province": "Cebu",
+      "city": "Cebu City",
+      "category": "police_hotlines",
+      "alternateNumbers": [
+        "0322546968",
+        "0322562194",
+        "0322557350",
+        "0322332178",
+        "0322330202",
+        "0322359666"
+      ]
+    },
+    {
+      "hotlineName": "Chong Hua Hospital",
+      "hotlineNumber": "0322558000",
+      "regionName": "Region VII",
+      "province": "Cebu",
+      "city": "Cebu City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Cebu Doctors' Hospital",
+      "hotlineNumber": "0322555555",
+      "regionName": "Region VII",
+      "province": "Cebu",
+      "city": "Cebu City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Perpetual Succour Hospital",
+      "hotlineNumber": "0322338620",
+      "regionName": "Region VII",
+      "province": "Cebu",
+      "city": "Cebu City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Velez General Hospital",
+      "hotlineNumber": "0322531871",
+      "regionName": "Region VII",
+      "province": "Cebu",
+      "city": "Cebu City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Cebu City Medical Center",
+      "hotlineNumber": "0322557141",
+      "regionName": "Region VII",
+      "province": "Cebu",
+      "city": "Cebu City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Vicente Sotto Memorial Medical Center",
+      "hotlineNumber": "0322551591",
+      "regionName": "Region VII",
+      "province": "Cebu",
+      "city": "Cebu City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Philippine National Red Cross (Cebu Chapter)",
+      "hotlineNumber": "0322534611",
+      "regionName": "Region VII",
+      "province": "Cebu",
+      "city": "Cebu City",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Traffic Operations Management",
+      "hotlineNumber": "0322539211",
+      "regionName": "Region VII",
+      "province": "Cebu",
+      "city": "Cebu City",
+      "category": "utility_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Parañaque DRRMO",
+      "hotlineNumber": "88207783",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Parañaque",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Parañaque PNP",
+      "hotlineNumber": "0282862877",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Parañaque",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Parañaque Bureau of Fire Protection",
+      "hotlineNumber": "88269131",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Parañaque",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["0284260219", "0284260246"]
+    },
+    {
+      "hotlineName": "Parañaque Philippines Red Cross",
+      "hotlineNumber": "8364790",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Parañaque",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Parañaque NDRRMC",
+      "hotlineNumber": "0289115061",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Parañaque",
+      "category": "utility_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Los Baños Municipal Action Center",
+      "hotlineNumber": "0495302953",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "Los Baños",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09267170718"]
+    },
+    {
+      "hotlineName": "Los Baños Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09772049641",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "Los Baños",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Los Baños Fire Station",
+      "hotlineNumber": "09394325837",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "Los Baños",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["0495367965"]
+    },
+    {
+      "hotlineName": "Los Baños PNP",
+      "hotlineNumber": "0495302954",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "Los Baños",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09985985649", "09275091198"]
+    },
+    {
+      "hotlineName": "Laguna Aquatech (formerly LARC)",
+      "hotlineNumber": "09985853723",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "Los Baños",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["09190616163"]
+    },
+    {
+      "hotlineName": "St. Jude Family Hospital",
+      "hotlineNumber": "0495361232",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "Los Baños",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["0495361982"]
+    },
+    {
+      "hotlineName": "Healthserv Los Baños Medical Center",
+      "hotlineNumber": "09173016646",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "Los Baños",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["0495364858", "09178133257"]
+    },
+    {
+      "hotlineName": "Los Baños Doctors Hospital",
+      "hotlineNumber": "0495360100",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "Los Baños",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["09063992757"]
+    },
+    {
+      "hotlineName": "UPLB University Health Service",
+      "hotlineNumber": "0495366238",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "Los Baños",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["09983466070", "09217865285", "09158022211", "09662242377"]
+    },
+    {
+      "hotlineName": "UPLB Security and Safety Office",
+      "hotlineNumber": "09060433288",
+      "regionName": "Region IV-A",
+      "province": "Laguna",
+      "city": "Los Baños",
+      "category": "police_hotlines",
+      "alternateNumbers": ["09218901259"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Accounting",
+      "hotlineNumber": "0284781099",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Agriculture",
+      "hotlineNumber": "0285195687",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Anti-Drug Abuse Council",
+      "hotlineNumber": "0283512399",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Assessors",
+      "hotlineNumber": "0287798163",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Budget",
+      "hotlineNumber": "0285110779",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Bureau of Fire Protection",
+      "hotlineNumber": "0288746177",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Bureau of Jail Management and Penology - Male Dormitory",
+      "hotlineNumber": "0283512508",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Business Permit and Licensing Office",
+      "hotlineNumber": "0285515930",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0282938088"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - CENRO",
+      "hotlineNumber": "0282921191",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0283329487", "0283329715"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - City Civil Registry",
+      "hotlineNumber": "0283711743",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0282534370"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - City Library",
+      "hotlineNumber": "0283327174",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - City Social Welfare and Development",
+      "hotlineNumber": "0287273425",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0283651440", "0282938138", "0282938116", "0283512499"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Clerk of Court",
+      "hotlineNumber": "0282537605",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Commission on Audit",
+      "hotlineNumber": "0285501459",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0288738545"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Engineering",
+      "hotlineNumber": "0282569680",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0283329660"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Engineering - Maintenance",
+      "hotlineNumber": "0288018157",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Estate Management and Development Office",
+      "hotlineNumber": "0282834388",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Family Court Br. 2",
+      "hotlineNumber": "0285326442",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - General Services Office",
+      "hotlineNumber": "0288716195",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - HRMD",
+      "hotlineNumber": "0282565198",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Health Office",
+      "hotlineNumber": "0287767268",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Jail - Female Dormitory",
+      "hotlineNumber": "0283618318",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas Lying-In Clinic",
+      "hotlineNumber": "0288295572",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "medical_hotlines",
+      "alternateNumbers": ["0285260793"]
+    },
+    {
+      "hotlineName": "Las Piñas P.E.S.O.",
+      "hotlineNumber": "0283615104",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Legal",
+      "hotlineNumber": "0288714360",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0285532975"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Local Disaster Risk Reduction Management",
+      "hotlineNumber": "0282906500",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0282426703", "0282425836"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Mayor's Office",
+      "hotlineNumber": "0288714343",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0288714345", "0288730765", "0288714344", "0285267056"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Media",
+      "hotlineNumber": "0288364366",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Metropolitan Trial Court Branch 121",
+      "hotlineNumber": "0283512538",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Metropolitan Trial Court Branch 122",
+      "hotlineNumber": "0282564199",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Metropolitan Trial Court Branch 124",
+      "hotlineNumber": "0282563559",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Metropolitan Trial Court Branch 79",
+      "hotlineNumber": "0282916213",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "NBI Las Piñas Satellite Office",
+      "hotlineNumber": "0283512490",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Nutrition",
+      "hotlineNumber": "0283512533",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Office for Senior Citizens Affair",
+      "hotlineNumber": "0282833854",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Office of Hon. Danilo V. Hernandez",
+      "hotlineNumber": "0282435731",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Office of Hon. Emmanuel Luis C. Casimiro",
+      "hotlineNumber": "0282938047",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Office of Hon. Filemon C. Aguilar III",
+      "hotlineNumber": "0282938153",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Office of Hon. Henry Medina",
+      "hotlineNumber": "0286395295",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Office of Hon. John Jess Bustamante",
+      "hotlineNumber": "0285342261",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Office of Hon. Lord Linley Aguilar",
+      "hotlineNumber": "0282938386",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Office of Hon. Luis I. Bustamante",
+      "hotlineNumber": "0282938173",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Office of Hon. Mark Anthony G. Santos",
+      "hotlineNumber": "0289622253",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Office of Hon. Oscar C. Peña",
+      "hotlineNumber": "0282938030",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Office of Hon. Rex H. Riguera",
+      "hotlineNumber": "0283512395",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Office of Hon. Ruben C. Ramos",
+      "hotlineNumber": "0288714348",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0283512795"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Parole and Probation",
+      "hotlineNumber": "0285527340",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Philippine Mediation Center",
+      "hotlineNumber": "0285266498",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Planning",
+      "hotlineNumber": "0288720921",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0283512440"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Prosecutor's Office",
+      "hotlineNumber": "0283329579",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Regional Trial Court Branch 198",
+      "hotlineNumber": "0287112298",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Regional Trial Court Branch 199",
+      "hotlineNumber": "0286824379",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Regional Trial Court Branch 253",
+      "hotlineNumber": "0286822005",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Regional Trial Court Branch 254",
+      "hotlineNumber": "0285267122",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Regional Trial Court Branch 255",
+      "hotlineNumber": "0283329605",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0283329629"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - TPMO",
+      "hotlineNumber": "0286580983",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["0283329776"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Treasury",
+      "hotlineNumber": "0288714339",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0288746176"]
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Tricycle Regulatory Management Office",
+      "hotlineNumber": "0284425850",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "utility_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Urban Poor Affairs Office",
+      "hotlineNumber": "0288364797",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Veterinary",
+      "hotlineNumber": "0282552911",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Hall - Vice Mayor's Office",
+      "hotlineNumber": "0284616225",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Las Piñas City Health Laboratory",
+      "hotlineNumber": "0282938164",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Pamplona II Health Center",
+      "hotlineNumber": "0283512578",
+      "regionName": "National Capital Region (NCR)",
+      "province": "Metro Manila",
+      "city": "Las Piñas",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Municipal Disaster Risk Reduction and Management Office",
+      "hotlineNumber": "09566542894",
+      "regionName": "Region II - Cagayan Valley",
+      "province": "Cagayan",
+      "city": "Aparri",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Aparri Police Station",
+      "hotlineNumber": "09172032003",
+      "regionName": "Region II - Cagayan Valley",
+      "province": "Cagayan",
+      "city": "Aparri",
+      "category": "police_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Aparri Fire Station",
+      "hotlineNumber": "09164910946",
+      "regionName": "Region II - Cagayan Valley",
+      "province": "Cagayan",
+      "city": "Aparri",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Philippine Coast Guard - Aparri",
+      "hotlineNumber": "09568301802",
+      "regionName": "Region II - Cagayan Valley",
+      "province": "Cagayan",
+      "city": "Aparri",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Aparri Provincial Hospital",
+      "hotlineNumber": "09363748430",
+      "regionName": "Region II - Cagayan Valley",
+      "province": "Cagayan",
+      "city": "Aparri",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Rural Health Unit - Aparri East",
+      "hotlineNumber": "09531908364",
+      "regionName": "Region II - Cagayan Valley",
+      "province": "Cagayan",
+      "city": "Aparri",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Rural Health Unit - Aparri West",
+      "hotlineNumber": "09359519786",
+      "regionName": "Region II - Cagayan Valley",
+      "province": "Cagayan",
+      "city": "Aparri",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Marilao Command Center",
+      "hotlineNumber": "09258881111",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Marilao",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0449198191"]
+    },
+    {
+      "hotlineName": "Marilao MDRRMO",
+      "hotlineNumber": "09694622952",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Marilao",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0442485523"]
+    },
+    {
+      "hotlineName": "Marilao Fire Station",
+      "hotlineNumber": "09209408181",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Marilao",
+      "category": "fire_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Marilao Police Station",
+      "hotlineNumber": "09985985385",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Marilao",
+      "category": "police_hotlines",
+      "alternateNumbers": ["0442489166", "0447693800"]
+    },
+    {
+      "hotlineName": "Bocaue Rescue",
+      "hotlineNumber": "09363309020",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "BFP Bocaue Fire Station",
+      "hotlineNumber": "09477325198",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "fire_hotlines",
+      "alternateNumbers": ["09362261093"]
+    },
+    {
+      "hotlineName": "PNP Bocaue Police Station",
+      "hotlineNumber": "09985985376",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "police_hotlines",
+      "alternateNumbers": ["0443093314"]
+    },
+    {
+      "hotlineName": "PDRRMO Bulacan Rescue 911",
+      "hotlineNumber": "09053333319",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09423671455"]
+    },
+    {
+      "hotlineName": "Bocaue Water District",
+      "hotlineNumber": "09338295904",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "utility_hotlines",
+      "alternateNumbers": ["09338295905"]
+    },
+    {
+      "hotlineName": "Municipal Health Office",
+      "hotlineNumber": "0448156940",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "medical_hotlines",
+      "alternateNumbers": []
+    },
+    {
+      "hotlineName": "Brgy. Antipona",
+      "hotlineNumber": "09611501961",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09266755230"]
+    },
+    {
+      "hotlineName": "Brgy. Bambang",
+      "hotlineNumber": "09265469708",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09634530379"]
+    },
+    {
+      "hotlineName": "Brgy. Batia",
+      "hotlineNumber": "09647579780",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09226266091", "09435640931", "09922489614"]
+    },
+    {
+      "hotlineName": "Brgy. Biñang 1st",
+      "hotlineNumber": "0447924300",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09661944858", "09935669591"]
+    },
+    {
+      "hotlineName": "Brgy. Biñang 2nd",
+      "hotlineNumber": "09227090700",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09384166144"]
+    },
+    {
+      "hotlineName": "Brgy. Bolacan",
+      "hotlineNumber": "09979263410",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09279669947"]
+    },
+    {
+      "hotlineName": "Brgy. Bunducan",
+      "hotlineNumber": "09772044957",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09159058302", "09283720840"]
+    },
+    {
+      "hotlineName": "Brgy. Bunlo",
+      "hotlineNumber": "09664200478",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09333116578", "09945121331"]
+    },
+    {
+      "hotlineName": "Brgy. Caingin",
+      "hotlineNumber": "0446401266",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09765376739", "09623683824"]
+    },
+    {
+      "hotlineName": "Brgy. Duhat",
+      "hotlineNumber": "09670730243",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09167132423", "09511509371"]
+    },
+    {
+      "hotlineName": "Brgy. Igulot",
+      "hotlineNumber": "09778440090",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09171840090"]
+    },
+    {
+      "hotlineName": "Brgy. Lolomboy",
+      "hotlineNumber": "09708173959",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09124856342", "09465100999"]
+    },
+    {
+      "hotlineName": "Brgy. Poblacion",
+      "hotlineNumber": "0443092956",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09237076439", "09219298901"]
+    },
+    {
+      "hotlineName": "Brgy. Sulucan",
+      "hotlineNumber": "0449136980",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09959321367", "09065902809"]
+    },
+    {
+      "hotlineName": "Brgy. Taal",
+      "hotlineNumber": "09239363599",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09293221916"]
+    },
+    {
+      "hotlineName": "Brgy. Tambubong",
+      "hotlineNumber": "09618689336",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["0447924974", "09101703620", "09226914677"]
+    },
+    {
+      "hotlineName": "Brgy. Turo",
+      "hotlineNumber": "09930965617",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09158042310", "09501374166"]
+    },
+    {
+      "hotlineName": "Brgy. Wakas",
+      "hotlineNumber": "09657239169",
+      "regionName": "Region III - Central Luzon",
+      "province": "Bulacan",
+      "city": "Bocaue",
+      "category": "government_hotlines",
+      "alternateNumbers": ["09473523352", "09976270271"]
+    }
+  ]
+}

@@ -12,13 +12,13 @@ export default async function Preview({ params }: { params: Promise<{ jobId: str
   const page = findPage(site, slug.join("/"));
   if (!page) notFound();
   return (
-    <>
+    <div className="editorial flex flex-1 flex-col">
       <PreviewBar site={site} currentSource={page.source_url} />
       <GovStrip />
       <Header site={site} />
       <main className="flex-1">{page.slug === "home" ? <HomePage site={site} page={page} /> : <ContentPage site={site} page={page} />}</main>
       <Footer site={site} />
-    </>
+    </div>
   );
 }
 
@@ -26,5 +26,5 @@ export async function generateMetadata({ params }: { params: Promise<{ jobId: st
   const { jobId, slug = [] } = await params;
   const site = await loadSite(jobId);
   const page = site && findPage(site, slug.join("/"));
-  return { title: page ? `${page.title} | ${site!.agency.short_name}` : "Preview", description: page?.summary };
+  return { title: page ? `${page.title} | ${site!.agency.short_name} (unofficial RE:GOV concept)` : "Preview", description: page ? `Unofficial AI-generated concept of ${new URL(site!.origin).host}. ${page.summary ?? ""}`.trim() : undefined, robots: { index: false, follow: false } };
 }

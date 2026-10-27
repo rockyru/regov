@@ -62,8 +62,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
         </section>
       )}
 
-      <footer className="px-5 py-3 text-center text-xs text-neutral-400">
-        Built with Muse Spark 1.3, SAM 3.1 and Muse Image on the BetterGov.ph Kapwa standard · <a className="underline hover:text-neutral-600" href="https://github.com/rockyru/regov">github.com/rockyru/regov</a>
+      <footer className="px-5 py-3 text-center text-xs text-neutral-400 space-y-1">
+        <p>Reimagined sites are <strong className="font-semibold text-neutral-500">unofficial AI-generated concepts</strong>, not affiliated with or endorsed by any agency. Always use the official website for services.</p>
+        <p>Built with Muse Spark 1.3, SAM 3.1 and Muse Image on the BetterGov.ph Kapwa standard · <a className="underline hover:text-neutral-600" href="https://github.com/rockyru/regov">github.com/rockyru/regov</a></p>
       </footer>
     </main>
   );

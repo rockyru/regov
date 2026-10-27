@@ -15,23 +15,26 @@
 }
 
 html { scroll-behavior: smooth; }
+
+/* Reimagined sites are editorial: square corners everywhere, Kapwa components included */
+.editorial, .editorial *, .editorial *::before, .editorial *::after { border-radius: 0 !important; }
 body { @apply bg-white text-neutral-900; }
 
 /* Markdown content */
 .prose-gov { @apply text-[17px] leading-relaxed text-neutral-800; }
 .prose-gov > * + * { @apply mt-4; }
-.prose-gov h2 { @apply text-2xl font-semibold text-neutral-900 mt-10 mb-3 tracking-tight; }
+.prose-gov h2 { @apply text-2xl font-bold text-neutral-900 mt-10 mb-3 tracking-tight leading-tight; }
 .prose-gov h3 { @apply text-xl font-semibold text-neutral-900 mt-8 mb-2; }
 .prose-gov h4 { @apply text-base font-semibold text-neutral-900 mt-6; }
 .prose-gov a { @apply text-kapwa-brand-700 underline underline-offset-2 decoration-kapwa-brand-300 hover:decoration-kapwa-brand-700; }
 .prose-gov ul { @apply list-disc pl-6 space-y-1.5; }
 .prose-gov ol { @apply list-decimal pl-6 space-y-1.5; }
-.prose-gov blockquote { @apply border-l-4 border-kapwa-brand-300 pl-4 text-neutral-700 italic; }
+.prose-gov blockquote { @apply border-l-2 border-neutral-900 pl-5 text-neutral-700 text-xl leading-snug; }
 .prose-gov table { @apply w-full text-[15px] border-collapse my-4; }
-.prose-gov th { @apply text-left bg-kapwa-brand-50 text-kapwa-brand-950 font-semibold px-3 py-2 border border-kapwa-brand-100; }
-.prose-gov td { @apply px-3 py-2 border border-neutral-200 align-top; }
+.prose-gov th { @apply text-left text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-600 px-3 py-2 border-b-2 border-neutral-900; }
+.prose-gov td { @apply px-3 py-2.5 border-b border-neutral-200 align-top; }
 .prose-gov strong { @apply font-semibold text-neutral-900; }
-.prose-gov hr { @apply border-neutral-200 my-8; }
+.prose-gov hr { @apply border-neutral-900 my-8; }
 
 /* Wide, fluid page container */
 @utility container-gov {

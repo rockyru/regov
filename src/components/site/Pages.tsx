@@ -2,11 +2,35 @@ import Link from "next/link";
 import type { SiteModel, SitePage } from "@/pipeline/schema";
 import { Block } from "./Blocks";
 import { Markdown } from "./Markdown";
-import { navHref } from "./Shell";
+import { navHref, eyebrow } from "./Shell";
 
 const slugTitle = (site: SiteModel, slug: string) => site.pages.find((p) => p.slug === slug)?.title ?? slug;
 const initialsOf = (n: string) => n.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 2).map((w) => w[0]).join("") || "•";
 const slugSummary = (site: SiteModel, slug: string) => site.pages.find((p) => p.slug === slug)?.summary ?? "";
+const nn = (i: number) => String(i + 1).padStart(2, "0");
+
+/** Editorial section head: numbered eyebrow, heavy top rule, heading left, deck right. */
+function SectionHead({ n, title, deck, small }: { n: number; title: string; deck?: string; small?: boolean }) {
+  return (
+    <div className="border-t-2 border-neutral-900 pt-5 grid gap-3 lg:grid-cols-[1fr_minmax(0,34rem)] lg:gap-12 items-end">
+      <div>
+        <div className={`${eyebrow} text-kapwa-brand-700`}>{nn(n)}</div>
+        <h2 className={`mt-2 font-bold tracking-tight text-neutral-900 ${small ? "text-2xl sm:text-3xl" : "text-3xl sm:text-4xl"} leading-[1.05]`}>{title}</h2>
+      </div>
+      {deck && <p className="text-[17px] leading-relaxed text-neutral-600 lg:text-right lg:border-l-0">{deck}</p>}
+    </div>
+  );
+}
+
+/** Square "tag" list used for units, barangays and campuses. */
+function Tags({ items, jobId }: { items: { name: string; detail?: string; slug?: string }[]; jobId: string }) {
+  const cls = "inline-block border border-neutral-300 px-3.5 py-1.5 text-sm font-medium text-neutral-800 hover:border-neutral-900 hover:text-neutral-900";
+  return (
+    <ul className="mt-6 flex flex-wrap gap-2">
+      {items.map((u) => <li key={u.name} title={u.detail}>{u.slug ? <Link href={navHref(jobId, u.slug)} className={cls}>{u.name}</Link> : <span className={cls}>{u.name}</span>}</li>)}
+    </ul>
+  );
+}
 
 export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
   const { jobId, agency } = site;
@@ -20,46 +44,53 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
   const servicesLabel = isLgu ? "Services for residents" : kind === "university" || kind === "school" ? "For students and applicants" : kind === "hospital" ? "For patients and visitors" : kind === "embassy" ? "Consular services" : kind === "goc_corporation" ? "For members and customers" : "Popular services";
   const mainBlocks = page.blocks.filter((b) => b.type !== "contact");
   const contact = page.blocks.find((b) => b.type === "contact");
+  const parentLine = locality.province && kind !== "province" && !agency.parent.toLowerCase().includes(locality.province.toLowerCase()) ? `${agency.parent} · ${locality.province}` : agency.parent;
+  const showFeatured = hero.heading && hero.heading.trim().toLowerCase() !== agency.name.trim().toLowerCase();
+  let n = 0;
+
   return (
     <>
-      <section className="relative overflow-hidden bg-[radial-gradient(ellipse_at_top_left,var(--color-kapwa-brand-700),var(--color-kapwa-brand-950)_60%)] text-white">
-        <div className="absolute inset-0 opacity-[0.07] bg-[linear-gradient(90deg,white_1px,transparent_1px),linear-gradient(white_1px,transparent_1px)] bg-[size:48px_48px]" aria-hidden />
-        <div className="relative container-gov py-16 lg:py-24 grid gap-12 lg:grid-cols-[1.1fr_.9fr] items-center">
-          <div>
-            <p className="text-kapwa-yellow-300 font-semibold tracking-wide text-sm uppercase">{locality.province && kind !== "province" && !agency.parent.toLowerCase().includes(locality.province.toLowerCase()) ? `${agency.parent} · ${locality.province}` : agency.parent}</p>
-            <h1 className="mt-3 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05]">{agency.name}</h1>
-            <p className="mt-5 text-lg sm:text-xl text-white/85 max-w-xl">{agency.tagline}</p>
-            <form role="search" className="mt-8 flex max-w-xl rounded-full bg-white p-1.5 shadow-xl">
-              <input aria-label="Search services and information" placeholder="Search services, forms, offices…" className="flex-1 bg-transparent px-4 text-neutral-900 placeholder:text-neutral-400 focus:outline-none" />
-              <button type="submit" className="rounded-full bg-kapwa-brand-700 px-6 py-2.5 font-semibold text-white hover:bg-kapwa-brand-800">Search</button>
-            </form>
-            {hero.heading && hero.heading.trim().toLowerCase() !== agency.name.trim().toLowerCase() && (
-              <a href={hero.primary_cta_href || "#"} className="mt-6 inline-flex items-center gap-3 rounded-xl bg-white/10 ring-1 ring-white/20 px-4 py-3 hover:bg-white/15 backdrop-blur">
-                <span className="rounded-md bg-kapwa-yellow-400 px-2 py-0.5 text-xs font-bold text-kapwa-brand-950">Featured</span>
-                <span className="text-sm sm:text-base"><span className="font-semibold">{hero.heading}</span>{hero.primary_cta_label && <span className="text-white/70"> · {hero.primary_cta_label} →</span>}</span>
+      {/* Masthead: flat, ruled, typographic */}
+      <section className="bg-kapwa-brand-950 text-white">
+        <div className="container-gov grid lg:grid-cols-[1.15fr_1fr]">
+          <div className="py-14 lg:py-20 lg:pr-16 lg:border-r lg:border-white/15">
+            <div className="flex items-center gap-3">
+              <span className="h-px w-10 bg-kapwa-yellow-400" aria-hidden />
+              <p className={`${eyebrow} text-kapwa-yellow-300`}>{parentLine}</p>
+            </div>
+            <h1 className="mt-5 text-[2.6rem] sm:text-6xl lg:text-7xl font-extrabold tracking-[-0.02em] leading-[0.98] max-w-[14ch]">{agency.name}</h1>
+            {agency.tagline && <p className="mt-6 text-xl sm:text-2xl text-white/80 max-w-xl leading-snug">{agency.tagline}</p>}
+            {showFeatured && (
+              <a href={hero.primary_cta_href || "#"} className="mt-10 flex items-start gap-4 border-t border-white/20 pt-5 max-w-xl group">
+                <span className={`${eyebrow} text-kapwa-yellow-400 shrink-0 mt-1`}>Featured</span>
+                <span className="text-[15px] sm:text-base leading-snug"><span className="font-semibold">{hero.heading}</span>{hero.primary_cta_label && <span className="block text-white/70 mt-0.5 group-hover:text-white">{hero.primary_cta_label} →</span>}</span>
               </a>
             )}
           </div>
-          <div className="rounded-2xl bg-white/10 ring-1 ring-white/15 backdrop-blur p-6 shadow-2xl">
-            <h2 className="text-lg font-semibold">{servicesLabel}</h2>
-            <ul className="mt-4 grid grid-cols-2 gap-3">
-              {site.popular_services.slice(0, 6).map((s) => (
-                <li key={s.slug + s.title}>
-                  <Link href={navHref(jobId, s.slug)} className="block h-full rounded-xl bg-white/10 hover:bg-white/20 ring-1 ring-white/10 p-4 transition backdrop-blur">
-                    <span className="block font-semibold leading-snug">{s.title}</span>
-                    <span className="mt-1 block text-xs text-white/70 line-clamp-2">{s.description}</span>
+          <div className="py-10 lg:py-20 lg:pl-16 border-t border-white/15 lg:border-t-0">
+            <h2 className={`${eyebrow} text-white/70 flex items-center justify-between`}>{servicesLabel}<span className="font-mono tracking-normal text-white/40">{site.popular_services.slice(0, 6).length} entries</span></h2>
+            <ol className="mt-4 border-t border-white/20">
+              {site.popular_services.slice(0, 6).map((s, i) => (
+                <li key={s.slug + s.title} className="border-b border-white/15">
+                  <Link href={navHref(jobId, s.slug)} className="group grid grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 py-3.5 hover:bg-white/5 -mx-3 px-3">
+                    <span className="font-mono text-sm text-kapwa-yellow-400">{nn(i)}</span>
+                    <span className="min-w-0">
+                      <span className="block font-semibold leading-snug text-[17px]">{s.title}</span>
+                      {s.description && <span className="mt-0.5 block text-sm text-white/65 line-clamp-1">{s.description}</span>}
+                    </span>
+                    <span aria-hidden className="text-white/40 transition group-hover:text-white group-hover:translate-x-1">→</span>
                   </Link>
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
         </div>
       </section>
 
       {hotlines.length > 0 && (
-        <section aria-label="Hotlines" className="bg-kapwa-red-700 text-white">
+        <section aria-label="Hotlines" className="bg-kapwa-red-700 text-white border-y border-black/20">
           <div className="container-gov py-3 flex flex-wrap items-center gap-x-8 gap-y-2 text-sm">
-            <span className="font-bold uppercase tracking-wider text-xs">{isLgu ? "Emergency hotlines" : "Hotlines"}</span>
+            <span className={`${eyebrow} shrink-0`}>{isLgu ? "Emergency hotlines" : "Hotlines"}</span>
             {hotlines.slice(0, 6).map((h) => <a key={h.name + h.detail} href={`tel:${h.detail.replace(/[^+\d]/g, "")}`} className="hover:underline"><span className="text-white/80">{h.name}:</span> <span className="font-semibold">{h.detail}</span></a>)}
           </div>
         </section>
@@ -67,45 +98,48 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
 
       <div className="container-gov">
         {officials.length > 0 && (
-          <section className="py-14 border-b border-neutral-100">
-            <div className="max-w-2xl"><h2 className="text-3xl font-bold tracking-tight text-neutral-900">{isLgu ? "Your local officials" : "Leadership"}</h2><p className="mt-2 text-neutral-600 text-lg">{isLgu ? `The people elected and appointed to serve ${agency.short_name || agency.name}.` : `The people who lead ${agency.short_name || agency.name}.`}</p></div>
-            <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {officials.slice(0, 8).map((o) => {
-                const inner = (<><span className="size-14 shrink-0 rounded-full bg-kapwa-brand-100 text-kapwa-brand-900 grid place-items-center font-bold text-lg">{initialsOf(o.name)}</span><span className="min-w-0"><span className="block font-semibold text-neutral-900 leading-tight">{o.name}</span><span className="block text-sm text-kapwa-brand-800 font-medium">{o.detail}</span></span></>);
-                return <li key={o.name + o.detail}>{o.slug ? <Link href={navHref(jobId, o.slug)} className="flex items-center gap-4 rounded-2xl ring-1 ring-neutral-200 p-4 hover:ring-kapwa-brand-400 h-full">{inner}</Link> : <div className="flex items-center gap-4 rounded-2xl ring-1 ring-neutral-200 p-4 h-full">{inner}</div>}</li>;
+          <section className="py-14">
+            <SectionHead n={n++} title={isLgu ? "Your local officials" : "Leadership"} deck={isLgu ? `The people elected and appointed to serve ${agency.short_name || agency.name}.` : `The people who lead ${agency.short_name || agency.name}.`} />
+            <ul className="mt-8 grid border-t border-l border-neutral-200 *:border-r *:border-b *:border-neutral-200 sm:grid-cols-2 lg:grid-cols-4">
+              {officials.slice(0, 8).map((o, i) => {
+                const inner = (<><span className="flex items-baseline justify-between"><span className="size-12 bg-kapwa-brand-950 text-white grid place-items-center font-bold text-base">{initialsOf(o.name)}</span><span className="font-mono text-xs text-neutral-400">{nn(i)}</span></span><span className="block mt-5 font-semibold text-neutral-900 leading-tight text-[17px]">{o.name}</span><span className={`block mt-1.5 ${eyebrow} text-kapwa-brand-800`}>{o.detail}</span></>);
+                const cls = "block bg-white p-5 h-full hover:bg-kapwa-brand-50";
+                return <li key={o.name + o.detail}>{o.slug ? <Link href={navHref(jobId, o.slug)} className={cls}>{inner}</Link> : <div className={cls}>{inner}</div>}</li>;
               })}
             </ul>
           </section>
         )}
 
         {programs.length > 0 && (
-          <section className="py-14 border-b border-neutral-100">
-            <div className="max-w-2xl"><h2 className="text-3xl font-bold tracking-tight text-neutral-900">Programs offered</h2><p className="mt-2 text-neutral-600 text-lg">{programs.length} programs across {units.length || "our"} colleges and units.</p></div>
-            <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {programs.slice(0, 18).map((p) => <li key={p.name + p.detail}>{p.slug ? <Link href={navHref(jobId, p.slug)} className="block rounded-xl ring-1 ring-neutral-200 px-4 py-3 hover:ring-kapwa-brand-400"><span className="block font-medium text-neutral-900">{p.name}</span>{p.detail && <span className="block text-sm text-neutral-500">{p.detail}</span>}</Link> : <div className="rounded-xl ring-1 ring-neutral-200 px-4 py-3"><span className="block font-medium text-neutral-900">{p.name}</span>{p.detail && <span className="block text-sm text-neutral-500">{p.detail}</span>}</div>}</li>)}
+          <section className="py-14">
+            <SectionHead n={n++} title="Programs offered" deck={`${programs.length} programs across ${units.length || "our"} colleges and units.`} />
+            <ul className="mt-8 grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
+              {programs.slice(0, 18).map((p, i) => {
+                const inner = (<><span className="font-mono text-xs text-neutral-400 w-7 shrink-0 pt-1">{nn(i)}</span><span><span className="block font-medium text-neutral-900">{p.name}</span>{p.detail && <span className="block text-sm text-neutral-500">{p.detail}</span>}</span></>);
+                const cls = "flex gap-2 py-3 border-b border-neutral-200 hover:text-kapwa-brand-900";
+                return <li key={p.name + p.detail}>{p.slug ? <Link href={navHref(jobId, p.slug)} className={cls}>{inner}</Link> : <div className={cls}>{inner}</div>}</li>;
+              })}
             </ul>
           </section>
         )}
 
         {units.length > 0 && !isLgu && (
-          <section className="py-14 border-b border-neutral-100">
-            <h2 className="text-3xl font-bold tracking-tight text-neutral-900">{site.site_kind === "university" || site.site_kind === "school" ? "Colleges and units" : site.site_kind === "hospital" ? "Departments and services" : "Offices and units"}</h2>
-            <ul className="mt-6 flex flex-wrap gap-2">
-              {units.map((u) => <li key={u.name}>{u.slug ? <Link href={navHref(jobId, u.slug)} className="inline-block rounded-full bg-kapwa-brand-50 text-kapwa-brand-900 ring-1 ring-kapwa-brand-100 px-3.5 py-1.5 text-sm font-medium hover:bg-kapwa-brand-100">{u.name}</Link> : <span className="inline-block rounded-full bg-kapwa-brand-50 text-kapwa-brand-900 ring-1 ring-kapwa-brand-100 px-3.5 py-1.5 text-sm font-medium">{u.name}</span>}</li>)}
-            </ul>
+          <section className="py-14">
+            <SectionHead n={n++} small title={site.site_kind === "university" || site.site_kind === "school" ? "Colleges and units" : site.site_kind === "hospital" ? "Departments and services" : "Offices and units"} />
+            <Tags items={units} jobId={jobId} />
           </section>
         )}
 
         {site.home_sections.map((sec) => (
-          <section key={sec.heading} className="py-14 border-b border-neutral-100 last:border-0">
-            <div className="max-w-2xl"><h2 className="text-3xl font-bold tracking-tight text-neutral-900">{sec.heading}</h2>{sec.description && <p className="mt-2 text-neutral-600 text-lg">{sec.description}</p>}</div>
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {sec.slugs.map((slug) => (
-                <Link key={slug} href={navHref(jobId, slug)} className="group relative flex flex-col rounded-3xl bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_10px_30px_-16px_rgba(0,56,168,0.25)] ring-1 ring-neutral-200/80 transition hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_22px_44px_-20px_rgba(0,56,168,0.4)]">
-                  <span className="mb-4 grid size-10 place-items-center rounded-xl bg-kapwa-brand-50 text-kapwa-brand-800 font-bold">{slugTitle(site, slug).slice(0, 1)}</span>
-                  <h3 className="text-lg font-semibold leading-snug text-neutral-900 group-hover:text-kapwa-brand-900">{slugTitle(site, slug)}</h3>
-                  <p className="mt-2 text-sm text-neutral-600 line-clamp-3">{slugSummary(site, slug)}</p>
-                  <span className="mt-auto pt-5 inline-flex items-center gap-1 text-sm font-semibold text-kapwa-brand-700">Read more <span aria-hidden className="transition group-hover:translate-x-0.5">→</span></span>
+          <section key={sec.heading} className="py-14">
+            <SectionHead n={n++} title={sec.heading} deck={sec.description} />
+            <div className="mt-8 grid border-t border-l border-neutral-200 *:border-r *:border-b *:border-neutral-200 sm:grid-cols-2 lg:grid-cols-3">
+              {sec.slugs.map((slug, i) => (
+                <Link key={slug} href={navHref(jobId, slug)} className="group flex flex-col bg-white p-6 min-h-56 hover:bg-kapwa-brand-50">
+                  <span className="font-mono text-xs text-neutral-400">{nn(i)}</span>
+                  <h3 className="mt-6 text-xl font-bold leading-tight tracking-tight text-neutral-900 group-hover:text-kapwa-brand-900">{slugTitle(site, slug)}</h3>
+                  <p className="mt-3 text-[15px] leading-relaxed text-neutral-600 line-clamp-3">{slugSummary(site, slug)}</p>
+                  <span className="mt-auto pt-6 inline-flex items-center gap-1 text-sm font-semibold text-kapwa-brand-800 border-b border-kapwa-brand-800 w-max">Read <span aria-hidden className="transition group-hover:translate-x-0.5">→</span></span>
                 </Link>
               ))}
             </div>
@@ -113,32 +147,36 @@ export function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
         ))}
 
         {(barangays.length > 0 || campuses.length > 0) && (
-          <section className="py-14 border-b border-neutral-100">
-            <div><h2 className="text-3xl font-bold tracking-tight text-neutral-900">{barangays.length ? "Our barangays" : "Our campuses"}</h2><p className="mt-2 text-neutral-600 text-lg">{barangays.length ? `${barangays.length} barangays${locality.province ? ` in ${agency.short_name || agency.name}, ${locality.province}` : ""}.` : `${campuses.length} campuses.`}</p></div>
-            <ul className="mt-6 flex flex-wrap gap-2">
-              {(barangays.length ? barangays : campuses).map((b) => <li key={b.name} className="rounded-full bg-kapwa-brand-50 text-kapwa-brand-900 ring-1 ring-kapwa-brand-100 px-3.5 py-1.5 text-sm font-medium" title={b.detail}>{b.name}</li>)}
-            </ul>
+          <section className="py-14">
+            <SectionHead n={n++} small title={barangays.length ? "Our barangays" : "Our campuses"} deck={barangays.length ? `${barangays.length} barangays${locality.province ? ` in ${agency.short_name || agency.name}, ${locality.province}` : ""}.` : `${campuses.length} campuses.`} />
+            <Tags items={barangays.length ? barangays : campuses} jobId={jobId} />
           </section>
         )}
 
         {site.news.length > 0 && (
-          <section className="py-14 border-b border-neutral-100">
-            <h2 className="text-3xl font-bold tracking-tight">News and updates</h2>
-            <ul className="mt-8 grid gap-5 md:grid-cols-2">
-              {site.news.slice(0, 4).map((n) => (
-                <li key={n.href}><a href={n.href} className="block rounded-2xl ring-1 ring-neutral-200 p-6 hover:ring-kapwa-brand-400 transition"><time className="text-xs font-semibold uppercase tracking-wider text-kapwa-brand-700">{n.date.slice(0, 10)}</time><h3 className="mt-1 font-semibold text-neutral-900" dangerouslySetInnerHTML={{ __html: n.title }} /><p className="mt-2 text-sm text-neutral-600 line-clamp-3">{n.excerpt}</p></a></li>
+          <section className="py-14">
+            <SectionHead n={n++} title="News and updates" />
+            <ul className="mt-6 border-t border-neutral-200">
+              {site.news.slice(0, 5).map((nw) => (
+                <li key={nw.href} className="border-b border-neutral-200">
+                  <a href={nw.href} className="group grid gap-2 py-5 md:grid-cols-[9rem_1fr_auto] md:gap-8 items-baseline hover:bg-kapwa-brand-50 -mx-3 px-3">
+                    <time className="font-mono text-xs text-neutral-500">{nw.date.slice(0, 10)}</time>
+                    <span className="min-w-0"><h3 className="text-lg font-semibold leading-snug text-neutral-900 group-hover:text-kapwa-brand-900" dangerouslySetInnerHTML={{ __html: nw.title }} /><p className="mt-1.5 text-[15px] leading-relaxed text-neutral-600 line-clamp-2">{nw.excerpt}</p></span>
+                    <span aria-hidden className="hidden md:inline text-neutral-400 group-hover:text-kapwa-brand-900">→</span>
+                  </a>
+                </li>
               ))}
             </ul>
           </section>
         )}
 
-        <div className="py-14 grid gap-10 lg:grid-cols-[1fr_360px]">
+        <div className="py-14 grid gap-12 lg:grid-cols-[1fr_360px] border-t-2 border-neutral-900">
           <div className="space-y-14">{mainBlocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} />)}</div>
           <aside className="space-y-6 lg:sticky lg:top-24 self-start">
             {contact && <Block block={contact} jobId={jobId} origin={site.origin} />}
-            <div className="rounded-2xl border border-neutral-200 p-6">
-              <h2 className="font-semibold text-neutral-900">About {agency.short_name}</h2>
-              <p className="mt-2 text-sm text-neutral-600">{agency.description}</p>
+            <div className="border-t-2 border-neutral-900 pt-4">
+              <h2 className={`${eyebrow} text-neutral-500`}>About {agency.short_name}</h2>
+              <p className="mt-3 text-[15px] leading-relaxed text-neutral-700">{agency.description}</p>
             </div>
           </aside>
         </div>
@@ -156,38 +194,40 @@ export function ContentPage({ site, page }: { site: SiteModel; page: SitePage })
   const contact = site.pages.find((p) => p.slug === "home")?.blocks.find((b) => b.type === "contact");
   return (
     <>
-      <div className="relative overflow-hidden bg-kapwa-brand-50/60 border-b border-kapwa-brand-100">
-        <div className="container-gov py-10 relative">
-          <nav aria-label="Breadcrumb" className="text-sm text-neutral-500 flex gap-2">
+      <div className="border-b-2 border-neutral-900 bg-white">
+        <div className="container-gov py-10 lg:py-14">
+          <nav aria-label="Breadcrumb" className={`${eyebrow} text-neutral-500 flex flex-wrap gap-2`}>
             <Link href={navHref(jobId, "home")} className="hover:text-kapwa-brand-900">Home</Link>
-            {parent && parent.slug !== page.slug && <><span>/</span><Link href={navHref(jobId, parent.slug)} className="hover:text-kapwa-brand-900">{parent.label}</Link></>}
-            <span>/</span><span className="text-neutral-800">{page.title}</span>
+            {parent && parent.slug !== page.slug && <><span className="text-neutral-300">/</span><Link href={navHref(jobId, parent.slug)} className="hover:text-kapwa-brand-900">{parent.label}</Link></>}
+            <span className="text-neutral-300">/</span><span className="text-neutral-900">{page.title}</span>
           </nav>
-          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-neutral-900">{page.hero.heading || page.title}</h1>
-          <p className="mt-3 max-w-3xl text-lg text-neutral-600">{page.hero.subheading || page.summary}</p>
+          <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_minmax(0,32rem)] lg:gap-16 items-end">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-[-0.02em] leading-[1.0] text-neutral-900">{page.hero.heading || page.title}</h1>
+            <p className="text-lg leading-relaxed text-neutral-600 lg:border-l lg:border-neutral-300 lg:pl-6">{page.hero.subheading || page.summary}</p>
+          </div>
         </div>
       </div>
       <div className="container-gov py-12 grid gap-12 lg:grid-cols-[240px_1fr_280px]">
         <aside className="hidden lg:block self-start sticky top-24">
-          {siblings.length > 1 && (<><h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">{parent?.label}</h2>
-            <ul className="mt-3 space-y-1 border-l border-neutral-200">
-              {siblings.map((s) => <li key={s.slug}><Link href={navHref(jobId, s.slug)} aria-current={s.slug === page.slug ? "page" : undefined} className={`block -ml-px border-l-2 pl-3 py-1.5 text-sm ${s.slug === page.slug ? "border-kapwa-brand-700 text-kapwa-brand-900 font-semibold" : "border-transparent text-neutral-600 hover:text-neutral-900 hover:border-neutral-300"}`}>{s.label}</Link></li>)}
+          {siblings.length > 1 && (<><h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{parent?.label}</h2>
+            <ul className="mt-2 divide-y divide-neutral-100">
+              {siblings.map((s) => <li key={s.slug}><Link href={navHref(jobId, s.slug)} aria-current={s.slug === page.slug ? "page" : undefined} className={`block py-2 text-sm ${s.slug === page.slug ? "text-kapwa-brand-900 font-semibold pl-3 border-l-2 border-kapwa-brand-900" : "text-neutral-600 hover:text-neutral-900 hover:pl-1 transition-[padding]"}`}>{s.label}</Link></li>)}
             </ul></>)}
         </aside>
         <article className="min-w-0 space-y-12">
           {hub && hub.slugs.length > 0 && (
             <section>
-              <h2 className="text-2xl font-semibold tracking-tight text-neutral-900 mb-4">{hub.heading || "In this section"}</h2>
-              <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                {hub.slugs.map((s) => <li key={s}><Link href={navHref(jobId, s)} className="block rounded-xl ring-1 ring-neutral-200 px-4 py-3 font-medium text-neutral-900 hover:ring-kapwa-brand-400 hover:text-kapwa-brand-900">{slugTitle(site, s)}</Link></li>)}
+              <h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2 mb-4`}>{hub.heading || "In this section"}</h2>
+              <ul className="grid border-t border-l border-neutral-200 *:border-r *:border-b *:border-neutral-200 sm:grid-cols-2 xl:grid-cols-3">
+                {hub.slugs.map((s, i) => <li key={s}><Link href={navHref(jobId, s)} className="flex gap-3 bg-white px-4 py-4 h-full font-medium text-neutral-900 hover:bg-kapwa-brand-50 hover:text-kapwa-brand-900"><span className="font-mono text-xs text-neutral-400 pt-1">{nn(i)}</span>{slugTitle(site, s)}</Link></li>)}
               </ul>
             </section>
           )}
           {page.blocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} />)}
           {page.blocks.length === 0 && <Markdown text={page.summary} jobId={jobId} origin={site.origin} />}
         </article>
-        <aside className="space-y-6 self-start lg:sticky lg:top-24">
-          {headings.length > 1 && (<div><h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">On this page</h2><ul className="mt-3 space-y-2 text-sm text-neutral-600">{headings.map((h) => <li key={h}>{h}</li>)}</ul></div>)}
+        <aside className="space-y-8 self-start lg:sticky lg:top-24">
+          {headings.length > 1 && (<div><h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>On this page</h2><ol className="mt-2 divide-y divide-neutral-100 text-sm text-neutral-600">{headings.map((h, i) => <li key={h} className="flex gap-3 py-2"><span className="font-mono text-xs text-neutral-400 pt-0.5">{nn(i)}</span>{h}</li>)}</ol></div>)}
           {contact && <Block block={contact} jobId={jobId} origin={site.origin} />}
         </aside>
       </div>
