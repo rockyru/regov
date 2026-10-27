@@ -98,6 +98,19 @@ Philippine government portals. Generated sites import its tokens and components 
 a stronger hero, service-first navigation, sticky header with search, WCAG AA contrast and
 semantic structure.
 
+## Contributing
+
+Issues and pull requests are welcome at [github.com/rockyru/regov](https://github.com/rockyru/regov/issues).
+Good first contributions: new government-domain patterns in `src/lib/govdomain.ts`, Kapwa
+block renderers in `src/components/site/Blocks.tsx`, and crawl fixes for sites the agent
+mishandles (open an issue with the address and the job's agent log). Run `npm run lint` and
+`npx tsc --noEmit` before opening a PR. Generated output must stay clearly marked unofficial.
+
+## License
+
+[MIT](./LICENSE). Generated sites remain unofficial concepts; agency names, seals and content
+belong to their respective institutions.
+
 ## Status
 
 See `PLAN.md` for the schedule and what is left before the Nov 4 deadline.
