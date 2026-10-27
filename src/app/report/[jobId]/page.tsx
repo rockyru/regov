@@ -172,7 +172,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
             </dl>
             {site.site_notes.length > 0 && (
               <ol className="mt-6 grid gap-x-10 md:grid-cols-2">
-                {site.site_notes.map((t, i) => <li key={i} className="grid grid-cols-[2.5rem_1fr] border-b border-neutral-200 py-2.5 text-[15px] leading-snug"><span className="font-semibold tabular-nums text-neutral-400">S-{String(i + 1).padStart(2, "0")}</span><span className="text-neutral-800">{t}</span></li>)}
+                {site.site_notes.map((t, i) => <li key={i} className="grid grid-cols-[2.5rem_1fr] gap-x-3 border-b border-neutral-200 py-2.5 text-[15px] leading-snug"><span className="font-semibold tabular-nums text-neutral-400">S-{String(i + 1).padStart(2, "0")}</span><span className="text-neutral-800">{t}</span></li>)}
               </ol>
             )}
           </section>
@@ -234,7 +234,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
           {crawl.skipped.length > 0 && (
             <section className="mt-12">
               <div className={`border-t-2 border-kapwa-brand-900 pt-4 ${eyebrow} text-neutral-500`}><span className="text-kapwa-brand-900 tabular-nums mr-3">{nn(n++ - 1)}</span>Excluded during crawl</div>
-              <ol className="mt-4 grid gap-x-10 md:grid-cols-2">{crawl.skipped.map((s, i) => <li key={i} className="grid grid-cols-[2.5rem_1fr] border-b border-neutral-200 py-2 text-sm"><span className="font-semibold tabular-nums text-neutral-400">X-{String(i + 1).padStart(2, "0")}</span><span className="min-w-0"><span className="block truncate text-neutral-800">{s.url}</span><span className="text-xs text-neutral-500">{s.reason}</span></span></li>)}</ol>
+              <ol className="mt-4 grid gap-x-10 md:grid-cols-2">{crawl.skipped.map((s, i) => <li key={i} className="grid grid-cols-[2.5rem_1fr] gap-x-3 border-b border-neutral-200 py-2 text-sm"><span className="font-semibold tabular-nums text-neutral-400">X-{String(i + 1).padStart(2, "0")}</span><span className="min-w-0"><span className="block truncate text-neutral-800">{s.url}</span><span className="text-xs text-neutral-500">{s.reason}</span></span></li>)}</ol>
             </section>
           )}
 

@@ -27,7 +27,17 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
       <AppHeader />
       <main className="flex-1">
         {/* Masthead */}
-        <section className="container-gov pt-14 pb-16 lg:pt-24 lg:pb-20 text-center">
+        <section className="relative overflow-hidden">
+          {/* Soft civic glow rising from the bottom: Kapwa blue with a touch of sun yellow and red */}
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[70%]">
+            <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_100%,rgba(0,56,168,0.16),transparent_70%),radial-gradient(40%_45%_at_12%_100%,rgba(252,209,22,0.20),transparent_70%),radial-gradient(40%_45%_at_88%_100%,rgba(206,18,38,0.10),transparent_70%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,56,168,0.10)_1px,transparent_1px)] bg-[size:22px_22px] [mask-image:linear-gradient(to_top,black_0%,transparent_70%)]" />
+            <svg className="absolute bottom-0 left-0 w-[160%] -translate-x-[18%] text-kapwa-brand-900/[0.06]" viewBox="0 0 1440 220" fill="currentColor" preserveAspectRatio="none" aria-hidden>
+              <path d="M0 140c160-60 320-80 480-60s320 80 480 60 320-100 480-80v160H0z" />
+              <path d="M0 190c200-40 400-60 600-30s400 70 600 40 240-60 240-60v100H0z" opacity=".7" />
+            </svg>
+          </div>
+          <div className="container-gov pt-14 pb-20 lg:pt-24 lg:pb-28 text-center">
           <p className={`${eyebrow} text-kapwa-brand-900`}>Autonomous civic technology</p>
           <h1 className="mt-5 text-5xl sm:text-6xl xl:text-[84px] font-black tracking-tight leading-[0.95] text-neutral-900">Reimagine <span className="text-kapwa-brand-900">Government</span>.</h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-neutral-600 leading-snug">Public websites deserve a second life. Paste a Philippine government site and an agent crawls it, understands it, and rebuilds it on the BetterGov Kapwa standard.</p>
@@ -35,6 +45,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
             <ReimagineBox done={jobs.map((j) => new URL(j.crawl!.origin).host.replace(/^www\./, ""))} initialError={error} initialUrl={url} />
           </div>
           <p className="mx-auto mt-6 max-w-2xl text-[13px] text-neutral-500">Government domains only: agencies, LGUs, state universities, hospitals. Sites behind bot protection are rebuilt from their Wayback Machine archive. Output is an unofficial concept.</p>
+          </div>
         </section>
 
         {(active.length > 0 || failed.length > 0) && (

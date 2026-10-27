@@ -78,7 +78,7 @@ export default async function JobStatus({ params }: { params: Promise<{ jobId: s
           <p className={`${eyebrow} flex items-center gap-3 ${status?.error ? "text-kapwa-red-700" : "text-kapwa-brand-900"}`}>
             {live && <span className="size-2 bg-kapwa-brand-600 animate-pulse" />}{state}{live && <span className="font-medium normal-case tracking-normal text-neutral-500 tabular-nums">· {elapsed}s</span>}
           </p>
-          <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 border-b-2 border-kapwa-brand-900 pb-6">
+          <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 pb-2">
             <div className="min-w-0">
               <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-900 break-words">{site?.agency.name ?? host}</h1>
               <p className="mt-2 text-neutral-500 break-all">{status?.url}</p>
