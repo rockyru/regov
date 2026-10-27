@@ -31,7 +31,7 @@ export default function HowItWorks() {
           <p><M>SAM 3.1</M> finds the agency&rsquo;s seal on the old homepage and cuts it out cleanly to use as the new logo. <M>Muse Spark</M> writes an art brief from the plan, and <M>Muse Image</M> paints a wide header illustration for that agency or town. It is labelled as AI-generated, never passed off as a photograph.</p>
         </> },
         { title: "Build on Kapwa", body: <>
-          <p>The site is rendered live from the plan on <a href="https://github.com/bettergovph/kapwa">Kapwa</a>, the design system BetterGov.ph volunteers made for Philippine government portals: its colour tokens, type scale and base styles, with an editorial layout on top (square corners, ruled sections, numbered indexes) so it reads like a public document, not an app.</p>
+          <p>The site is rendered live from the plan on <a href="https://github.com/bettergovph/kapwa">Kapwa</a>, the design system BetterGov.ph volunteers made for Philippine government portals: its colour tokens, type scale and base styles, with an editorial layout on top (square corners, ruled sections, numbered indexes) so it reads like a public document, not an app. <Link href="/case-study">How RE:GOV uses Kapwa →</Link></p>
           <p>A design check runs first. If the old site is already modern, the agent keeps its brand colour and softer shapes and upgrades it instead of replacing its look.</p>
         </> },
         { title: "Documents and people", body: <>
@@ -45,7 +45,7 @@ export default function HowItWorks() {
             <li><strong>WCAG 2.2 AA.</strong> Every rebuilt page is tested with axe-core, and each finding is tagged with the criterion it breaks.</li>
             <li><strong>Before and after.</strong> Both homepages are loaded in a fresh browser to compare speed, weight, requests and automated accessibility errors.</li>
           </ul>
-          <p>All of it lands in the migration report. <Link href="/case-study">See a full example →</Link></p>
+          <p>All of it lands in the migration report for each site, linked from the <Link href="/showcase">showcase</Link>.</p>
         </> },
         { title: "After the build", body: <>
           <ul>

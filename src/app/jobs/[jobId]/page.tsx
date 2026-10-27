@@ -164,7 +164,7 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
               <p className={`${eyebrow} text-neutral-500`}>While you wait</p>
               <ul className="mt-4 grid sm:grid-cols-3 border-t border-l border-neutral-200">
                 {[
-                  ["/case-study", "Case study", "One municipal site taken end to end, with the measured results."],
+                  ["/case-study", "Case study", "Kapwa in an AI agent: what fit, what didn't, and the components government sites still need."],
                   ["/how-it-works", "How it works", "Each step, which Meta model does what, and where it stops."],
                   ["/showcase", "Showcase", "Every site rebuilt so far, side by side with the original."],
                 ].map(([href, title, text]) => (
