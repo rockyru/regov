@@ -47,7 +47,10 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   for (const { u } of usages) for (const [d, v] of Object.entries(u?.days ?? {})) { const x = days.get(d) ?? { calls: 0, tokens: 0 }; x.calls += v.calls; x.tokens += v.tokens; days.set(d, x); }
   const lastDays = [...days].sort((a, b) => b[0].localeCompare(a[0])).slice(0, 7);
   const topSites = usages.filter((x) => x.u).map((x) => ({ id: x.j.id, name: x.j.site?.agency.short_name || x.j.id, ...totalOf(x.u!) })).sort((a, b) => b.tokens - a.tokens).slice(0, 5);
-  const recorded = usages.filter((x) => x.u).map((x) => totalOf(x.u!).run.tokens).filter((v) => v > 0);
+  // Full builds only: a site that only had a later step backfilled would pull the average down.
+  const recorded = usages.filter((x) => x.u?.run.understand).map((x) => totalOf(x.u!).run.tokens);
+  // Cost of a full run from what recorded runs actually used; the early measured figure until one exists.
+  const perRun = recorded.length ? `about ${usd(recorded.reduce((a, b) => a + b, 0) / recorded.length)} a site on average` : "about $0.80 a site";
   const tab = (key: string, label: string, n: number) => <Link href={`/admin?token=${encodeURIComponent(token)}&show=${key}`} className={`border-b-2 px-1 pb-2 ${show === key ? "border-kapwa-brand-900 text-kapwa-brand-900" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}>{label} <span className="tabular-nums">{n}</span></Link>;
 
   return (
@@ -57,12 +60,12 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <div className="container-gov pt-10 pb-16">
           <p className={`${eyebrow} text-kapwa-brand-900`}>Operator</p>
           <h1 className="mt-2 text-4xl font-display font-normal tracking-tight">Runs and reruns</h1>
-          <p className="mt-2 max-w-3xl text-neutral-600">Reruns from here skip the daily quota, the per-visitor limit, the queue cap and the 24-hour dedupe. Each one spends Meta credits (about $0.38 a site). Queue now: {q.running} running, {q.waiting} waiting; {q.today.used} runs today.</p>
+          <p className="mt-2 max-w-3xl text-neutral-600">Reruns from here skip the daily quota, the per-visitor limit, the queue cap and the 24-hour dedupe. Each one spends Meta credits ({perRun}). Queue now: {q.running} running, {q.waiting} waiting; {q.today.used} runs today.</p>
           <div className="mt-6 grid gap-6 border-t border-neutral-300 pt-4 md:grid-cols-2">
             <div>
               <h2 className={`${eyebrow} text-neutral-600`}>Model usage by day (Manila)</h2>
               {lastDays.length ? (
-                <table className="mt-2 w-full text-sm"><tbody>{lastDays.map(([d, v]) => <tr key={d} className="border-b border-neutral-200"><td className="py-1 pr-3 tabular-nums">{d}</td><td className="py-1 px-3 text-right tabular-nums">{v.calls} calls</td><td className="py-1 px-3 text-right tabular-nums">{v.tokens.toLocaleString("en-PH")} tokens</td><td className="py-1 pl-3 text-right tabular-nums">≈ {usd(v.tokens)}</td></tr>)}</tbody></table>
+                <div className="overflow-x-auto"><table className="mt-2 w-full whitespace-nowrap text-sm"><tbody>{lastDays.map(([d, v]) => <tr key={d} className="border-b border-neutral-200"><td className="py-1 pr-2 tabular-nums">{d}</td><td className="py-1 px-2 text-right tabular-nums">{v.calls} calls</td><td className="py-1 px-2 text-right tabular-nums">{v.tokens.toLocaleString("en-PH")} tokens</td><td className="py-1 pl-2 text-right tabular-nums">≈ {usd(v.tokens)}</td></tr>)}</tbody></table></div>
               ) : <p className="mt-2 text-sm text-neutral-600">Nothing recorded yet. New runs, backfills, Filipino and Ask are counted from now on.</p>}
               {recorded.length > 0 && <p className="mt-2 text-[13px] text-neutral-600">Average recorded run: {Math.round(recorded.reduce((a, b) => a + b, 0) / recorded.length).toLocaleString("en-PH")} tokens (≈ {usd(recorded.reduce((a, b) => a + b, 0) / recorded.length)}) over {recorded.length} {recorded.length === 1 ? "site" : "sites"}. Estimates use USD_PER_MTOK when set.</p>}
             </div>
@@ -81,13 +84,13 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           <form method="post" action="/api/rerun" className="mt-6">
             <input type="hidden" name="token" value={token} />
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <p className="max-w-2xl text-sm text-neutral-600">{list.length} {list.length === 1 ? "site" : "sites"}. Failed sites are ticked. <strong>Apply design check</strong> runs only the new design step on a finished build (cents a site, no rebuild). <strong>Rerun</strong> rebuilds from scratch (about $0.38 a site).</p>
+              <p className="max-w-2xl text-sm text-neutral-600">{list.length} {list.length === 1 ? "site" : "sites"}. Failed sites are ticked. <strong>Apply design check</strong> runs only the new design step on a finished build (cents a site, no rebuild). <strong>Rerun</strong> rebuilds from scratch ({perRun}).</p>
               <div className="flex flex-wrap gap-3">
                 <button type="submit" name="action" value="assess" className={btn.ghost}>Apply design check</button>
                 <button type="submit" name="action" value="rerun" className={btn.primary}>Rerun ticked sites →</button>
               </div>
             </div>
-            <table className="mt-4 w-full text-sm">
+            <div className="mt-4 overflow-x-auto"><table className="w-full text-sm">
               <thead><tr className="border-b-2 border-kapwa-brand-900 text-left"><th className="w-10 py-2" /><th className="py-2 pr-4 font-semibold">Site</th><th className="py-2 pr-4 font-semibold">Latest run</th><th className="py-2 pr-4 font-semibold">Design</th><th className="py-2 pr-4 font-semibold tabular-nums">Builds</th><th className="py-2 font-semibold">When</th></tr></thead>
               <tbody>
                 {list.map((r) => (
@@ -101,7 +104,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </form>
         </div>
       </main>
