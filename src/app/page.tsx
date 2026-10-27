@@ -4,6 +4,7 @@ import { ReimagineBox } from "@/components/ReimagineBox";
 import { JobCard, cardGrid } from "@/components/JobCard";
 import { AppHeader, AppFooter, SectionHead, eyebrow } from "@/components/AppShell";
 import { Reveal } from "@/components/Reveal";
+import { progressOf } from "@/lib/progress";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +34,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
         {(active.length > 0 || failed.length > 0) && (
           <section className="border-b border-kapwa-yellow-400/60 bg-kapwa-yellow-50">
             <ul className="container-gov py-3 flex flex-wrap gap-x-8 gap-y-2 text-sm">
-              {running.map((j) => <li key={j.id}><Link href={`/jobs/${j.id}`} className="inline-flex items-center gap-2 font-semibold text-kapwa-brand-900 hover:underline"><span className="size-2 bg-kapwa-brand-600 animate-pulse" />Reimagining {new URL(j.status!.url).host} · {j.status!.phase} →</Link></li>)}
+              {running.map((j) => <li key={j.id}><Link href={`/jobs/${j.id}`} className="inline-flex items-center gap-2 font-semibold text-kapwa-brand-900 hover:underline"><span className="size-2 bg-kapwa-brand-600 animate-pulse" />Reimagining {new URL(j.status!.url).host} · {progressOf(j.status!).label.toLowerCase()} <span className="tabular-nums">{progressOf(j.status!).pct}%</span> →</Link></li>)}
               {waiting > 0 && <li className="inline-flex items-center gap-2 font-semibold text-neutral-700"><span className="size-2 bg-kapwa-yellow-400" />{waiting} {waiting === 1 ? "site" : "sites"} waiting in the queue</li>}
               {failed.slice(0, 3).map((j) => <li key={j.id}><Link href={`/jobs/${j.id}`} className="inline-flex items-center gap-2 font-semibold text-kapwa-red-800 hover:underline"><span className="size-2 bg-kapwa-red-600" />{new URL(j.status!.url).host} stopped →</Link></li>)}
             </ul>

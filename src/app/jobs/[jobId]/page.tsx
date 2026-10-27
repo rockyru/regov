@@ -1,24 +1,18 @@
 import Link from "next/link";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { JOBS_ROOT, loadSite, settle } from "@/lib/jobs";
-import { runQueue, type QueueInfo } from "@/lib/runQueue";
+import { JOBS_ROOT, loadSite, settle, typicalRunMs } from "@/lib/jobs";
+import { runQueue, LIMITS, type QueueInfo } from "@/lib/runQueue";
 import { AppHeader, AppFooter, SectionHead, eyebrow, btn, nn } from "@/components/AppShell";
 import { LiveRefresh } from "@/components/LiveRefresh";
+import { STEPS, progressOf } from "@/lib/progress";
 
 export const dynamic = "force-dynamic";
 type Ev = { t: number; type: string; [k: string]: unknown };
 type Status = { url: string; phase: string; events: Ev[]; done: boolean; error: string; startedAt: string; queue?: QueueInfo };
 
-const STEPS: { key: string; label: string; tool: string }[] = [
-  { key: "crawl", label: "Crawl", tool: "Playwright" },
-  { key: "archive", label: "Archive", tool: "Wayback Machine" },
-  { key: "understand", label: "Understand", tool: "Muse Spark" },
-  { key: "plan", label: "Plan", tool: "Muse Spark" },
-  { key: "segment", label: "Segment", tool: "SAM 3.1" },
-  { key: "band", label: "Illustrate", tool: "Muse Image" },
-  { key: "write", label: "Assemble", tool: "RE:GOV" },
-];
+
+const mins = (ms: number) => Math.max(1, Math.round(ms / 60_000));
 
 function describe(e: Ev): { text: string; tag?: string } {
   switch (e.type) {
@@ -72,13 +66,15 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
   if (!status?.done && (status?.error || (status?.events.length ?? 0) === 0)) {
     try { procLog = (await readFile(join(JOBS_ROOT, jobId, "pipeline.log"), "utf8")).split("\n").filter(Boolean).slice(-15).join("\n"); } catch { /* none */ }
   }
-  const archived = status?.events.some((e) => e.type === "archive");
-  const steps = STEPS.filter((s) => s.key !== "archive" || archived || status?.phase === "archive");
-  const idx = Math.max(0, steps.findIndex((s) => s.key === (status?.done ? "write" : status?.phase === "queued" ? "crawl" : status?.phase ?? "crawl")));
+  const { steps, idx, detail, pct } = progressOf(status);
   const host = status?.url ? new URL(status.url).host : jobId;
   const v = site ? encodeURIComponent(site.generated_at) : "";
   const live = !status?.done && !status?.error;
   const elapsed = status ? Math.round((Date.now() - new Date(status.startedAt).getTime()) / 1000) : 0;
+  const typical = live ? await typicalRunMs() : 0;
+  const leftMs = Math.max(0, typical * (1 - pct / 100));
+  // A job at place p starts when p slots have freed up; running jobs are assumed half done.
+  const waitMs = queued ? (Math.ceil(queued.position / LIMITS.concurrency) - 0.5) * typical : 0;
   const state = queued ? "Waiting in line" : live ? "Reimagining" : status?.error ? "Stopped" : "Reimagined";
   const existingNote = existing === "done" ? "This site was reimagined recently, so the agent is showing that run instead of starting another."
     : existing === "running" ? "The agent is already working on this site. You are watching that run."
@@ -93,7 +89,7 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
         <div className="container-gov pt-10 pb-16">
           {/* Title block */}
           <p className={`${eyebrow} flex items-center gap-3 ${status?.error ? "text-kapwa-red-700" : "text-kapwa-brand-900"}`}>
-            {live && <span className="size-2 bg-kapwa-brand-600 animate-pulse" />}{state}{live && <span className="font-medium normal-case tracking-normal text-neutral-500 tabular-nums">· {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, "0")}{!queued && " · usually 4 to 8 minutes"}</span>}
+            {live && <span className="size-2 bg-kapwa-brand-600 animate-pulse" />}{state}{live && <span className="font-medium normal-case tracking-normal text-neutral-500 tabular-nums">· {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, "0")}{!queued && ` · ${pct}% · ${leftMs < 60_000 ? "almost done" : `about ${mins(leftMs)} min left`}`}</span>}
           </p>
           <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 pb-2">
             <div className="min-w-0">
@@ -113,10 +109,11 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
                 <div>
                   <p className={`${eyebrow} text-neutral-500`}>Queue</p>
                   <p className="mt-2 text-3xl sm:text-4xl font-display font-normal tracking-tight text-neutral-900">{queued.position === 1 ? "Next up" : `${queued.position - 1} ahead of you`}</p>
-                  <p className="mt-2 max-w-xl text-neutral-700">The agent rebuilds a few sites at a time so each run gets the whole machine. You can leave and come back: it starts on its own, this page keeps refreshing, and the home page lists it until it is done. A run usually takes four to eight minutes once it begins.</p>
+                  <p className="mt-1 text-lg text-kapwa-brand-900">Starts in about {mins(waitMs)} min · ready in about {mins(waitMs + typical)} min</p>
+                  <p className="mt-2 max-w-xl text-neutral-700">The agent rebuilds a few sites at a time so each run gets the whole machine. You can leave and come back: it starts on its own, this page keeps refreshing, and the home page lists it until it is done. A run usually takes about {mins(typical)} minutes once it begins.</p>
                 </div>
-                <dl className="grid grid-cols-3 gap-6">
-                  {[[queued.position, "your place"], [queued.of, "in line"], [queued.running, "running now"]].map(([v, l]) => <div key={String(l)}><dd className="text-2xl font-bold tabular-nums">{v}</dd><dt className="text-[12px] text-neutral-500">{l}</dt></div>)}
+                <dl className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                  {[[queued.position, "your place"], [queued.of, "in line"], [queued.running, "running now"], [`~${mins(waitMs)}m`, "est. wait"]].map(([v, l]) => <div key={String(l)}><dd className="text-2xl font-bold tabular-nums">{v}</dd><dt className="text-[12px] text-neutral-500">{l}</dt></div>)}
                 </dl>
               </div>
             </section>
@@ -125,7 +122,7 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
           {/* Pipeline */}
           <section className="mt-10">
             <SectionHead n={n++} title="Pipeline" aside={<span className="tabular-nums">{steps.length} steps</span>} />
-            <ol className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 border-l border-neutral-200">
+            <ol className={`mt-6 grid grid-cols-2 sm:grid-cols-3 ${steps.length === 7 ? "lg:grid-cols-7" : "lg:grid-cols-6"} border-l border-neutral-200`}>
               {steps.map((s, i) => {
                 const st = status?.error && i === idx ? "error" : i < idx || status?.done ? "done" : i === idx && !queued ? "active" : "todo";
                 const top = st === "done" ? "border-t-kapwa-brand-900" : st === "active" ? "border-t-kapwa-yellow-400" : st === "error" ? "border-t-kapwa-red-600" : "border-t-neutral-200";
@@ -134,13 +131,22 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
                     <div className="flex items-center justify-between text-sm font-semibold tabular-nums"><span>{nn(i)}</span><span className={st === "done" ? "text-kapwa-brand-900" : st === "error" ? "text-kapwa-red-700" : ""}>{st === "done" ? "✓" : st === "active" ? "…" : st === "error" ? "!" : ""}</span></div>
                     <div className="mt-3 font-bold">{s.label}</div>
                     <div className="text-[12px] text-neutral-500">{s.tool}</div>
+                    {st === "active" && <div className="mt-2 text-[12px] font-semibold text-kapwa-brand-900 tabular-nums">{detail}</div>}
                   </li>
                 );
               })}
             </ol>
             {live && !queued && (
-              <div className="relative h-1 overflow-hidden bg-neutral-200" role="progressbar" aria-label="Agent working" aria-valuetext={`${STEPS.find((s) => s.key === status?.phase)?.label ?? "Working"}`}>
-                <div className="absolute inset-y-0 left-0 w-2/5 bg-kapwa-brand-900 motion-safe:animate-sweep motion-reduce:w-full" />
+              <div className="mt-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 text-sm">
+                  <span className="font-semibold text-neutral-900">Step {idx + 1} of {steps.length} · {steps[idx]?.label} <span className="font-normal text-neutral-500">· {detail}</span></span>
+                  <span className="tabular-nums text-neutral-500">{pct}% · {leftMs < 60_000 ? "almost done" : `about ${mins(leftMs)} min left`}</span>
+                </div>
+                <div className="relative mt-2 h-2 overflow-hidden bg-neutral-200" role="progressbar" aria-label="Agent progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} aria-valuetext={`${steps[idx]?.label}, ${detail}`}>
+                  <div className="absolute inset-y-0 left-0 overflow-hidden bg-kapwa-brand-900 transition-[width] duration-700" style={{ width: `${Math.max(3, pct)}%` }}>
+                    <div className="absolute inset-y-0 left-0 w-2/5 bg-white/25 motion-safe:animate-sweep motion-reduce:hidden" />
+                  </div>
+                </div>
               </div>
             )}
           </section>

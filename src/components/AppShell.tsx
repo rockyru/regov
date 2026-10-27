@@ -18,7 +18,7 @@ export function AppHeader({ crumb }: { crumb?: string }) {
     <header>
       <div className="container-gov h-16 flex items-center justify-between gap-6">
         <div className="flex items-center gap-4 min-w-0">
-          <Wordmark className="h-12 sm:h-[52px]" />
+          <Wordmark className="h-12 sm:h-[52px] translate-y-1" />
           {crumb && <span className="hidden sm:flex items-center gap-4 min-w-0 text-sm text-neutral-500"><span className="h-5 w-px bg-neutral-300" /><span className="truncate">{crumb}</span></span>}
         </div>
         <nav aria-label="RE:GOV" className="flex items-center gap-5 text-sm font-semibold">

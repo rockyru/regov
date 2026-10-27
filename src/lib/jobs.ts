@@ -18,6 +18,24 @@ export function settle<T extends JobStatus>(s: T, now = Date.now()): T {
   return { ...s, phase: "error", error: "The agent went quiet for more than 15 minutes, so this run is considered lost. It usually means the agent restarted. Please start it again." };
 }
 
+/** Median wall time of the last 15 finished runs, for queue and progress estimates. Cached for a minute. */
+let typical: { at: number; ms: number } | null = null;
+export async function typicalRunMs(): Promise<number> {
+  if (typical && Date.now() - typical.at < 60_000) return typical.ms;
+  const runs: { start: number; ms: number }[] = [];
+  for (const id of await readdir(JOBS_ROOT).catch(() => [] as string[])) {
+    try {
+      const s = JSON.parse(await readFile(join(JOBS_ROOT, id, "status.json"), "utf8")) as JobStatus;
+      const start = new Date(s.startedAt).getTime(), end = s.events.at(-1)?.t ?? 0;
+      if (s.done && end > start) runs.push({ start, ms: end - start });
+    } catch { /* not a run */ }
+  }
+  const recent = runs.sort((a, b) => b.start - a.start).slice(0, 15).map((r) => r.ms).sort((a, b) => a - b);
+  const ms = recent.length ? Math.min(15, Math.max(2, recent[Math.floor(recent.length / 2)] / 60_000)) * 60_000 : 6 * 60_000;
+  typical = { at: Date.now(), ms };
+  return ms;
+}
+
 // Restore jobs from R2 once per process if the local jobs dir is empty (container cold start).
 let restoring: Promise<void> | null = null;
 async function ensureRestored() {
