@@ -48,6 +48,7 @@ function iconFor(label: string) {
 
 export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string }) {
   const [open, setOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
   const pathname = usePathname();
   const href = (slug: string) => (slug && slug !== "home" ? `/preview/${jobId}/${slug}` : `/preview/${jobId}`);
   const sections = nav.filter((n) => n.slug !== "home" && (n.slug || n.children.length > 0));
@@ -59,12 +60,14 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
     return slugs.some((s) => pathname === href(s));
   };
 
-  const close = () => setOpen(false);
+  // Animate out, unless the viewer prefers reduced motion (then no animationend would fire).
+  const close = () => (window.matchMedia("(prefers-reduced-motion: reduce)").matches ? setOpen(false) : setClosing(true));
+  const finishClose = (e: React.AnimationEvent) => { if (closing && e.target === e.currentTarget) { setOpen(false); setClosing(false); } };
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     window.addEventListener("keydown", onKey);
     return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", onKey); };
   }, [open]);
@@ -91,7 +94,7 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
             </li>
           ))}
           <li className="flex flex-1 min-w-0">
-            <button type="button" aria-expanded={open} aria-controls="mobile-drawer" onClick={() => setOpen(!open)} className={tab(open)}>
+            <button type="button" aria-expanded={open} aria-controls="mobile-drawer" onClick={() => (open ? close() : setOpen(true))} className={tab(open)}>
               {bar(open)}<Icon name={open ? "menu" : "grid"} /><span>More</span>
             </button>
           </li>
@@ -101,11 +104,11 @@ export function MobileNav({ nav, jobId }: { nav: SiteModel["nav"]; jobId: string
       {/* Drawer that rises from the bottom */}
       {open && (
         <div className="fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-label="All sections">
-          <button type="button" aria-label="Close menu" onClick={() => setOpen(false)} className="absolute inset-0 bg-kapwa-brand-950/60 backdrop-blur-[2px]" />
-          <div id="mobile-drawer" className="absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col bg-white text-neutral-900 border-t-4 border-kapwa-yellow-400 shadow-2xl motion-safe:animate-[drawer-up_.22s_ease-out]">
+          <button type="button" aria-label="Close menu" onClick={close} className={`absolute inset-0 bg-kapwa-brand-950/60 backdrop-blur-[2px] motion-safe:duration-200 ${closing ? "motion-safe:animate-out motion-safe:fade-out" : "motion-safe:animate-in motion-safe:fade-in"}`} />
+          <div id="mobile-drawer" onAnimationEnd={finishClose} className={`absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col bg-white text-neutral-900 border-t-4 border-kapwa-yellow-400 shadow-2xl motion-safe:duration-300 motion-safe:fill-mode-forwards ${closing ? "motion-safe:animate-out motion-safe:slide-out-to-bottom motion-safe:ease-in" : "motion-safe:animate-in motion-safe:slide-in-from-bottom motion-safe:ease-out"}`}>
             <div className="flex items-center justify-between px-5 h-14 border-b-2 border-neutral-900 shrink-0">
               <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-600">All sections</span>
-              <button type="button" onClick={() => setOpen(false)} className="inline-flex h-9 items-center gap-1.5 px-3 text-sm font-semibold border border-neutral-900 hover:bg-neutral-900 hover:text-white">
+              <button type="button" onClick={close} className="inline-flex h-9 items-center gap-1.5 px-3 text-sm font-semibold border border-neutral-900 hover:bg-neutral-900 hover:text-white">
                 Close <Caret />
               </button>
             </div>
