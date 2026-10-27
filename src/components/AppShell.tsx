@@ -22,6 +22,8 @@ export function AppHeader({ crumb }: { crumb?: string }) {
           {crumb && <span className="hidden sm:flex items-center gap-4 min-w-0 text-sm text-neutral-500"><span className="h-5 w-px bg-neutral-300" /><span className="truncate">{crumb}</span></span>}
         </div>
         <nav aria-label="RE:GOV" className="flex items-center gap-5 text-sm font-semibold">
+          <Link href="/how-it-works" className="hidden md:inline hover:text-kapwa-brand-900">How it works</Link>
+          <Link href="/case-study" className="hidden md:inline hover:text-kapwa-brand-900">Case study</Link>
           <Link href="/showcase" className="hover:text-kapwa-brand-900">Showcase</Link>
           <a href="https://github.com/rockyru/regov" className="hover:text-kapwa-brand-900">GitHub ↗</a>
           <Link href="/#reimagine" className="hidden sm:inline-flex h-9 items-center bg-kapwa-brand-900 px-4 text-white hover:bg-kapwa-brand-950">Reimagine a site</Link>
@@ -36,6 +38,8 @@ const FOOTER_COLS: { heading: string; links: { label: string; href: string; ext?
     { label: "Home", href: "/" },
     { label: "Reimagine a site", href: "/#reimagine" },
     { label: "Showcase", href: "/showcase" },
+    { label: "How it works", href: "/how-it-works" },
+    { label: "Case study", href: "/case-study" },
     { label: "Source code", href: "https://github.com/rockyru/regov", ext: true },
     { label: "Report an issue", href: "https://github.com/rockyru/regov/issues", ext: true },
     { label: "Privacy", href: "/privacy" },

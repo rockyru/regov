@@ -159,6 +159,27 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
             )}
           </section>
 
+          {live && (
+            <section className="mt-10 border-t-2 border-kapwa-brand-900 pt-5">
+              <p className={`${eyebrow} text-neutral-500`}>While you wait</p>
+              <ul className="mt-4 grid sm:grid-cols-3 border-t border-l border-neutral-200">
+                {[
+                  ["/case-study", "Case study", "One municipal site taken end to end, with the measured results."],
+                  ["/how-it-works", "How it works", "Each step, which Meta model does what, and where it stops."],
+                  ["/showcase", "Showcase", "Every site rebuilt so far, side by side with the original."],
+                ].map(([href, title, text]) => (
+                  <li key={href} className="border-r border-b border-neutral-200">
+                    <Link href={href} className="group block h-full p-5 hover:bg-kapwa-brand-50">
+                      <span className="font-bold text-neutral-900 group-hover:text-kapwa-brand-900">{title} →</span>
+                      <span className="mt-1 block text-sm text-neutral-600">{text}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-sm text-neutral-500">This run keeps going if you leave. The home page lists it until it is done.</p>
+            </section>
+          )}
+
           {site && (
             <section className="relative mt-10 overflow-hidden bg-kapwa-brand-950 text-white">
               {site.assets.cover && (
