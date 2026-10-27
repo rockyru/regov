@@ -150,16 +150,11 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
 
   return (
     <>
-      {/* Print: A4 pages numbered "n / total" in the bottom-left margin; the letterhead repeats via <thead>. */}
-      <style>{`@page { size: A4; margin: 12mm 14mm 16mm; @bottom-left { content: counter(page) " / " counter(pages); font: 600 8pt Inter, sans-serif; color: #525252; } }`}</style>
+      {/* Print: A4 pages, "n / total" bottom left and the logo bottom right in the page margin; the letterhead repeats via <thead>. */}
+      <style>{`@page { size: A4; margin: 12mm 14mm 16mm; @bottom-left { content: counter(page) " / " counter(pages); font: 600 8pt Inter, sans-serif; color: #525252; } @bottom-right { content: url(/brand/logo-print.svg); vertical-align: middle; } }`}</style>
       <div className="print:hidden"><AppHeader crumb={`Migration report · ${host}`} /></div>
-      <main className="relative flex-1 overflow-hidden print:overflow-visible">
-        {/* Subtle art at the foot of the report on screen, and of every printed page. */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[22vw] max-h-80 print:fixed print:h-[42mm] print:max-h-none">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/hero-sm.jpg" alt="" className="h-full w-full object-cover object-bottom opacity-[0.09] grayscale-[40%] [mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,.35)_35%,black_85%)]" />
-        </div>
-        <table className="container-gov block max-w-[1400px] pt-10 pb-[18vw] print:table print:w-full print:max-w-none print:p-0">
+      <main className="flex-1">
+        <table className="container-gov block max-w-[1400px] pt-10 pb-16 print:table print:w-full print:max-w-none print:p-0">
           <thead className="block print:table-header-group">
             <tr className="block print:table-row"><td className="block print:table-cell print:pb-6">
               {/* Letterhead */}
