@@ -15,11 +15,12 @@ export function applyDesignCheck(jobId: string) {
     try {
       const dir = join(JOBS_ROOT, jobId);
       const crawl = JSON.parse(await readFile(join(dir, "crawl.json"), "utf8")) as { pages: { viewportShotFile: string }[] };
+      const { fetchToDisk, pushFile } = await import("../../scripts/sync-jobs");
+      await fetchToDisk(`${jobId}/${crawl.pages[0].viewportShotFile}`);
       const { design } = await assessDesign(dir, crawl.pages[0].viewportShotFile);
       const site = JSON.parse(await readFile(join(dir, "site.json"), "utf8"));
       const json = JSON.stringify({ ...site, design }, null, 2);
       await writeFile(join(dir, "site.json"), json);
-      const { pushFile } = await import("../../scripts/sync-jobs");
       await pushFile(`${jobId}/site.json`, json);
       if (design.hero) await pushFile(`${jobId}/${design.hero}`, await readFile(join(dir, design.hero)));
     } catch (e) {

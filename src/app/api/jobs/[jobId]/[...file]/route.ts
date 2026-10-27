@@ -10,7 +10,13 @@ export async function GET(_req: Request, ctx: { params: Promise<{ jobId: string;
   if (!target.startsWith(resolve(JOBS_ROOT, jobId) + sep)) return new Response("nope", { status: 400 });
   if (!/^(assets|shots)\//.test(file.join("/")) && file.join("/") !== "site.json") return new Response("not served", { status: 404 });
   try {
-    const buf = await readFile(target);
+    // Screenshots are not restored at boot (see scripts/sync-jobs.ts): fetch from R2 on first use.
+    let buf = await readFile(target).catch(() => null);
+    if (!buf) {
+      const { fetchToDisk } = await import("../../../../../../scripts/sync-jobs");
+      if (await fetchToDisk(`${jobId}/${file.join("/")}`)) buf = await readFile(target);
+    }
+    if (!buf) throw new Error("missing");
     const ext = target.split(".").pop() ?? "";
     return new Response(new Uint8Array(buf), { headers: { "content-type": TYPES[ext] ?? "application/octet-stream", "cache-control": "no-cache" } });
   } catch {

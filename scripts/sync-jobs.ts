@@ -33,12 +33,25 @@ export async function pushFile(key: string, body: string | Buffer) {
   const s3 = client(); if (!s3) return;
   await s3.send(new PutObjectCommand({ Bucket: R2_BUCKET, Key: key, Body: body }));
 }
+/** Copy one object to jobs/<key> if it is not on disk yet. Returns the local path, or null if R2 has no such object. */
+export async function fetchToDisk(key: string): Promise<string | null> {
+  const dest = join(ROOT, key);
+  try { await stat(dest); return dest; } catch { /* not local */ }
+  const s3 = client(); if (!s3) return null;
+  try {
+    const g = await s3.send(new GetObjectCommand({ Bucket: R2_BUCKET, Key: key }));
+    await mkdir(dirname(dest), { recursive: true });
+    await writeFile(dest, Buffer.from(await g.Body!.transformToByteArray()));
+    return dest;
+  } catch { return null; }
+}
 export async function getFile(key: string): Promise<string | null> {
   const s3 = client(); if (!s3) return null;
   try { const g = await s3.send(new GetObjectCommand({ Bucket: R2_BUCKET, Key: key })); return await g.Body!.transformToString(); } catch { return null; }
 }
-// Downloads run in parallel. "core" restores what pages need to render (status, site, assets) and
-// blocks boot; "shots" restores the source screenshots (most of the bytes) after the server is up.
+// Downloads run in parallel with retries. "core" restores what pages need to render (status, site,
+// crawl, assets) and blocks boot. Screenshots are most of the bytes, so they are not restored up
+// front: the file route fetches each one from R2 the first time it is asked for.
 const SHOTS = /^[^/]+\/shots\//;
 export async function pullAll(part: "all" | "core" | "shots" = "all") {
   const s3 = client(); if (!s3) { console.log("[sync] R2 not configured, skipping"); return; }
@@ -52,22 +65,28 @@ export async function pullAll(part: "all" | "core" | "shots" = "all") {
     }
     token = r.IsTruncated ? r.NextContinuationToken : undefined;
   } while (token);
-  let n = 0, i = 0;
+  let n = 0, i = 0, failed = 0;
   const worker = async () => {
     while (i < keys.length) {
       const { key, size } = keys[i++];
       const dest = join(ROOT, key);
       try { const st = await stat(dest); if (st.size === size) continue; } catch { /* missing */ }
-      try {
-        const g = await s3.send(new GetObjectCommand({ Bucket: R2_BUCKET, Key: key }));
-        await mkdir(dirname(dest), { recursive: true });
-        await writeFile(dest, Buffer.from(await g.Body!.transformToByteArray()));
-        n++;
-      } catch (e) { console.error(`[sync] ${key}:`, (e as Error).message); }
+      for (let attempt = 1; attempt <= 4; attempt++) {
+        try {
+          const g = await s3.send(new GetObjectCommand({ Bucket: R2_BUCKET, Key: key }));
+          await mkdir(dirname(dest), { recursive: true });
+          await writeFile(dest, Buffer.from(await g.Body!.transformToByteArray()));
+          n++;
+          break;
+        } catch (e) {
+          if (attempt === 4) { failed++; console.error(`[sync] ${key}:`, (e as Error).message); }
+          else await new Promise((r) => setTimeout(r, 500 * attempt));
+        }
+      }
     }
   };
-  await Promise.all(Array.from({ length: 24 }, worker));
-  console.log(`[sync] restored ${n} of ${keys.length} ${part} files`);
+  await Promise.all(Array.from({ length: 12 }, worker));
+  console.log(`[sync] restored ${n} of ${keys.length} ${part} files${failed ? `, ${failed} failed` : ""}`);
 }
 const [cmd, arg] = process.argv.slice(2);
 if (cmd === "push" && arg) pushJob(arg).catch((e) => { console.error(e); process.exit(1); });
