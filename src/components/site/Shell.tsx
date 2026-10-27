@@ -147,7 +147,7 @@ export function Header({ site }: { site: SiteModel }) {
               );
             })}
           </div>
-          {/* The search box gives up width before the menu wraps: a button alone below xl, then 240–400px. */}
+          {/* The search box gives up width before the menu wraps: a button alone below xl, then 208–400px. */}
           <form role="search" action={navHref(jobId, "search")} className="flex flex-1 lg:flex-none xl:flex-[1_1_13rem] xl:min-w-52 xl:max-w-[25rem] items-center lg:ml-auto py-2">
             <label className="sr-only" htmlFor="site-search">{t(site.lang, "Search this site")}</label>
             <input id="site-search" name="q" maxLength={200} placeholder={t(site.lang, "Search or ask a question…")} className="h-10 w-full min-w-0 lg:hidden xl:block border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
