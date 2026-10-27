@@ -41,7 +41,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
         )}
 
         {/* Masthead */}
-        <section className="relative flex min-h-[calc(100dvh-3.5rem)] flex-col overflow-hidden">
+        <section className="relative flex min-h-[calc(100dvh-4rem)] flex-col overflow-hidden">
           {/* Muse Image: a Philippine civic panorama pinned to the bottom of the viewport (public/hero.jpg) */}
           <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[max(33.4vw,46%)] min-h-64">
             {/* eslint-disable-next-line @next/next/no-img-element */}

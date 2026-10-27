@@ -16,9 +16,9 @@ export function Wordmark({ className = "", tone = "ink" }: { className?: string;
 export function AppHeader({ crumb }: { crumb?: string }) {
   return (
     <header>
-      <div className="container-gov h-14 flex items-center justify-between gap-6">
+      <div className="container-gov h-16 flex items-center justify-between gap-6">
         <div className="flex items-center gap-4 min-w-0">
-          <Wordmark className="h-9" />
+          <Wordmark className="h-10 sm:h-11" />
           {crumb && <span className="hidden sm:flex items-center gap-4 min-w-0 text-sm text-neutral-500"><span className="h-5 w-px bg-neutral-300" /><span className="truncate">{crumb}</span></span>}
         </div>
         <nav aria-label="RE:GOV" className="flex items-center gap-5 text-sm font-semibold">
