@@ -15,6 +15,7 @@ import { loadScores, fmtMs, fmtBytes, change, type Scores } from "@/lib/scores";
 import { CHARTER_SLUG, unshout } from "@/lib/charterPages";
 import type { CharterFile } from "@/pipeline/charter";
 import type { PortraitFile } from "@/pipeline/portraits";
+import type { VerifyFile } from "@/pipeline/verify";
 
 export const dynamic = "force-dynamic";
 
@@ -146,6 +147,41 @@ function ScoresSection({ n, s }: { n: number; s: Scores }) {
   );
 }
 
+/** Muse Spark's page-by-page comparison of the rebuild with the original: what was kept, lost or added. */
+function VerifySection({ n, v, href }: { n: number; v: VerifyFile; href: (slug: string) => string }) {
+  const faithful = v.pages.filter((p) => p.verdict === "faithful").length;
+  const unsupported = v.pages.reduce((t, p) => t + p.unsupported.length, 0);
+  const flagged = v.pages.filter((p) => p.verdict !== "faithful" || p.unsupported.length).sort((a, b) => b.unsupported.length - a.unsupported.length || a.coverage - b.coverage);
+  const ok = v.pages.filter((p) => !flagged.includes(p));
+  const figures: [string | number, string][] = [[`${v.average}%`, "of the original content kept, on average"], [`${faithful} / ${v.pages.length}`, "pages judged faithful"], [unsupported, "statements not found on the original"], [flagged.length, "pages for a person to check"]];
+  const chip = (verdict: string) => verdict === "faithful" ? "bg-kapwa-green-50 text-kapwa-green-800" : verdict === "minor_gaps" ? "bg-kapwa-yellow-50 text-kapwa-orange-800" : "bg-kapwa-red-50 text-kapwa-red-700";
+  return (
+    <Sec n={n} title="Self-check" aside="Muse Spark compared each rebuilt page with its original">
+      <p className="max-w-3xl text-neutral-700 print:text-[10pt]">After rebuilding, the agent checked its own work: Muse Spark read every original page (its text, and its screenshot where available) next to the rebuilt page, and listed anything lost and any statement the original does not support. Rewording is expected; changed facts are not.</p>
+      <dl className="mt-6 grid grid-cols-2 md:grid-cols-4 border-t border-l border-kapwa-brand-900 print:grid-cols-4 print:break-inside-avoid">
+        {figures.map(([val, l]) => <div key={l} className="border-r border-b border-kapwa-brand-900 p-4 print:p-2.5"><dd className="text-3xl font-display font-normal tracking-tight tabular-nums text-neutral-900 print:text-[18pt]">{val}</dd><dt className="mt-1 text-[13px] text-neutral-600 print:text-[8pt]">{l}</dt></div>)}
+      </dl>
+      {flagged.length > 0 && (
+        <ol className="mt-6 divide-y divide-neutral-200 border-y border-neutral-200">
+          {flagged.map((p) => (
+            <li key={p.slug} className="py-3 print:break-inside-avoid">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <Link href={href(p.slug)} className="font-semibold text-neutral-900 hover:text-kapwa-brand-900">{p.title}</Link>
+                <span className={`px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wider ${chip(p.verdict)}`}>{p.verdict.replace("_", " ")}</span>
+                <span className="text-[13px] tabular-nums text-neutral-600">{p.coverage}% kept</span>
+              </div>
+              {p.unsupported.length > 0 && <ul className="mt-1.5 space-y-0.5 text-[14px] text-neutral-800">{p.unsupported.map((x, i) => <li key={i}><span className="font-semibold text-kapwa-red-700">Not on the original:</span> {x}</li>)}</ul>}
+              {p.missing.length > 0 && <ul className="mt-1 space-y-0.5 text-[14px] text-neutral-700">{p.missing.map((x, i) => <li key={i}><span className="font-semibold text-kapwa-orange-800">Lost:</span> {x}</li>)}</ul>}
+            </li>
+          ))}
+        </ol>
+      )}
+      {ok.length > 0 && <p className="mt-4 text-[13px] text-neutral-600 print:text-[8pt]"><span className="font-semibold text-kapwa-green-800">Faithful:</span> {ok.map((p) => `${p.title} (${p.coverage}%)`).join(" · ")}</p>}
+      <p className="mt-3 max-w-3xl text-[13px] text-neutral-600 print:text-[8pt]">A model checking a model catches most dropped or invented facts, not all. Pages flagged here go to the agency&rsquo;s editor first.</p>
+    </Sec>
+  );
+}
+
 /** WikiBayan's community record of public projects for this place or office, against what the original site publishes. */
 function ProjectsSection({ n, rows, lgu, publishes, jobId }: { n: number; rows: Matched[]; lgu: boolean; publishes: boolean; jobId: string }) {
   const total = rows.reduce((t, p) => t + p.budget, 0);
@@ -251,6 +287,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
   try { wcag = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/wcag.json"), "utf8")); } catch {}
   const axeBefore = crawl.pages.flatMap((p) => p.axe?.violations ?? []);
   const scores = await loadScores(join(JOBS_ROOT, jobId));
+  let verify: VerifyFile | null = null;
+  try { verify = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/verify.json"), "utf8")); } catch {}
   let portraits: PortraitFile | null = null;
   try { portraits = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/portraits.json"), "utf8")); } catch {}
   let segments: Box[] = [];
@@ -330,12 +368,14 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
             </dl>
             {site.site_notes.length > 0 && (
               <ol className="mt-6 grid gap-x-10 xl:grid-cols-2">
-                {site.site_notes.map((t, i) => <li key={i} className="grid grid-cols-[2.5rem_1fr] gap-x-3 border-b border-neutral-200 py-2.5 text-[15px] leading-snug print:break-inside-avoid print:py-1.5 print:text-[9pt]"><span className="font-semibold tabular-nums text-neutral-400">S-{String(i + 1).padStart(2, "0")}</span><span className="text-neutral-800">{t}</span></li>)}
+                {site.site_notes.map((t, i) => <li key={i} className="grid grid-cols-[2.5rem_1fr] gap-x-3 border-b border-neutral-200 py-2.5 text-[15px] leading-snug print:break-inside-avoid print:py-1.5 print:text-[9pt]"><span className="font-semibold tabular-nums text-neutral-500">S-{String(i + 1).padStart(2, "0")}</span><span className="text-neutral-800">{t}</span></li>)}
               </ol>
             )}
           </Sec>
 
           {scores?.rebuilt && <ScoresSection n={n++} s={scores} />}
+
+          {verify && verify.pages.length > 0 && <VerifySection n={n++} v={verify} href={pageHref} />}
 
           {charter && charter.docs.length > 0 && (
             <Sec n={n++} title="Citizen's Charter" aside="Read from PDFs by Muse Spark">
@@ -409,9 +449,9 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
             <ol className="grid 2xl:grid-cols-2 gap-x-12">
               {site.pages.map((p, i) => (
                 <li key={p.slug} className="grid grid-cols-[2.5rem_1fr_auto] items-baseline gap-x-3 border-b border-neutral-200 py-2.5 print:break-inside-avoid print:py-1.5 print:text-[9pt]">
-                  <span className="font-semibold tabular-nums text-neutral-400 text-sm">{nn(i)}</span>
+                  <span className="font-semibold tabular-nums text-neutral-500 text-sm">{nn(i)}</span>
                   <span className="min-w-0">
-                    <Link href={pageHref(p.slug)} className="font-semibold text-neutral-900 hover:text-kapwa-brand-900 leading-snug">{p.title}</Link>
+                    <Link href={pageHref(p.slug)} className="inline-block py-0.5 font-semibold text-neutral-900 hover:text-kapwa-brand-900 leading-snug">{p.title}</Link>
                     <span className="block truncate text-xs text-neutral-500"><span className="uppercase tracking-wider font-semibold text-[10px] text-kapwa-brand-900">{p.page_type}</span> · <a href={p.source_url} target="_blank" rel="noreferrer" className="hover:underline">{new URL(p.source_url).pathname || "/"}</a></span>
                   </span>
                   <span className="text-sm tabular-nums text-neutral-700 whitespace-nowrap"><span>{p.blocks.length}</span><span className="text-neutral-300 mx-1.5">/</span><span className={p.a11y_issues.length ? "text-kapwa-red-700" : ""}>{p.a11y_issues.length}</span><span className="text-neutral-300 mx-1.5">/</span><span className={p.migration_notes.length ? "text-kapwa-orange-700" : ""}>{p.migration_notes.length}</span></span>
@@ -429,7 +469,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
 
           {crawl.skipped.length > 0 && (
             <Sec n={n++} title="Excluded during crawl" aside={<span className="tabular-nums">{crawl.skipped.length} addresses</span>}>
-              <ol className="grid gap-x-10 2xl:grid-cols-2">{crawl.skipped.map((s, i) => <li key={i} className="grid grid-cols-[2.5rem_1fr] gap-x-3 border-b border-neutral-200 py-2 text-sm print:break-inside-avoid print:py-1 print:text-[8.5pt]"><span className="font-semibold tabular-nums text-neutral-400">X-{String(i + 1).padStart(2, "0")}</span><span className="min-w-0"><span className="block truncate text-neutral-800">{s.url}</span><span className="text-xs text-neutral-500">{s.reason}</span></span></li>)}</ol>
+              <ol className="grid gap-x-10 2xl:grid-cols-2">{crawl.skipped.map((s, i) => <li key={i} className="grid grid-cols-[2.5rem_1fr] gap-x-3 border-b border-neutral-200 py-2 text-sm print:break-inside-avoid print:py-1 print:text-[8.5pt]"><span className="font-semibold tabular-nums text-neutral-500">X-{String(i + 1).padStart(2, "0")}</span><span className="min-w-0"><span className="block truncate text-neutral-800">{s.url}</span><span className="text-xs text-neutral-500">{s.reason}</span></span></li>)}</ol>
             </Sec>
           )}
 
