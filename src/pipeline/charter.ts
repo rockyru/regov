@@ -40,11 +40,18 @@ Summaries are one plain sentence for citizens. If the document is not a services
 const MAX_DOCS = Number(process.env.CHARTER_MAX_DOCS) || 8;
 const MAX_BYTES = 20 * 1024 * 1024;
 
-/** Linked PDFs that look like a charter or a services list, charters first. */
+/** Linked PDFs that are charters: Citizen's Charter files when the site has any, else files named "charter",
+ *  and only as a last resort up to 3 "services"/"requirements" files (those are often benefit checklists, not charters). */
 export function charterCandidates(crawl: CrawlResult): string[] {
   const pdfs = [...new Set(crawl.pages.flatMap((p) => p.attachments).filter((a) => /\.pdf(\?|$)/i.test(a)))];
-  const score = (u: string) => (/citizen.{0,3}s?.{0,3}charter/i.test(decodeURIComponent(u)) ? 2 : /charter|requirements|services/i.test(decodeURIComponent(u)) ? 1 : 0);
-  return pdfs.filter((u) => score(u) > 0).sort((a, b) => score(b) - score(a)).slice(0, MAX_DOCS);
+  const name = (u: string) => { try { return decodeURIComponent(u.split("/").pop() ?? u); } catch { return u; } };
+  // Newest edition first when a site keeps several years of the same charter.
+  const year = (u: string) => Math.max(0, ...(name(u).match(/20\d\d/g) ?? []).map(Number));
+  const citizen = pdfs.filter((u) => /citizen.{0,3}s?.{0,3}charter/i.test(name(u))).sort((a, b) => year(b) - year(a));
+  if (citizen.length) return citizen.slice(0, MAX_DOCS);
+  const charter = pdfs.filter((u) => /charter/i.test(name(u))).sort((a, b) => year(b) - year(a));
+  if (charter.length) return charter.slice(0, MAX_DOCS);
+  return pdfs.filter((u) => /requirements|services/i.test(name(u))).slice(0, 3);
 }
 
 async function download(url: string, archive?: string): Promise<Buffer> {
