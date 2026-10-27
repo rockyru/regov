@@ -12,6 +12,7 @@ import { scoreSite } from "../src/pipeline/scores";
 import { readCharters } from "../src/pipeline/charter";
 import { findPortraits } from "../src/pipeline/portraits";
 import { verifySite } from "../src/pipeline/verify";
+import { findEvidence } from "../src/pipeline/evidence";
 
 const [inputUrl, jobId, max = "20"] = process.argv.slice(2);
 let url = inputUrl;
@@ -83,6 +84,14 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
       log({ type: "portraits", found: p.checked, named: p.people.length });
     } catch (e) {
       console.warn("[portraits] skipped:", (e as Error).message);
+    }
+    // Outline the old homepage's accessibility problems for the report (never fails the run).
+    status.phase = "evidence"; await flush();
+    try {
+      const ev = await findEvidence(dir, JSON.parse(await readFile(join(dir, "site.json"), "utf8")));
+      log({ type: "evidence", outlined: ev?.items.length ?? 0 });
+    } catch (e) {
+      console.warn("[evidence] skipped:", (e as Error).message);
     }
     // WCAG 2.2 check of the rebuilt pages through the running app (free; never fails the run).
     status.phase = "audit"; await flush();

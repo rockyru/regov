@@ -70,7 +70,7 @@ export const scSort = (a: string, b: string) => { const x = a.split(".").map(Num
 // Ordered rules from finding wording to criteria. A finding can break more than one.
 const RULES: [RegExp, string[]][] = [
   [/contrast|legib|faint|hard to read against|light (grey|gray) text|pale text/i, ["1.4.3"]],
-  [/images? of text|text (embedded )?(in|as) (an? )?(image|graphic|banner|poster)|image-only|scanned|infographic|poster|flyer/i, ["1.4.5", "1.1.1"]],
+  [/images? of text|text (embedded )?(in|as) (an? )?(image|graphic|banner|poster)|embedded in (an? )?(image|graphic|picture)|image-only|scanned|infographic|poster|flyer/i, ["1.4.5", "1.1.1"]],
   [/\balt\b|alt text|alternative text|alt attribute|decorative image|missing (image )?description|unlabel+ed (image|icon|graphic)/i, ["1.1.1"]],
   [/carousel|slider|slideshow|auto-?play|auto-?rotat|marquee|scrolling text|ticker|animated|blink/i, ["2.2.2"]],
   [/\bvideo|\baudio|caption|transcript/i, ["1.2.2"]],
