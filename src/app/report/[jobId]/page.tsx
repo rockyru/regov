@@ -163,11 +163,11 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
           <thead className="block print:table-header-group">
             <tr className="block print:table-row"><td className="block print:table-cell print:pb-6">
               {/* Letterhead */}
-              <div className="grid grid-cols-[1fr_auto] items-start gap-6 border-b border-neutral-300 pb-5 sm:grid-cols-[1fr_1fr_auto] print:grid-cols-[1fr_1fr_auto] print:pb-3">
-                <div className="text-[13px] leading-snug text-neutral-700 print:text-[8pt]"><div className="font-semibold text-neutral-900">RE:GOV</div><div>regov.app</div></div>
-                <div className="hidden text-[13px] leading-snug text-neutral-700 sm:block print:block print:text-[8pt]"><div className="font-semibold text-neutral-900">{site.agency.name} · {host}</div><div>Migration report</div></div>
+              <div className="grid grid-cols-[auto_1fr] items-start gap-x-10 gap-y-3 border-b border-neutral-300 pb-5 sm:grid-cols-[auto_1fr_auto] print:grid-cols-[auto_1fr_auto] print:pb-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/brand/logo.svg" alt="RE:GOV. Reimagine Government." className="h-11 w-auto justify-self-end print:h-[11mm]" />
+                <img src="/brand/logo.svg" alt="RE:GOV. Reimagine Government." className="h-11 w-auto print:h-[11mm]" />
+                <div className="hidden text-[13px] leading-snug text-neutral-700 sm:block print:block print:text-[8pt]"><div className="font-semibold text-neutral-900">{site.agency.name} · {host}</div><div>Migration report</div></div>
+                <div className="justify-self-end text-right text-[13px] leading-snug text-neutral-700 print:text-[8pt]"><div className="font-semibold text-neutral-900">RE:GOV</div><div>regov.app</div></div>
               </div>
             </td></tr>
           </thead>
