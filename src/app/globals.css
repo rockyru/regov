@@ -25,8 +25,8 @@
   }
 }
 
-/* Display headings: Fraunces at its soft, slightly wonky, large-optical-size setting */
-.font-display { font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144; }
+/* Display headings: Fraunces, crisp high-contrast cut (closest free match to Larken) */
+.font-display { font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144; }
 
 /* Reimagined sites: no single unbreakable string (emails, URLs, long codes) may widen the page */
 .site-shell { overflow-x: clip; }
