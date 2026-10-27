@@ -44,3 +44,10 @@ body { @apply bg-white text-neutral-900; }
   @media (width >= 40rem) { padding-inline: 2rem; }
   @media (width >= 64rem) { padding-inline: 3rem; }
 }
+
+/* Print: reports read as documents */
+@media print {
+  header nav, .print\:hidden { display: none !important; }
+  main { padding-top: 0 !important; }
+  a { text-decoration: none; color: inherit; }
+}

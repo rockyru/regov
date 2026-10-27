@@ -5,40 +5,106 @@ import { join } from "node:path";
 import { JOBS_ROOT, loadSite } from "@/lib/jobs";
 import type { CrawlResult } from "@/pipeline/types";
 import type { Box } from "@/pipeline/segment";
+import { AppHeader, AppFooter, eyebrow, btn, nn } from "@/components/AppShell";
+import { PrintButton } from "@/components/PrintButton";
 
 export const dynamic = "force-dynamic";
 
-type Finding = { page: string; slug: string; text: string };
-function groupBy(items: Finding[]) {
-  const m = new Map<string, { page: string; slug: string; items: string[] }>();
-  for (const it of items) (m.get(it.slug) ?? m.set(it.slug, { page: it.page, slug: it.slug, items: [] }).get(it.slug)!).items.push(it.text);
-  return [...m.values()];
+type Finding = { ref: string; page: string; slug: string; text: string; category: string };
+
+const A11Y_CATEGORIES: [string, RegExp][] = [
+  ["Colour contrast", /contrast|legib/i],
+  ["Heading structure", /heading|\bh[1-6]\b|hierarch/i],
+  ["Images and media", /image|alt(ernative)?\b|icon|slider|carousel|photo|video|infographic/i],
+  ["Links and controls", /link|button|control|anchor|read.?more|click here/i],
+  ["Forms and labels", /form|label|input|field/i],
+  ["Typography", /font|text size|small text|line spacing|all.?caps|serif|readab|justified/i],
+  ["Character encoding", /encod|mojibake|Ã|character/i],
+  ["Structure and semantics", /table|layout|semantic|landmark|list|navigation|language|lang\b|skip/i],
+];
+const HUMAN_CATEGORIES: [string, RegExp][] = [
+  ["Missing or blank content", /blank|missing|empty|not captured|could not|no .* (listed|captured|found)|retriev|unavailable/i],
+  ["Time-sensitive, verify", /wayback|archive|snapshot|time-sensitive|outdated|may have (been )?(updated|changed)|verify|confirm|current/i],
+  ["Dropped as site chrome", /dropped|excluded|removed|site chrome|omitted|not migrated/i],
+  ["Uncertain extraction", /unclear|ambiguous|assum|guess|inferred|approximat|truncat/i],
+];
+const categorize = (text: string, cats: [string, RegExp][]) => cats.find(([, re]) => re.test(text))?.[0] ?? "Other";
+
+function collect(pages: { title: string; slug: string }[], pick: (p: { slug: string }) => string[], prefix: string, cats: [string, RegExp][]): Finding[] {
+  const out: Finding[] = [];
+  for (const p of pages) for (const text of pick(p)) out.push({ ref: `${prefix}-${String(out.length + 1).padStart(2, "0")}`, page: p.title, slug: p.slug, text, category: categorize(text, cats) });
+  return out;
 }
 
-function Findings({ title, subtitle, tone, groups, jobId }: { title: string; subtitle: string; tone: "red" | "amber"; groups: { page: string; slug: string; items: string[] }[]; jobId: string }) {
-  const total = groups.reduce((n, g) => n + g.items.length, 0);
-  const dot = tone === "red" ? "bg-kapwa-red-500" : "bg-kapwa-yellow-400";
-  const badge = tone === "red" ? "bg-kapwa-red-50 text-kapwa-red-700" : "bg-kapwa-yellow-50 text-kapwa-orange-700";
+function tally(items: Finding[], cats: [string, RegExp][]) {
+  const names = [...cats.map(([n]) => n), "Other"];
+  return names.map((name) => ({ name, count: items.filter((i) => i.category === name).length })).filter((c) => c.count > 0).sort((a, b) => b.count - a.count);
+}
+
+/** A register of findings, grouped by page, with reference numbers. */
+function Register({ n, title, deck, items, cats, jobId, tone }: { n: number; title: string; deck: string; items: Finding[]; cats: [string, RegExp][]; jobId: string; tone: "red" | "amber" }) {
+  const byPage = new Map<string, Finding[]>();
+  for (const it of items) (byPage.get(it.slug) ?? byPage.set(it.slug, []).get(it.slug)!).push(it);
+  const groups = [...byPage.values()];
+  const counts = tally(items, cats);
+  const accent = tone === "red" ? "border-kapwa-red-600" : "border-kapwa-yellow-400";
+  const href = (slug: string) => (slug === "home" ? `/preview/${jobId}` : `/preview/${jobId}/${slug}`);
   return (
-    <div>
-      <div className="flex items-baseline gap-3"><h2 className="text-2xl font-bold tracking-tight">{title}</h2><span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${badge}`}>{total}</span></div>
-      <p className="mt-1 text-sm text-neutral-500">{subtitle}</p>
-      <div className="mt-5 overflow-hidden rounded-3xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-16px_rgba(0,56,168,0.25)] ring-1 ring-neutral-200/80 divide-y divide-neutral-100">
-        {groups.map((g) => (
-          <details key={g.slug} open={g.items.length <= 4} className="group">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-3.5 hover:bg-neutral-50">
-              <span className="flex items-center gap-3 min-w-0"><span className={`size-2 shrink-0 rounded-full ${dot}`} /><Link href={g.slug === "home" ? `/preview/${jobId}` : `/preview/${jobId}/${g.slug}`} className="truncate font-semibold text-neutral-900 hover:text-kapwa-brand-900">{g.page}</Link></span>
-              <span className="flex items-center gap-3 text-xs text-neutral-500"><span>{g.items.length}</span><span className="text-neutral-400 transition group-open:rotate-180">▾</span></span>
-            </summary>
-            <ul className="px-5 pb-4 pl-10 space-y-2 text-[15px] leading-relaxed text-neutral-700">
-              {g.items.map((t, i) => <li key={i} className="relative before:absolute before:-left-4 before:top-[0.7em] before:size-1 before:rounded-full before:bg-neutral-300">{t}</li>)}
-            </ul>
-          </details>
-        ))}
-        {groups.length === 0 && <p className="px-5 py-6 text-sm text-neutral-500">Nothing found.</p>}
+    <section className="mt-12 break-inside-avoid-page">
+      <div className={`border-t-2 border-kapwa-brand-900 pt-4`}>
+        <div className={`${eyebrow} text-neutral-500`}><span className="text-kapwa-brand-900 tabular-nums mr-3">{nn(n - 1)}</span>{title}</div>
+        <div className="mt-2 flex flex-wrap items-baseline gap-x-6 gap-y-1">
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight"><span className="tabular-nums">{items.length}</span> {items.length === 1 ? "finding" : "findings"} <span className="text-neutral-400 font-semibold">across {groups.length} {groups.length === 1 ? "page" : "pages"}</span></h2>
+        </div>
+        <p className="mt-2 max-w-3xl text-neutral-600">{deck}</p>
       </div>
-    </div>
+
+      {counts.length > 0 && (
+        <table className="mt-6 w-full text-sm">
+          <caption className={`${eyebrow} text-left text-neutral-500 pb-2`}>{nn(n - 1)}.1 — Breakdown by category</caption>
+          <thead><tr className="border-b-2 border-kapwa-brand-900 text-left"><th className="py-2 pr-4 font-semibold">Category</th><th className="py-2 px-4 text-right font-semibold tabular-nums w-20">Count</th><th className="py-2 pl-4 font-semibold w-1/2">Share</th></tr></thead>
+          <tbody>
+            {counts.map((c) => (
+              <tr key={c.name} className="border-b border-neutral-200">
+                <td className="py-2 pr-4">{c.name}</td>
+                <td className="py-2 px-4 text-right tabular-nums">{c.count}</td>
+                <td className="py-2 pl-4"><div className="flex items-center gap-3"><div className={`h-2.5 ${tone === "red" ? "bg-kapwa-red-600" : "bg-kapwa-yellow-400"}`} style={{ width: `${Math.max(2, (c.count / items.length) * 100)}%` }} /><span className="text-xs text-neutral-500 tabular-nums">{Math.round((c.count / items.length) * 100)}%</span></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {items.length > 0 ? (
+        <div className="mt-8">
+          <div className={`${eyebrow} text-neutral-500 pb-2 border-b-2 border-kapwa-brand-900`}>{nn(n - 1)}.2 — Full register</div>
+          <div className="xl:columns-2 xl:gap-12">
+          {groups.map((g) => (
+            <div key={g[0].slug} className="break-inside-avoid pt-4 first:pt-0">
+              <div className={`flex items-baseline justify-between gap-4 border-l-4 ${accent} bg-neutral-50 px-3 py-2`}>
+                <Link href={href(g[0].slug)} className="font-bold text-neutral-900 hover:text-kapwa-brand-900">{g[0].page}</Link>
+                <span className="text-xs text-neutral-500 tabular-nums">{g[0].ref}–{g[g.length - 1].ref}</span>
+              </div>
+              <ol className="divide-y divide-neutral-200 border-b border-neutral-200">
+                {g.map((it) => (
+                  <li key={it.ref} className="grid grid-cols-[3.25rem_1fr] gap-x-3 py-2 text-[14px] leading-snug">
+                    <span className="font-semibold tabular-nums text-neutral-500">{it.ref}</span>
+                    <span className="text-neutral-800">{it.text} <span className="whitespace-nowrap text-xs text-neutral-400">· {it.category}</span></span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))}
+          </div>
+        </div>
+      ) : <p className="mt-6 text-sm text-neutral-500">Nothing recorded.</p>}
+    </section>
   );
+}
+
+function Seal({ src, alt }: { src: string; alt: string }) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={src} alt={alt} className="max-h-24" />;
 }
 
 const COLORS: Record<string, string> = { logo: "#fcd116", "navigation menu": "#35b0ff", banner: "#ff6878", sidebar: "#3deb8e", footer: "#fdad3a" };
@@ -52,95 +118,130 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
   try { segments = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/segments.json"), "utf8")); } catch {}
   const home = crawl.pages[0];
   const vw = home.width, vh = 900;
-  const a11y = site.pages.flatMap((p) => p.a11y_issues.map((i) => ({ page: p.title, slug: p.slug, issue: i })));
-  const notes = site.pages.flatMap((p) => p.migration_notes.map((n) => ({ page: p.title, slug: p.slug, note: n })));
+  const a11y = collect(site.pages, (p) => site.pages.find((x) => x.slug === p.slug)!.a11y_issues, "A", A11Y_CATEGORIES);
+  const notes = collect(site.pages, (p) => site.pages.find((x) => x.slug === p.slug)!.migration_notes, "H", HUMAN_CATEGORIES);
   const blocks = site.pages.reduce((n, p) => n + p.blocks.length, 0);
   const imageOnly = site.pages.reduce((n, p) => n + p.blocks.filter((b) => b.type === "image").length, 0);
-  const Stat = ({ v, l }: { v: string | number; l: string }) => <div className="rounded-3xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-16px_rgba(0,56,168,0.25)] ring-1 ring-neutral-200/80 p-5"><div className="text-3xl font-black tracking-tight text-kapwa-brand-900">{v}</div><div className="mt-1 text-sm text-neutral-500">{l}</div></div>;
+  const host = new URL(site.origin).host;
+  const generated = new Date(site.generated_at);
+  const a11yPages = new Set(a11y.map((x) => x.slug)).size;
+  const notePages = new Set(notes.map((x) => x.slug)).size;
+  const logo = site.assets.logo ? `/api/jobs/${jobId}/${site.assets.logo}?v=${encodeURIComponent(site.generated_at)}` : null;
+  const pageHref = (slug: string) => (slug === "home" ? `/preview/${jobId}` : `/preview/${jobId}/${slug}`);
+  let n = 1;
+  const figures: [string | number, string][] = [[crawl.pages.length, "pages crawled"], [site.pages.length, "pages rebuilt"], [blocks, "content blocks"], [a11y.length, "accessibility findings"], [notes.length, "items for human review"], [imageOnly, "image-only sections transcribed"]];
 
   return (
-    <main className="container-gov pb-16 flex-1">
-      <header className="flex items-center justify-between pt-6 pb-10">
-        <Link href="/" className="text-2xl font-black tracking-tight leading-none"><span className="text-kapwa-brand-900">RE</span><span className="text-kapwa-red-600">:</span>GOV</Link>
-        <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">← Back to home</Link>
-      </header>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div><p className="text-sm font-semibold uppercase tracking-wider text-kapwa-brand-700">RE:GOV migration report</p><h1 className="text-4xl font-extrabold tracking-tight">{site.agency.name}</h1><p className="text-neutral-500">{site.origin} → BetterGov Kapwa standard · {new Date(site.generated_at).toLocaleString()}</p></div>
-        <div className="flex gap-3"><Link href={`/preview/${jobId}`} className="rounded-full bg-kapwa-brand-800 px-5 py-2.5 font-semibold text-white hover:bg-kapwa-brand-900">View site →</Link><a href={site.origin} target="_blank" rel="noreferrer" className="rounded-full ring-1 ring-neutral-200 px-5 py-2.5 font-semibold text-neutral-700 hover:bg-neutral-50">Original ↗</a></div>
-      </div>
-
-      <div className="mt-10 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-        <Stat v={crawl.pages.length} l="pages crawled" /><Stat v={site.pages.length} l="pages rebuilt" /><Stat v={blocks} l="content blocks" /><Stat v={a11y.length} l="accessibility issues found" /><Stat v={imageOnly} l="image-only sections transcribed" /><Stat v={((site.tokens ?? 0) / 1000).toFixed(0) + "k"} l="Muse Spark tokens" />
-      </div>
-
-      <section className="mt-14 grid gap-8 lg:grid-cols-[1fr_360px]">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">What SAM 3.1 saw on the old homepage</h2>
-          <p className="mt-1 text-neutral-600">Noun-phrase prompts (logo, search box, map, infographic, photograph) on the original screenshot. The seal was cut out and reused as the new site's brand mark.</p>
-          <div className="mt-4 relative overflow-hidden rounded-3xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-16px_rgba(0,56,168,0.25)] ring-1 ring-neutral-200/80" style={{ aspectRatio: `${vw}/${vh}` }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/api/jobs/${jobId}/${home.viewportShotFile}`} alt="Original homepage" className="absolute inset-0 w-full h-full" />
-            {segments.map((b, i) => (
-              <div key={i} className="absolute border-2 rounded-sm" style={{ left: `${(b.left / vw) * 100}%`, top: `${(b.top / vh) * 100}%`, width: `${((b.right - b.left) / vw) * 100}%`, height: `${((b.bottom - b.top) / vh) * 100}%`, borderColor: COLORS[b.prompt] ?? "#fff", boxShadow: `0 0 0 9999px ${(COLORS[b.prompt] ?? "#fff")}00` }}>
-                <span className="absolute -top-5 left-0 text-[10px] font-bold px-1 rounded" style={{ background: COLORS[b.prompt] ?? "#fff", color: "#111" }}>{b.prompt} {(b.confidence * 100).toFixed(0)}%</span>
+    <>
+      <AppHeader crumb={`Migration report · ${host}`} />
+      <main className="flex-1">
+        <div className="container-gov pt-10 pb-16 max-w-[1400px]">
+          {/* Title block */}
+          <div className="grid gap-8 lg:grid-cols-[1fr_minmax(280px,34%)] border-b-2 border-kapwa-brand-900 pb-8">
+            <div>
+              <p className={`${eyebrow} text-kapwa-brand-900 flex items-center gap-3`}><span className="h-px w-10 bg-kapwa-red-600" />Migration report</p>
+              <h1 className="mt-4 text-4xl sm:text-5xl font-black tracking-tight text-neutral-900">{site.agency.name}</h1>
+              <p className="mt-3 max-w-2xl text-lg text-neutral-600">Automated assessment and rebuild of <a href={site.origin} className="underline decoration-neutral-300 underline-offset-4 hover:decoration-kapwa-brand-900" target="_blank" rel="noreferrer">{host}</a> on the BetterGov Kapwa design standard.</p>
+              <div className="mt-6 flex flex-wrap gap-3 print:hidden">
+                <Link href={`/preview/${jobId}`} className={btn.primary}>View the rebuilt site →</Link>
+                <a href={site.origin} target="_blank" rel="noreferrer" className={btn.ghost}>Original ↗</a>
+                <PrintButton className={`${btn.ghost} border-neutral-300 text-neutral-600 hover:border-kapwa-brand-900`} />
               </div>
-            ))}
-          </div>
-        </div>
-        <div className="space-y-4">
-          <div className="rounded-3xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-16px_rgba(0,56,168,0.25)] ring-1 ring-neutral-200/80 p-5">
-            <h3 className="font-semibold">Extracted brand mark</h3>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-neutral-50 p-3 grid place-items-center">{site.assets.logo ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={`/api/jobs/${jobId}/${site.assets.logo}?v=${encodeURIComponent(site.generated_at)}`} alt="logo on white" className="max-h-20" /> : <span className="text-xs text-neutral-400">none</span>}</div>
-              <div className="rounded-2xl bg-kapwa-brand-950 p-3 grid place-items-center">{site.assets.logo ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={`/api/jobs/${jobId}/${site.assets.logo}?v=${encodeURIComponent(site.generated_at)}`} alt="logo on brand" className="max-h-20" /> : null}</div>
             </div>
+            <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 self-end text-sm border-t border-kapwa-brand-900 pt-4">
+              {[
+                ["Reference", jobId],
+                ["Source", crawl.archive ? `Wayback Machine capture, ${crawl.archive.date.slice(0, 10)}` : "Live site"],
+                ["Generated", generated.toLocaleString("en-PH", { dateStyle: "long", timeStyle: "short", timeZone: "Asia/Manila" })],
+                ["Models", "Muse Spark 1.3 · SAM 3.1 · Muse Image"],
+                ["Standard", "Kapwa by BetterGov.ph"],
+                ["Status", "Unofficial AI-generated concept"],
+              ].map(([k, v]) => <div key={k} className="contents"><dt className={`${eyebrow} text-neutral-500 pt-0.5`}>{k}</dt><dd className="text-neutral-900 break-words">{v}</dd></div>)}
+            </dl>
           </div>
-          <div className="rounded-3xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-16px_rgba(0,56,168,0.25)] ring-1 ring-neutral-200/80 p-5">
-            <h3 className="font-semibold">Site-wide findings</h3>
-            <ul className="mt-2 list-disc pl-5 text-sm text-neutral-700 space-y-1.5">{site.site_notes.map((n, i) => <li key={i}>{n}</li>)}</ul>
-          </div>
-        </div>
-      </section>
 
-      <section className="mt-14">
-        <h2 className="text-2xl font-bold tracking-tight">Page by page</h2>
-        <div className="mt-4 overflow-x-auto rounded-3xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-16px_rgba(0,56,168,0.25)] ring-1 ring-neutral-200/80">
-          <table className="w-full text-sm">
-            <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wider text-neutral-500"><tr><th className="px-4 py-3">Old page</th><th className="px-4 py-3">Type</th><th className="px-4 py-3">Blocks</th><th className="px-4 py-3">A11y issues</th><th className="px-4 py-3">Needs a human</th><th className="px-4 py-3">New page</th></tr></thead>
-            <tbody className="divide-y divide-neutral-100">
-              {site.pages.map((p) => (
-                <tr key={p.slug}>
-                  <td className="px-4 py-3"><a className="text-kapwa-brand-800 hover:underline" href={p.source_url} target="_blank" rel="noreferrer">{new URL(p.source_url).pathname || "/"}</a></td>
-                  <td className="px-4 py-3"><span className="rounded-full bg-kapwa-brand-50 text-kapwa-brand-900 px-2.5 py-0.5 text-xs font-semibold">{p.page_type}</span></td>
-                  <td className="px-4 py-3">{p.blocks.length}</td>
-                  <td className="px-4 py-3">{p.a11y_issues.length}</td>
-                  <td className="px-4 py-3">{p.migration_notes.length}</td>
-                  <td className="px-4 py-3"><Link className="font-medium text-kapwa-brand-800 hover:underline" href={p.slug === "home" ? `/preview/${jobId}` : `/preview/${jobId}/${p.slug}`}>{p.title}</Link></td>
-                </tr>
+          {/* 01 Summary */}
+          <section className="mt-10">
+            <div className={`${eyebrow} text-neutral-500`}><span className="text-kapwa-brand-900 tabular-nums mr-3">{nn(n++ - 1)}</span>Summary</div>
+            <p className="mt-3 max-w-3xl text-lg leading-snug text-neutral-800">
+              The agent {crawl.archive ? `read the ${crawl.archive.date.slice(0, 4)} archived copy of` : "crawled"} <strong className="font-semibold">{host}</strong>, kept <strong className="font-semibold tabular-nums">{site.pages.length}</strong> of <span className="tabular-nums">{crawl.pages.length}</span> pages, and rebuilt them as <span className="tabular-nums">{blocks}</span> structured content blocks.
+              It recorded <strong className="font-semibold tabular-nums">{a11y.length}</strong> accessibility findings on <span className="tabular-nums">{a11yPages}</span> pages, corrected in the rebuild, and <strong className="font-semibold tabular-nums">{notes.length}</strong> items on <span className="tabular-nums">{notePages}</span> pages that need a person to confirm before any of this is published.
+            </p>
+            <dl className="mt-6 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 border-t border-l border-kapwa-brand-900">
+              {figures.map(([v, l]) => <div key={l} className="border-r border-b border-kapwa-brand-900 p-4"><dd className="text-3xl font-black tracking-tight tabular-nums text-neutral-900">{v}</dd><dt className="mt-1 text-[13px] text-neutral-600">{l}</dt></div>)}
+            </dl>
+            {site.site_notes.length > 0 && (
+              <ol className="mt-6 grid gap-x-10 md:grid-cols-2">
+                {site.site_notes.map((t, i) => <li key={i} className="grid grid-cols-[2.5rem_1fr] border-b border-neutral-200 py-2.5 text-[15px] leading-snug"><span className="font-semibold tabular-nums text-neutral-400">S-{String(i + 1).padStart(2, "0")}</span><span className="text-neutral-800">{t}</span></li>)}
+              </ol>
+            )}
+          </section>
+
+          {/* 02 Source analysis */}
+          <section className="mt-12 grid gap-8 lg:grid-cols-[1fr_320px]">
+            <div>
+              <div className={`border-t-2 border-kapwa-brand-900 pt-4 ${eyebrow} text-neutral-500`}><span className="text-kapwa-brand-900 tabular-nums mr-3">{nn(n++ - 1)}</span>Source analysis</div>
+              <h2 className="mt-2 text-2xl font-black tracking-tight">What SAM 3.1 saw on the old homepage</h2>
+              <p className="mt-1 text-neutral-600">Noun-phrase prompts (logo, navigation menu, banner, sidebar, footer) on the original screenshot. The seal was cut out and reused as the new site&rsquo;s brand mark.</p>
+              <div className="mt-4 relative overflow-hidden border border-kapwa-brand-900 bg-white" style={{ aspectRatio: `${vw}/${vh}` }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/api/jobs/${jobId}/${home.viewportShotFile}`} alt="Original homepage" className="absolute inset-0 w-full h-full" />
+                {segments.map((b, i) => (
+                  <div key={i} className="absolute border-2" style={{ left: `${(b.left / vw) * 100}%`, top: `${(b.top / vh) * 100}%`, width: `${((b.right - b.left) / vw) * 100}%`, height: `${((b.bottom - b.top) / vh) * 100}%`, borderColor: COLORS[b.prompt] ?? "#fff" }}>
+                    <span className="absolute -top-5 left-0 text-[10px] font-bold px-1 tabular-nums" style={{ background: COLORS[b.prompt] ?? "#fff", color: "#111" }}>{b.prompt} {(b.confidence * 100).toFixed(0)}%</span>
+                  </div>
+                ))}
+              </div>
+              {segments.length > 0 && (
+                <table className="mt-4 w-full text-sm">
+                  <thead><tr className="border-b-2 border-kapwa-brand-900 text-left"><th className="py-2 pr-4 font-semibold">Region</th><th className="py-2 px-4 font-semibold text-right tabular-nums">Confidence</th><th className="py-2 pl-4 font-semibold text-right tabular-nums">Box (px)</th></tr></thead>
+                  <tbody>{segments.map((b, i) => <tr key={i} className="border-b border-neutral-200"><td className="py-1.5 pr-4 flex items-center gap-2"><span className="size-3 border border-kapwa-brand-900" style={{ background: COLORS[b.prompt] ?? "#fff" }} />{b.prompt}</td><td className="py-1.5 px-4 text-right tabular-nums">{(b.confidence * 100).toFixed(0)}%</td><td className="py-1.5 pl-4 text-right tabular-nums text-neutral-500">{Math.round(b.right - b.left)} × {Math.round(b.bottom - b.top)}</td></tr>)}</tbody>
+                </table>
+              )}
+            </div>
+            <div>
+              <div className={`border-t-2 border-kapwa-brand-900 pt-4 ${eyebrow} text-neutral-500`}>Extracted brand mark</div>
+              <div className="mt-4 grid grid-cols-2 border-t border-l border-kapwa-brand-900">
+                <div className="border-r border-b border-kapwa-brand-900 bg-white p-4 aspect-square grid place-items-center">{logo ? <Seal src={logo} alt="Seal on white" /> : <span className="text-xs text-neutral-400">none</span>}</div>
+                <div className="border-r border-b border-kapwa-brand-900 bg-kapwa-brand-950 p-4 aspect-square grid place-items-center">{logo ? <Seal src={logo} alt="Seal on navy" /> : null}</div>
+              </div>
+              <p className="mt-3 text-[13px] text-neutral-500">Cut from the SAM 3.1 logo mask. Used in the header, footer and social previews of the rebuilt site.</p>
+            </div>
+          </section>
+
+          {/* 03 Page inventory */}
+          <section className="mt-12">
+            <div className={`border-t-2 border-kapwa-brand-900 pt-4 ${eyebrow} text-neutral-500 flex items-center justify-between gap-4`}><span><span className="text-kapwa-brand-900 tabular-nums mr-3">{nn(n++ - 1)}</span>Page inventory</span><span className="font-medium normal-case tracking-normal text-neutral-500 tabular-nums">{site.pages.length} pages · blocks / a11y / human</span></div>
+            <ol className="mt-4 grid lg:grid-cols-2 gap-x-12">
+              {site.pages.map((p, i) => (
+                <li key={p.slug} className="grid grid-cols-[2.5rem_1fr_auto] items-baseline gap-x-3 border-b border-neutral-200 py-2.5">
+                  <span className="font-semibold tabular-nums text-neutral-400 text-sm">{nn(i)}</span>
+                  <span className="min-w-0">
+                    <Link href={pageHref(p.slug)} className="font-semibold text-neutral-900 hover:text-kapwa-brand-900 leading-snug">{p.title}</Link>
+                    <span className="block truncate text-xs text-neutral-500"><span className="uppercase tracking-wider font-semibold text-[10px] text-kapwa-brand-900">{p.page_type}</span> · <a href={p.source_url} target="_blank" rel="noreferrer" className="hover:underline">{new URL(p.source_url).pathname || "/"}</a></span>
+                  </span>
+                  <span className="text-sm tabular-nums text-neutral-700 whitespace-nowrap"><span>{p.blocks.length}</span><span className="text-neutral-300 mx-1.5">/</span><span className={p.a11y_issues.length ? "text-kapwa-red-700" : ""}>{p.a11y_issues.length}</span><span className="text-neutral-300 mx-1.5">/</span><span className={p.migration_notes.length ? "text-kapwa-orange-700" : ""}>{p.migration_notes.length}</span></span>
+                </li>
               ))}
-            </tbody>
-          </table>
+            </ol>
+          </section>
+
+          <Register n={n++} title="Accessibility findings" tone="red" items={a11y} cats={A11Y_CATEGORIES} jobId={jobId}
+            deck="Issues Muse Spark observed on the original pages. The rebuilt site addresses them with semantic headings, real text instead of images of text, labelled controls and WCAG AA contrast." />
+          <Register n={n++} title="Items for human review" tone="amber" items={notes} cats={HUMAN_CATEGORIES} jobId={jobId}
+            deck="Content the agent migrated but could not verify, and gaps it could not fill. Each item should be checked by the agency before anything here is treated as current." />
+
+          {crawl.skipped.length > 0 && (
+            <section className="mt-12">
+              <div className={`border-t-2 border-kapwa-brand-900 pt-4 ${eyebrow} text-neutral-500`}><span className="text-kapwa-brand-900 tabular-nums mr-3">{nn(n++ - 1)}</span>Excluded during crawl</div>
+              <ol className="mt-4 grid gap-x-10 md:grid-cols-2">{crawl.skipped.map((s, i) => <li key={i} className="grid grid-cols-[2.5rem_1fr] border-b border-neutral-200 py-2 text-sm"><span className="font-semibold tabular-nums text-neutral-400">X-{String(i + 1).padStart(2, "0")}</span><span className="min-w-0"><span className="block truncate text-neutral-800">{s.url}</span><span className="text-xs text-neutral-500">{s.reason}</span></span></li>)}</ol>
+            </section>
+          )}
+
+          <p className="mt-12 border-t-2 border-kapwa-brand-900 pt-4 text-[13px] text-neutral-500">Prepared automatically by RE:GOV. The rebuilt site is an unofficial, AI-generated concept and is not affiliated with or endorsed by {site.agency.short_name}. Findings are machine observations and may be incomplete; verify against the official website before acting on them.</p>
         </div>
-      </section>
-
-      <section className="mt-14 grid gap-10 lg:grid-cols-2">
-        <Findings
-          title="Accessibility issues fixed"
-          subtitle="Found by Muse Spark on the old pages. The new site uses semantic headings, real text, labelled controls and WCAG AA contrast."
-          tone="red"
-          groups={groupBy(a11y.map((x) => ({ page: x.page, slug: x.slug, text: x.issue })))}
-          jobId={jobId}
-        />
-        <Findings
-          title="Needs a human"
-          subtitle="Content the agent migrated but could not verify, and gaps it could not fill."
-          tone="amber"
-          groups={groupBy(notes.map((x) => ({ page: x.page, slug: x.slug, text: x.note })))}
-          jobId={jobId}
-        />
-      </section>
-
-      {crawl.skipped.length > 0 && <section className="mt-14"><h2 className="text-xl font-bold">Skipped during crawl</h2><ul className="mt-2 text-sm text-neutral-600 space-y-1">{crawl.skipped.map((s, i) => <li key={i}>{s.url} — {s.reason}</li>)}</ul></section>}
-    </main>
+      </main>
+      <AppFooter />
+    </>
   );
 }

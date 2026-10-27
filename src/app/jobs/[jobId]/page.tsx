@@ -2,6 +2,7 @@ import Link from "next/link";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { JOBS_ROOT, loadSite } from "@/lib/jobs";
+import { AppHeader, AppFooter, SectionHead, eyebrow, btn, nn } from "@/components/AppShell";
 
 export const dynamic = "force-dynamic";
 type Ev = { t: number; type: string; [k: string]: unknown };
@@ -34,8 +35,7 @@ function describe(e: Ev): { text: string; tag?: string } {
     default: return { text: e.type };
   }
 }
-const TAG: Record<string, string> = { crawl: "bg-neutral-100 text-neutral-600", spark: "bg-kapwa-brand-50 text-kapwa-brand-800", sam: "bg-kapwa-yellow-50 text-kapwa-orange-700", image: "bg-kapwa-green-50 text-kapwa-green-800", archive: "bg-kapwa-orange-50 text-kapwa-orange-800", warn: "bg-kapwa-red-50 text-kapwa-red-700", phase: "bg-neutral-900 text-white" };
-const CARD = "rounded-3xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_-16px_rgba(0,56,168,0.25)] ring-1 ring-neutral-200/80";
+const TAG: Record<string, string> = { crawl: "text-neutral-500", spark: "text-kapwa-brand-800", sam: "text-kapwa-orange-700", image: "text-kapwa-green-800", archive: "text-kapwa-orange-800", warn: "text-kapwa-red-700", phase: "text-neutral-900" };
 
 export default async function JobStatus({ params }: { params: Promise<{ jobId: string }> }) {
   const { jobId } = await params;
@@ -65,78 +65,91 @@ export default async function JobStatus({ params }: { params: Promise<{ jobId: s
   const v = site ? encodeURIComponent(site.generated_at) : "";
   const live = !status?.done && !status?.error;
   const elapsed = status ? Math.round((Date.now() - new Date(status.startedAt).getTime()) / 1000) : 0;
+  const state = live ? "Reimagining" : status?.error ? "Stopped" : "Reimagined";
+  let n = 1;
 
   return (
-    <main className="container-gov pb-16 flex-1">
+    <>
       {live && <meta httpEquiv="refresh" content="2" />}
-      <header className="flex items-center justify-between pt-6 pb-10">
-        <Link href="/" className="text-2xl font-black tracking-tight leading-none"><span className="text-kapwa-brand-900">RE</span><span className="text-kapwa-red-600">:</span>GOV</Link>
-        <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">← Home</Link>
-      </header>
-
-      <div className="mx-auto max-w-5xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-kapwa-brand-700">{live ? "Reimagining" : status?.error ? "Stopped" : "Reimagined"}</p>
-        <h1 className="mt-2 text-3xl sm:text-5xl font-black tracking-tight text-neutral-900 break-words">{site?.agency.name ?? host}</h1>
-        <p className="mt-2 text-neutral-500 break-all">{status?.url}{live && ` · ${elapsed}s`}</p>
-
-        {/* Stepper */}
-        <ol className={`mt-8 ${CARD} p-4 sm:p-5 flex flex-wrap justify-center gap-x-2 gap-y-5`}>
-          {steps.map((s, i) => {
-            const state = status?.error && i === idx ? "error" : i < idx || status?.done ? "done" : i === idx ? "active" : "todo";
-            return (
-              <li key={s.key} className="flex w-[84px] sm:w-[112px] lg:w-[136px] flex-col items-center text-center gap-1.5">
-                <span className={`grid size-8 sm:size-9 place-items-center rounded-full text-sm font-bold ${state === "done" ? "bg-kapwa-green-600 text-white" : state === "active" ? "bg-kapwa-brand-800 text-white ring-4 ring-kapwa-brand-100 animate-pulse" : state === "error" ? "bg-kapwa-red-600 text-white" : "bg-neutral-100 text-neutral-400"}`}>{state === "done" ? "✓" : i + 1}</span>
-                <span className={`text-xs sm:text-sm font-semibold leading-tight ${state === "todo" ? "text-neutral-400" : "text-neutral-900"}`}>{s.label}</span>
-                <span className="text-[10px] sm:text-[11px] leading-tight text-neutral-400">{s.tool}</span>
-              </li>
-            );
-          })}
-        </ol>
-
-        {site && (
-          <div className={`relative mt-8 overflow-hidden ${CARD} text-white`}>
-            {site.assets.cover && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={`/api/jobs/${jobId}/${site.assets.cover}?v=${v}`} alt="" className="absolute inset-0 h-full w-full object-cover" />
-            )}
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,35,101,0.96)_0%,rgba(6,35,101,0.85)_45%,rgba(6,35,101,0.25)_100%)]" aria-hidden />
-            <div className="relative p-8 sm:p-10 max-w-xl">
-              <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider">{(site.site_kind ?? "").replace(/_/g, " ")}</span>
-              <h2 className="mt-4 text-3xl font-black tracking-tight">{site.agency.name}</h2>
-              <p className="mt-2 text-white/80">{site.agency.tagline}</p>
-              <p className="mt-4 text-sm text-white/70">{site.pages.length} pages · {site.entities?.length ?? 0} people, offices and services identified · {((site.tokens ?? 0) / 1000).toFixed(0)}k tokens</p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link href={`/preview/${jobId}`} className="rounded-full bg-kapwa-yellow-400 px-5 py-2.5 font-bold text-kapwa-brand-950 hover:bg-kapwa-yellow-300">View site →</Link>
-                <Link href={`/report/${jobId}`} className="rounded-full bg-white/15 px-5 py-2.5 font-semibold text-white ring-1 ring-white/30 hover:bg-white/25">Migration report</Link>
-              </div>
+      <AppHeader crumb={host} />
+      <main className="flex-1">
+        <div className="container-gov pt-10 pb-16">
+          {/* Title block */}
+          <p className={`${eyebrow} flex items-center gap-3 ${status?.error ? "text-kapwa-red-700" : "text-kapwa-brand-900"}`}>
+            {live && <span className="size-2 bg-kapwa-brand-600 animate-pulse" />}{state}{live && <span className="font-medium normal-case tracking-normal text-neutral-500 tabular-nums">· {elapsed}s</span>}
+          </p>
+          <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 border-b-2 border-kapwa-brand-900 pb-6">
+            <div className="min-w-0">
+              <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-900 break-words">{site?.agency.name ?? host}</h1>
+              <p className="mt-2 text-neutral-500 break-all">{status?.url}</p>
             </div>
+            {site && <div className="flex flex-wrap gap-3"><Link href={`/preview/${jobId}`} className={btn.yellow}>View site →</Link><Link href={`/report/${jobId}`} className={btn.ghost}>Migration report</Link></div>}
           </div>
-        )}
 
-        {status?.error && (
-          <div className={`mt-8 ${CARD} p-6 border-l-0`}>
-            <div className="flex items-start gap-3"><span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-kapwa-red-50 text-kapwa-red-700 font-bold">!</span><div><h2 className="font-bold text-neutral-900">RE:GOV could not finish this site</h2><p className="mt-1 text-neutral-700">{status.error}</p><p className="mt-2 text-sm text-neutral-500">If the site is behind bot protection and has no archived copy, there is nothing public to rebuild from. Try another address.</p></div></div>
-          </div>
-        )}
+          {/* Pipeline */}
+          <section className="mt-10">
+            <SectionHead n={n++} title="Pipeline" aside={<span className="tabular-nums">{steps.length} steps</span>} />
+            <ol className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 border-l border-neutral-200">
+              {steps.map((s, i) => {
+                const st = status?.error && i === idx ? "error" : i < idx || status?.done ? "done" : i === idx ? "active" : "todo";
+                const top = st === "done" ? "border-t-kapwa-brand-900" : st === "active" ? "border-t-kapwa-yellow-400" : st === "error" ? "border-t-kapwa-red-600" : "border-t-neutral-200";
+                return (
+                  <li key={s.key} className={`border-t-4 border-r border-b border-neutral-200 p-4 ${top} ${st === "todo" ? "text-neutral-400" : "text-neutral-900"} ${st === "active" ? "bg-kapwa-yellow-50" : ""}`}>
+                    <div className="flex items-center justify-between text-sm font-semibold tabular-nums"><span>{nn(i)}</span><span className={st === "done" ? "text-kapwa-brand-900" : st === "error" ? "text-kapwa-red-700" : ""}>{st === "done" ? "✓" : st === "active" ? "…" : st === "error" ? "!" : ""}</span></div>
+                    <div className="mt-3 font-bold">{s.label}</div>
+                    <div className="text-[12px] text-neutral-500">{s.tool}</div>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
 
-        <section className="mt-8">
-          <div className="flex items-center justify-between"><h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">Agent log</h2>{live && <span className="flex items-center gap-2 text-xs text-neutral-500"><span className="size-2 rounded-full bg-kapwa-green-500 animate-pulse" /> live</span>}</div>
-          <ol className={`mt-3 ${CARD} divide-y divide-neutral-100 max-h-[32rem] overflow-y-auto`}>
-            {(status?.events ?? []).slice().reverse().map((e, i) => {
-              const d = describe(e);
-              return (
-                <li key={i} className="flex items-start gap-2 sm:gap-3 px-4 sm:px-5 py-2.5 text-[14px]">
-                  <time className="hidden sm:block w-16 shrink-0 pt-0.5 font-mono text-xs text-neutral-400">{new Date(e.t).toLocaleTimeString("en-PH", { hour12: false, timeZone: "Asia/Manila" })}</time>
-                  {d.tag && <span className={`mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${TAG[d.tag]}`}>{d.tag}</span>}
-                  <span className="text-neutral-800 break-words min-w-0">{d.text}</span>
-                </li>
-              );
-            })}
-            {(!status || status.events.length === 0) && !procLog && <li className="px-5 py-6 text-sm text-neutral-400">Starting the agent… {status?.phase === "queued" && live ? `(${elapsed}s)` : ""}</li>}
-            {procLog && <li className="px-5 py-4"><div className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-2">Process output</div><pre className="whitespace-pre-wrap break-words font-mono text-xs text-neutral-600">{procLog}</pre></li>}
-          </ol>
-        </section>
-      </div>
-    </main>
+          {site && (
+            <section className="relative mt-10 overflow-hidden bg-kapwa-brand-950 text-white">
+              {site.assets.cover && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={`/api/jobs/${jobId}/${site.assets.cover}?v=${v}`} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              )}
+              <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,35,101,0.97)_0%,rgba(6,35,101,0.9)_45%,rgba(6,35,101,0.3)_100%)]" aria-hidden />
+              <div className="relative p-8 sm:p-10 max-w-2xl">
+                <p className={`${eyebrow} text-kapwa-yellow-400`}>{(site.site_kind ?? "").replace(/_/g, " ")} · Unofficial concept</p>
+                <h2 className="mt-3 text-3xl sm:text-4xl font-black tracking-tight">{site.agency.name}</h2>
+                <p className="mt-2 text-white/80 text-lg">{site.agency.tagline}</p>
+                <dl className="mt-6 grid grid-cols-3 gap-4 border-t border-white/20 pt-4 max-w-md">
+                  {[[site.pages.length, "pages"], [site.entities?.length ?? 0, "entities"], [((site.tokens ?? 0) / 1000).toFixed(0) + "k", "tokens"]].map(([v, l]) => <div key={String(l)}><dt className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/60">{l}</dt><dd className="text-2xl font-bold tabular-nums">{v}</dd></div>)}
+                </dl>
+              </div>
+            </section>
+          )}
+
+          {status?.error && (
+            <section className="mt-10 border-l-4 border-kapwa-red-600 bg-kapwa-red-50 p-6">
+              <h2 className="font-bold text-neutral-900">RE:GOV could not finish this site</h2>
+              <p className="mt-1 text-neutral-800">{status.error}</p>
+              <p className="mt-2 text-sm text-neutral-600">If the site is behind bot protection and has no archived copy, there is nothing public to rebuild from. Try another address.</p>
+            </section>
+          )}
+
+          <section className="mt-10">
+            <SectionHead n={n++} title="Agent log" aside={live ? <span className="flex items-center gap-2"><span className="size-2 bg-kapwa-green-500 animate-pulse" /> live</span> : <span className="tabular-nums">{status?.events.length ?? 0} events</span>} />
+            <ol className="mt-6 border-t border-kapwa-brand-900 max-h-[32rem] overflow-y-auto">
+              {(status?.events ?? []).slice().reverse().map((e, i) => {
+                const d = describe(e);
+                return (
+                  <li key={i} className="grid grid-cols-[auto_1fr] sm:grid-cols-[4.5rem_4.5rem_1fr] items-baseline gap-x-3 border-b border-neutral-200 px-1 py-2 text-[14px]">
+                    <time className="hidden sm:block text-xs text-neutral-400 tabular-nums">{new Date(e.t).toLocaleTimeString("en-PH", { hour12: false, timeZone: "Asia/Manila" })}</time>
+                    <span className={`${eyebrow} ${TAG[d.tag ?? ""] ?? "text-neutral-500"}`}>{d.tag ?? ""}</span>
+                    <span className="text-neutral-800 break-words min-w-0">{d.text}</span>
+                  </li>
+                );
+              })}
+              {(!status || status.events.length === 0) && !procLog && <li className="px-1 py-6 text-sm text-neutral-400">Starting the agent… {status?.phase === "queued" && live ? `(${elapsed}s)` : ""}</li>}
+              {procLog && <li className="px-1 py-4"><div className={`${eyebrow} text-neutral-400 mb-2`}>Process output</div><pre className="whitespace-pre-wrap break-words text-xs text-neutral-600">{procLog}</pre></li>}
+            </ol>
+          </section>
+        </div>
+      </main>
+      <AppFooter />
+    </>
   );
 }
