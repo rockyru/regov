@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { loadSite, findPage, JOBS_ROOT } from "@/lib/jobs";
 import { GovStrip, Header, Footer, PreviewBar } from "@/components/site/Shell";
 import { HomePage, ContentPage } from "@/components/site/Pages";
+import { AuroraNav, auroraVars } from "@/components/site/Aurora";
 import { HotlinesPage } from "@/components/site/Civic";
 import { SearchPage } from "@/components/site/Search";
 import { brandScale } from "@/components/site/theme";
@@ -57,10 +58,16 @@ const NOTICE = {
 };
 
 async function SiteView({ site, page, path, here, q = "", notice }: { site: SiteModel; page?: SitePage; path: string; here: string; q?: string; notice?: keyof typeof NOTICE }) {
+  const art = site.design?.mode === "refine" && !!site.design.art;
+  const home = page?.slug === "home";
+  // Search, hotlines and projects are built by RE:GOV rather than migrated; on art-directed sites they take the site's look too.
+  const virtual = !page || path === "search" || path === PROJECTS_SLUG;
+  const utility = path === "search" ? <SearchPage site={site} q={q} /> : path === PROJECTS_SLUG ? <PublicProjectsPage site={site} rows={await projectsFor(site)} /> : <HotlinesPage site={site} />;
   return (
     <div lang={site.lang === "fil" ? "fil" : undefined} className="editorial site-shell flex flex-1 flex-col" style={site.design?.mode === "refine" ? brandScale(site.design.primary) : undefined}>
       <PreviewBar site={site} currentSource={page?.source_url} />
-      <GovStrip jobId={site.jobId} lang={site.lang ?? (notice ? "fil" : "en")} here={here} />
+      {/* Art-directed sites bring their own header (src/components/site/Aurora.tsx); the homepage draws it over the masthead. */}
+      {!art && <GovStrip jobId={site.jobId} lang={site.lang ?? (notice ? "fil" : "en")} here={here} />}
       {notice && (
         <div role="status" lang="fil" className="bg-kapwa-yellow-50 border-b border-kapwa-yellow-400 text-[14px] text-neutral-800">
           <div className="container-gov py-2.5 flex items-center gap-3">
@@ -69,8 +76,8 @@ async function SiteView({ site, page, path, here, q = "", notice }: { site: Site
           </div>
         </div>
       )}
-      <Header site={site} />
-      <main className="flex-1">{path === "search" ? <SearchPage site={site} q={q} /> : path === PROJECTS_SLUG ? <PublicProjectsPage site={site} rows={await projectsFor(site)} /> : !page ? <HotlinesPage site={site} /> : page.slug === "home" ? <HomePage site={site} page={page} /> : <ContentPage site={site} page={page} />}</main>
+      {!art ? <Header site={site} /> : !home && <AuroraNav site={site} here={here} />}
+      <main className="flex-1">{virtual ? (art ? <div className="refined aurora aurora-body bg-[var(--au-canvas)] text-[var(--au-ink)]" style={auroraVars(site)}>{utility}</div> : utility) : home ? <HomePage site={site} page={page!} here={here} /> : <ContentPage site={site} page={page!} />}</main>
       <Footer site={site} />
     </div>
   );

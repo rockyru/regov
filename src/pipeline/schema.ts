@@ -96,7 +96,7 @@ export interface SiteModel extends SitePlan {
   news: { title: string; date: string; excerpt: string; href: string }[];
   assets: { logo: string; logo_box: number[]; band?: string; cover?: string; band_brief?: string };
   /** From assess.ts. Missing on sites built before the design check: treated as redesign. */
-  design?: { mode: "redesign" | "refine"; score: number; reason: string; primary: string; hero?: string };
+  design?: { mode: "redesign" | "refine"; score: number; reason: string; primary: string; hero?: string; art?: import("./artDirect").ArtDirection };
   tokens?: number;
   /** Officials' photos found by SAM 3.1 and named by Muse Spark (src/pipeline/portraits.ts), keyed by personKey; added by loadSite. */
   portraits?: Record<string, { src: string; alt: string }>;
