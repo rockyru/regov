@@ -266,7 +266,10 @@ export function PreviewBar({ site, currentSource }: { site: SiteModel; currentSo
   return (
     <div className="bg-amber-400 text-amber-950 text-[13px]">
       <div className="container-gov h-8 flex items-center gap-3 whitespace-nowrap overflow-hidden">
-        <span className="font-black shrink-0 tracking-tight">RE<span className="text-kapwa-red-700">:</span>GOV</span>
+        <Link href="/" className="flex shrink-0 items-center gap-1.5 font-black tracking-tight" aria-label="RE:GOV home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/mark.svg" alt="" className="h-4 w-auto" /><span>RE<span className="text-kapwa-red-700">:</span>GOV</span>
+        </Link>
         <span className="shrink-0 border border-amber-950/40 px-1.5 py-px text-[10px] font-bold uppercase tracking-[0.14em]">Unofficial concept</span>
         <span className="truncate"><span className="hidden md:inline">{site.pages.length} pages reimagined from {host} by an AI agent · </span>not affiliated with {site.agency.short_name || "the agency"}</span>
         <span className="ml-auto flex items-center gap-4 shrink-0">

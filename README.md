@@ -1,6 +1,8 @@
+<p><img src="public/brand/logo.svg" alt="RE:GOV. Reimagine Government." width="360"></p>
+
 # RE:GOV — Reimagine Government
 
-**Public websites deserve a second life.** An autonomous AI agent that transforms legacy government websites into modern, accessible, citizen-first digital experiences. Live at [regov.app](https://regov.app) (coming up).
+**Public websites deserve a second life.** An autonomous AI agent that transforms legacy government websites into modern, accessible, citizen-first digital experiences. Live at [regov.app](https://regov.app).
 
 Paste the URL of an old Philippine government WordPress site. The agent crawls it, uses
 **SAM 3.1** and **Muse Spark 1.3** (Meta Model API) to understand every page, rebuilds the

@@ -3,8 +3,14 @@ import Link from "next/link";
 export const eyebrow = "text-[11px] font-bold uppercase tracking-[0.18em]";
 export const nn = (i: number) => String(i + 1).padStart(2, "0");
 
-export function Wordmark({ className = "" }: { className?: string }) {
-  return <Link href="/" className={`font-black tracking-tight leading-none ${className}`}><span className="text-kapwa-brand-900">RE</span><span className="text-kapwa-red-600">:</span>GOV</Link>;
+/** The RE:GOV lockup (RG monogram, wordmark, tagline) from public/brand. `tone` picks ink or white. */
+export function Wordmark({ className = "", tone = "ink" }: { className?: string; tone?: "ink" | "white" }) {
+  return (
+    <Link href="/" className={`inline-flex shrink-0 items-center ${className}`} aria-label="RE:GOV home">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={tone === "white" ? "/brand/logo-white.svg" : "/brand/logo.svg"} alt="RE:GOV. Reimagine Government." className="h-full w-auto" />
+    </Link>
+  );
 }
 
 export function AppHeader({ crumb }: { crumb?: string }) {
@@ -12,7 +18,7 @@ export function AppHeader({ crumb }: { crumb?: string }) {
     <header>
       <div className="container-gov h-14 flex items-center justify-between gap-6">
         <div className="flex items-center gap-4 min-w-0">
-          <Wordmark className="text-xl" />
+          <Wordmark className="h-9" />
           {crumb && <span className="hidden sm:flex items-center gap-4 min-w-0 text-sm text-neutral-500"><span className="h-5 w-px bg-neutral-300" /><span className="truncate">{crumb}</span></span>}
         </div>
         <nav aria-label="RE:GOV" className="flex items-center gap-5 text-sm font-semibold">
@@ -64,7 +70,7 @@ export function AppFooter() {
       <div className="container-gov pt-14 pb-8">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_repeat(4,minmax(0,1fr))]">
           <div className="max-w-sm">
-            <Wordmark className="text-2xl [&>span:first-child]:text-white [&>span:last-child]:text-kapwa-red-500 text-white" />
+            <Wordmark className="h-12" tone="white" />
             <p className="mt-3 text-[15px] leading-snug text-neutral-300">Reimagine Government. An autonomous agent that gives Philippine public websites a second life on the BetterGov Kapwa standard.</p>
             <p className="mt-4 text-sm text-neutral-400">Built solo for the Meta Global AI Developer Hackathon 2026, Indie track, by <a href="https://rmbergonia.com" className="font-semibold text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">Ruther Bergonia</a>, a software systems architect in Manila.</p>
             <div className="mt-5 flex flex-wrap gap-2">
