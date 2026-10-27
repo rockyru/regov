@@ -5,6 +5,10 @@ import { isAdmin } from "@/lib/admin";
 import { runQueue } from "@/lib/runQueue";
 import { assessing } from "@/lib/designCheck";
 import { AppHeader, AppFooter, eyebrow, btn } from "@/components/AppShell";
+import { join } from "node:path";
+import { JOBS_ROOT } from "@/lib/jobs";
+import { loadUsage } from "@/lib/usage";
+import { usd, totalOf } from "@/lib/usageLabels";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Operator | RE:GOV", robots: { index: false, follow: false } };
@@ -37,6 +41,13 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const count = (st: string) => all.filter((r) => r.state === st).length;
   const unchecked = all.filter((r) => r.state === "done" && r.design === "not checked").length;
   const q = runQueue.snapshot();
+  // Model usage across every site, from each site's usage.json (sites built before Oct 28 report build tokens only).
+  const usages = await Promise.all(jobs.map(async (j) => ({ j, u: await loadUsage(join(JOBS_ROOT, j.id)) })));
+  const days = new Map<string, { calls: number; tokens: number }>();
+  for (const { u } of usages) for (const [d, v] of Object.entries(u?.days ?? {})) { const x = days.get(d) ?? { calls: 0, tokens: 0 }; x.calls += v.calls; x.tokens += v.tokens; days.set(d, x); }
+  const lastDays = [...days].sort((a, b) => b[0].localeCompare(a[0])).slice(0, 7);
+  const topSites = usages.filter((x) => x.u).map((x) => ({ id: x.j.id, name: x.j.site?.agency.short_name || x.j.id, ...totalOf(x.u!) })).sort((a, b) => b.tokens - a.tokens).slice(0, 5);
+  const recorded = usages.filter((x) => x.u).map((x) => totalOf(x.u!).run.tokens).filter((v) => v > 0);
   const tab = (key: string, label: string, n: number) => <Link href={`/admin?token=${encodeURIComponent(token)}&show=${key}`} className={`border-b-2 px-1 pb-2 ${show === key ? "border-kapwa-brand-900 text-kapwa-brand-900" : "border-transparent text-neutral-500 hover:text-neutral-900"}`}>{label} <span className="tabular-nums">{n}</span></Link>;
 
   return (
@@ -47,6 +58,19 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
           <p className={`${eyebrow} text-kapwa-brand-900`}>Operator</p>
           <h1 className="mt-2 text-4xl font-display font-normal tracking-tight">Runs and reruns</h1>
           <p className="mt-2 max-w-3xl text-neutral-600">Reruns from here skip the daily quota, the per-visitor limit, the queue cap and the 24-hour dedupe. Each one spends Meta credits (about $0.38 a site). Queue now: {q.running} running, {q.waiting} waiting; {q.today.used} runs today.</p>
+          <div className="mt-6 grid gap-6 border-t border-neutral-300 pt-4 md:grid-cols-2">
+            <div>
+              <h2 className={`${eyebrow} text-neutral-600`}>Model usage by day (Manila)</h2>
+              {lastDays.length ? (
+                <table className="mt-2 w-full text-sm"><tbody>{lastDays.map(([d, v]) => <tr key={d} className="border-b border-neutral-200"><td className="py-1 pr-3 tabular-nums">{d}</td><td className="py-1 px-3 text-right tabular-nums">{v.calls} calls</td><td className="py-1 px-3 text-right tabular-nums">{v.tokens.toLocaleString("en-PH")} tokens</td><td className="py-1 pl-3 text-right tabular-nums">≈ {usd(v.tokens)}</td></tr>)}</tbody></table>
+              ) : <p className="mt-2 text-sm text-neutral-600">Nothing recorded yet. New runs, backfills, Filipino and Ask are counted from now on.</p>}
+              {recorded.length > 0 && <p className="mt-2 text-[13px] text-neutral-600">Average recorded run: {Math.round(recorded.reduce((a, b) => a + b, 0) / recorded.length).toLocaleString("en-PH")} tokens (≈ {usd(recorded.reduce((a, b) => a + b, 0) / recorded.length)}) over {recorded.length} {recorded.length === 1 ? "site" : "sites"}. Estimates use USD_PER_MTOK when set.</p>}
+            </div>
+            <div>
+              <h2 className={`${eyebrow} text-neutral-600`}>Sites that used the most</h2>
+              {topSites.length ? <ol className="mt-2 text-sm">{topSites.map((s) => <li key={s.id} className="flex justify-between gap-3 border-b border-neutral-200 py-1"><Link href={`/report/${s.id}`} className="truncate hover:text-kapwa-brand-900">{s.name}</Link><span className="shrink-0 tabular-nums text-neutral-600">{s.tokens.toLocaleString("en-PH")} · ≈ {usd(s.tokens)}</span></li>)}</ol> : <p className="mt-2 text-sm text-neutral-600">–</p>}
+            </div>
+          </div>
           {rerun && <p className="mt-4 border-l-4 border-kapwa-brand-900 bg-kapwa-brand-50 px-5 py-3 text-sm">Queued {rerun} {rerun === "1" ? "rerun" : "reruns"}. They start as slots free up.</p>}
           {(assess || assessing.size > 0) && <p className="mt-4 border-l-4 border-kapwa-brand-900 bg-kapwa-brand-50 px-5 py-3 text-sm">Design check {assessing.size > 0 ? `running for ${assessing.size} ${assessing.size === 1 ? "site" : "sites"}, one at a time (about 10 seconds each). Reload to see results.` : "finished."}</p>}
 

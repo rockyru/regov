@@ -9,6 +9,7 @@ import { segmentHome } from "./segment";
 import { assessDesign, type Design } from "./assess";
 import { makeBand } from "./band";
 import { pmap } from "./cache";
+import { step } from "../lib/usage";
 
 export type BuildEvent =
   | { type: "phase"; phase: "understand" | "plan" | "segment" | "band" | "write"; detail?: string }
@@ -35,7 +36,7 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
   const concurrency = Number(process.env.UNDERSTAND_CONCURRENCY ?? 3);
   const pages: SitePage[] = await pmap(usable, concurrency, async (p, i) => {
     const t = Date.now();
-    const { model, usage } = await understandPage(jobDir, p, crawl.archive?.note ?? "");
+    const { model, usage } = await step("understand", () => understandPage(jobDir, p, crawl.archive?.note ?? ""));
     tokens += usage;
     onEvent({ type: "page", index: i, title: model.title, page_type: model.page_type, blocks: model.blocks.length, ms: Date.now() - t });
     return fixPage({ ...model, slug: slugOf(p.url), source_url: p.url, source_screenshot: p.screenshotFile });
@@ -46,17 +47,17 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
   const unique = pages.map((p) => ({ ...p, slug: canon(p.slug) })).filter((p) => (seen.has(p.slug) ? false : (seen.add(p.slug), true)));
 
   onEvent({ type: "phase", phase: "plan" });
-  const { plan, usage } = await planSite(jobDir, crawl, unique);
+  const { plan, usage } = await step("plan", () => planSite(jobDir, crawl, unique));
   tokens += usage;
   onEvent({ type: "plan", agency: plan.agency.name, nav: plan.nav.map((n) => n.label) });
 
   onEvent({ type: "phase", phase: "segment" });
-  const seg = await segmentHome(jobDir, crawl.pages[0].viewportShotFile);
+  const seg = await step("segment", () => segmentHome(jobDir, crawl.pages[0].viewportShotFile));
   onEvent({ type: "segment", regions: seg.segments.length, logo: !!seg.logo });
   // Keep the old look and upgrade it, or replace it with ours (see assess.ts).
   let design: Design | undefined;
   try {
-    const a = await assessDesign(jobDir, crawl.pages[0].viewportShotFile);
+    const a = await step("design", () => assessDesign(jobDir, crawl.pages[0].viewportShotFile));
     design = a.design;
     tokens += a.usage;
     onEvent({ type: "design", mode: design.mode, score: design.score, reason: design.reason });
@@ -72,7 +73,7 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
   onEvent({ type: "phase", phase: "band" });
   let band: { band?: string; cover?: string; brief?: string } = {};
   try {
-    const b = await makeBand(jobDir, plan, unique.map((p) => p.summary));
+    const b = await step("band", () => makeBand(jobDir, plan, unique.map((p) => p.summary)));
     band = { band: b.band, cover: b.cover, brief: b.brief };
     onEvent({ type: "band", brief: b.brief });
   } catch (e) {

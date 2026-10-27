@@ -4,12 +4,13 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { findPortraits } from "../src/pipeline/portraits";
+import { withUsage } from "../src/lib/usage";
 
 async function main() {
   for (const id of process.argv.slice(2)) {
     const t = Date.now();
     const site = JSON.parse(await readFile(join("jobs", id, "site.json"), "utf8"));
-    const p = await findPortraits(join("jobs", id), site);
+    const p = await withUsage(join("jobs", id), "run", "portraits", () => findPortraits(join("jobs", id), site));
     console.log(`${id}: ${p.people.length} named of ${p.checked} photos in ${((Date.now() - t) / 1000).toFixed(0)}s`);
     for (const x of p.people) console.log(`  ${x.name} · ${x.page} · ${x.alt}`);
   }

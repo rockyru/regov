@@ -7,6 +7,7 @@ import { z } from "zod";
 import { meta, MUSE } from "../lib/meta";
 import { strictSchema, type SiteModel } from "./schema";
 import { cached } from "./cache";
+import { withUsage } from "../lib/usage";
 import { JOBS_ROOT } from "../lib/jobs";
 import { pageText, searchSite } from "../lib/siteSearch";
 
@@ -50,13 +51,13 @@ export async function askSite(site: SiteModel, question: string, ip: string): Pr
   const prompt = `Site: ${site.agency.name} (${new URL(site.origin).host})\n\nAll pages:\n${index}\n- hotlines: Emergency hotlines (national 911 and the numbers below)\n\nHotlines published on the site:\n${hotlines || "none"}\n\nFull text of the most relevant pages:\n${full || "(no keyword matches)"}\n\nQuestion: ${q}`;
   const out = await cached(join(JOBS_ROOT, site.jobId), ["ask-v2", MUSE, site.generated_at, q.toLowerCase()], async () => {
     admit(ip);
-    const r = await meta.responses.create({
+    const r = await withUsage(join(JOBS_ROOT, site.jobId), "on_demand", "ask", () => meta.responses.create({
       model: MUSE,
       instructions: SYSTEM,
       input: prompt,
       text: { format: { type: "json_schema", name: "answer", strict: true, schema: SCHEMA } },
       reasoning: { effort: "low" } as never,
-    }, { timeout: 60_000 });
+    }, { timeout: 60_000 }));
     return { ...Answer.parse(JSON.parse(r.output_text)), usage: r.usage?.total_tokens ?? 0 };
   });
   const valid = new Set([...site.pages.map((p) => p.slug), "hotlines"]);
