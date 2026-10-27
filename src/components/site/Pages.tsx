@@ -6,6 +6,7 @@ import { navHref, eyebrow } from "./Shell";
 import { CivicStrip, TransparencySection } from "./Civic";
 import { t } from "./i18n";
 import { portraitOf } from "@/lib/people";
+import { AuroraHome, AuroraPage } from "./Aurora";
 
 const slugTitle = (site: SiteModel, slug: string) => site.pages.find((p) => p.slug === slug)?.title ?? slug;
 const initialsOf = (n: string) => n.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 2).map((w) => w[0]).join("") || "•";
@@ -91,7 +92,7 @@ function RefinedMasthead({ site, hero, parentLine, servicesLabel }: { site: Site
   );
 }
 
-export async function HomePage({ site, page }: { site: SiteModel; page: SitePage }) {
+export async function HomePage({ site, page, here }: { site: SiteModel; page: SitePage; here?: string }) {
   const { jobId, agency } = site;
   const hero = page.hero;
   const kind = site.site_kind ?? "national_agency";
@@ -112,6 +113,7 @@ export async function HomePage({ site, page }: { site: SiteModel; page: SitePage
   const parentLine = locality.province && kind !== "province" && !agency.parent.toLowerCase().includes(locality.province.toLowerCase()) ? `${agency.parent} · ${locality.province}` : agency.parent;
   const showFeatured = hero.heading && hero.heading.trim().toLowerCase() !== agency.name.trim().toLowerCase();
   let n = 0;
+  if (site.design?.mode === "refine" && site.design.art) return <AuroraHome site={site} page={page} here={here ?? navHref(jobId, "home")} />;
 
   return (
     <>
@@ -262,6 +264,44 @@ export function ContentPage({ site, page }: { site: SiteModel; page: SitePage })
   const stub = /under\s*constr?[au]ction|coming soon|page (is )?(not available|under development)/i.test(bodyText) || bodyText.length < 60;
   const stubText = bodyText.length <= 80 ? bodyText : bodyText.slice(0, 77) + "…";
   const isArchive = /web\.archive\.org/.test(page.source_url ?? "");
+  // Three columns only from xl: at 1024px they left the article about 300px wide. The section menu is also in the header.
+  const body = (
+    <div className="container-gov py-12 grid gap-12 lg:grid-cols-[1fr_240px] xl:grid-cols-[240px_1fr_280px]">
+      <aside className="hidden xl:block self-start sticky top-24">
+        {siblings.length > 1 && (<><h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{parent?.label}</h2>
+          <ul className="mt-2 divide-y divide-neutral-100">
+            {siblings.map((s) => <li key={s.slug}><Link href={navHref(jobId, s.slug)} aria-current={s.slug === page.slug ? "page" : undefined} className={`block py-2 text-sm ${s.slug === page.slug ? "text-kapwa-brand-900 font-semibold pl-3 border-l-2 border-kapwa-brand-900" : "text-neutral-600 hover:text-neutral-900 hover:pl-1 transition-[padding]"}`}>{s.label}</Link></li>)}
+          </ul></>)}
+      </aside>
+      <article data-blocks className="min-w-0 space-y-12">
+        {hub && hub.slugs.length > 0 && (
+          <section>
+            <h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2 mb-4`}>{hub.heading || t(site.lang, "In this section")}</h2>
+            <ul className="grid border-t border-l border-neutral-200 *:border-r *:border-b *:border-neutral-200 sm:grid-cols-2 xl:grid-cols-3">
+              {hub.slugs.map((s, i) => <li key={s}><Link href={navHref(jobId, s)} className="flex gap-3 bg-white px-4 py-4 h-full font-medium text-neutral-900 hover:bg-kapwa-brand-50 hover:text-kapwa-brand-900"><span className="text-xs font-semibold tabular-nums text-neutral-500 pt-1">{nn(i)}</span>{slugTitle(site, s)}</Link></li>)}
+            </ul>
+          </section>
+        )}
+        {stub ? (
+          <section className="border-l-4 border-kapwa-yellow-400 bg-kapwa-yellow-50 p-6">
+            <h2 className={`${eyebrow} text-neutral-600`}>{t(site.lang, "Not yet migrated")}</h2>
+            {site.lang === "fil" ? <p className="mt-2 text-[17px] leading-relaxed text-neutral-800">Walang tunay na nilalaman ang orihinal na pahina{isArchive ? " sa naka-archive na kopyang pinagbatayan ng agent" : ""}{stubText && <> (ang nakasulat: &ldquo;{stubText}&rdquo;)</>}. Pinanatili ang pahina para buo ang istruktura ng site; maisusulat ito ng isang editor sa loob ng ilang minuto.</p> : <p className="mt-2 text-[17px] leading-relaxed text-neutral-800">The original page had no real content{isArchive ? " in the archived copy the agent rebuilt from" : ""}{stubText && <> (it read &ldquo;{stubText}&rdquo;)</>}. The page is kept so the site structure stays complete; an editor can write it in a few minutes.</p>}
+            {page.source_url && <a className="mt-4 inline-block border-b-2 border-neutral-900 font-semibold text-neutral-900 hover:text-kapwa-brand-900" href={page.source_url} target="_blank" rel="noreferrer">{t(site.lang, "Check the original page ↗")}</a>}
+          </section>
+        ) : (
+          <>
+            {page.blocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} lang={site.lang} portraits={site.portraits} />)}
+            {page.blocks.length === 0 && <Markdown text={page.summary} jobId={jobId} origin={site.origin} />}
+          </>
+        )}
+      </article>
+      <aside className="space-y-8 self-start lg:sticky lg:top-24">
+        {headings.length > 1 && (<div><h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{t(site.lang, "On this page")}</h2><ol className="mt-2 divide-y divide-neutral-100 text-sm text-neutral-600">{headings.map((h, i) => <li key={h} className="flex gap-3 py-2"><span className="text-xs font-semibold tabular-nums text-neutral-500 pt-0.5">{nn(i)}</span>{h}</li>)}</ol></div>)}
+        {contact && <Block block={contact} jobId={jobId} origin={site.origin} lang={site.lang} portraits={site.portraits} />}
+      </aside>
+    </div>
+  );
+  if (site.design?.mode === "refine" && site.design.art) return <AuroraPage site={site} page={page}>{body}</AuroraPage>;
   return (
     <>
       <div className="border-b-2 border-neutral-900 bg-white">
@@ -277,41 +317,7 @@ export function ContentPage({ site, page }: { site: SiteModel; page: SitePage })
           </div>
         </div>
       </div>
-      {/* Three columns only from xl: at 1024px they left the article about 300px wide. The section menu is also in the header. */}
-      <div className="container-gov py-12 grid gap-12 lg:grid-cols-[1fr_240px] xl:grid-cols-[240px_1fr_280px]">
-        <aside className="hidden xl:block self-start sticky top-24">
-          {siblings.length > 1 && (<><h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{parent?.label}</h2>
-            <ul className="mt-2 divide-y divide-neutral-100">
-              {siblings.map((s) => <li key={s.slug}><Link href={navHref(jobId, s.slug)} aria-current={s.slug === page.slug ? "page" : undefined} className={`block py-2 text-sm ${s.slug === page.slug ? "text-kapwa-brand-900 font-semibold pl-3 border-l-2 border-kapwa-brand-900" : "text-neutral-600 hover:text-neutral-900 hover:pl-1 transition-[padding]"}`}>{s.label}</Link></li>)}
-            </ul></>)}
-        </aside>
-        <article data-blocks className="min-w-0 space-y-12">
-          {hub && hub.slugs.length > 0 && (
-            <section>
-              <h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2 mb-4`}>{hub.heading || t(site.lang, "In this section")}</h2>
-              <ul className="grid border-t border-l border-neutral-200 *:border-r *:border-b *:border-neutral-200 sm:grid-cols-2 xl:grid-cols-3">
-                {hub.slugs.map((s, i) => <li key={s}><Link href={navHref(jobId, s)} className="flex gap-3 bg-white px-4 py-4 h-full font-medium text-neutral-900 hover:bg-kapwa-brand-50 hover:text-kapwa-brand-900"><span className="text-xs font-semibold tabular-nums text-neutral-500 pt-1">{nn(i)}</span>{slugTitle(site, s)}</Link></li>)}
-              </ul>
-            </section>
-          )}
-          {stub ? (
-            <section className="border-l-4 border-kapwa-yellow-400 bg-kapwa-yellow-50 p-6">
-              <h2 className={`${eyebrow} text-neutral-600`}>{t(site.lang, "Not yet migrated")}</h2>
-              {site.lang === "fil" ? <p className="mt-2 text-[17px] leading-relaxed text-neutral-800">Walang tunay na nilalaman ang orihinal na pahina{isArchive ? " sa naka-archive na kopyang pinagbatayan ng agent" : ""}{stubText && <> (ang nakasulat: &ldquo;{stubText}&rdquo;)</>}. Pinanatili ang pahina para buo ang istruktura ng site; maisusulat ito ng isang editor sa loob ng ilang minuto.</p> : <p className="mt-2 text-[17px] leading-relaxed text-neutral-800">The original page had no real content{isArchive ? " in the archived copy the agent rebuilt from" : ""}{stubText && <> (it read &ldquo;{stubText}&rdquo;)</>}. The page is kept so the site structure stays complete; an editor can write it in a few minutes.</p>}
-              {page.source_url && <a className="mt-4 inline-block border-b-2 border-neutral-900 font-semibold text-neutral-900 hover:text-kapwa-brand-900" href={page.source_url} target="_blank" rel="noreferrer">{t(site.lang, "Check the original page ↗")}</a>}
-            </section>
-          ) : (
-            <>
-              {page.blocks.map((b, i) => <Block key={i} block={b} jobId={jobId} origin={site.origin} lang={site.lang} portraits={site.portraits} />)}
-              {page.blocks.length === 0 && <Markdown text={page.summary} jobId={jobId} origin={site.origin} />}
-            </>
-          )}
-        </article>
-        <aside className="space-y-8 self-start lg:sticky lg:top-24">
-          {headings.length > 1 && (<div><h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{t(site.lang, "On this page")}</h2><ol className="mt-2 divide-y divide-neutral-100 text-sm text-neutral-600">{headings.map((h, i) => <li key={h} className="flex gap-3 py-2"><span className="text-xs font-semibold tabular-nums text-neutral-500 pt-0.5">{nn(i)}</span>{h}</li>)}</ol></div>)}
-          {contact && <Block block={contact} jobId={jobId} origin={site.origin} lang={site.lang} portraits={site.portraits} />}
-        </aside>
-      </div>
+      {body}
     </>
   );
 }

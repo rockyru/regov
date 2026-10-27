@@ -40,6 +40,17 @@ html { scroll-behavior: smooth; }
 .editorial, .editorial *, .editorial *::before, .editorial *::after { border-radius: 0 !important; }
 /* Refined sites keep the softer shapes of their original design. */
 .editorial .refined, .editorial .refined * { border-radius: revert-layer !important; }
+/* Template blocks inside art-directed pages (src/components/site/Aurora.tsx): hairlines, lighter type, the site's ink. */
+.aurora-body h1 { font-weight: 500; letter-spacing: -0.045em; color: var(--au-ink); }
+.aurora-body ul[class*="border-t"][class*="border-neutral-900"] { border-top-width: 0; }
+.aurora-body [class*="border-b-2"][class*="bg-white"] { background: transparent; }
+.aurora-body h2, .aurora-body h3 { font-weight: 500; letter-spacing: -0.02em; color: var(--au-ink); }
+.aurora-body [class*="border-neutral-900"] { border-color: color-mix(in oklab, var(--au-ink) 18%, transparent); }
+.aurora-body [class*="border-t-2"], .aurora-body [class*="border-y"] { border-top-width: 0; }
+.aurora-body [class*="border-b-2"] { border-bottom-width: 1px; }
+.aurora-body [class*="bg-kapwa-yellow-50"] { background: color-mix(in oklab, var(--au-haze) 45%, white); }
+.aurora-body [class*="border-kapwa-yellow-400"] { border-color: var(--au-deep); }
+.aurora-body [class*="bg-neutral-950"], .aurora-body [class*="bg-kapwa-brand-950"] { background: var(--au-ink); }
 body { @apply bg-white text-neutral-900; }
 
 /* Markdown content */

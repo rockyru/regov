@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { listJobs } from "@/lib/jobs";
+import { listJobs, loadSite } from "@/lib/jobs";
+import { ScaledFrame } from "@/components/ScaledFrame";
 import { ReimagineBox } from "@/components/ReimagineBox";
 import { JobCard, cardGrid } from "@/components/JobCard";
 import { AppHeader, AppFooter, SectionHead, eyebrow } from "@/components/AppShell";
@@ -9,19 +10,17 @@ import { queueStrip } from "@/lib/queueStrip";
 
 export const dynamic = "force-dynamic";
 
-const STEPS: { title: string; body: string; tools: { name: string; meta?: boolean }[] }[] = [
-  { title: "Crawl", body: "Playwright walks the site politely, page by page. If bot protection blocks it, the agent reads the Wayback Machine capture instead.", tools: [{ name: "Playwright" }, { name: "Wayback Machine" }] },
-  { title: "Understand", body: "Muse Spark reads every page as a citizen would: what it offers, who it names, what is broken, and what a screen reader cannot see.", tools: [{ name: "Muse Spark 1.3", meta: true }] },
-  { title: "Segment", body: "SAM 3.1 finds the seal, navigation and banners on the old homepage, and cuts the seal out as the new brand mark.", tools: [{ name: "SAM 3.1", meta: true }] },
-  { title: "Illustrate", body: "Muse Spark writes an art brief for the real place and mandate; Muse Image paints the identity band and cover.", tools: [{ name: "Muse Image", meta: true }] },
-  { title: "Rebuild", body: "A site plan, mega menus, hotlines, transparency and a migration report, assembled on the BetterGov Kapwa design system.", tools: [{ name: "Kapwa" }, { name: "Next.js" }] },
-];
+// The featured reimagining: eGovPH, art-directed in its own look (src/components/site/Aurora.tsx).
+const FEATURED = "e-gov-ph-mvq8z9ew";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ error?: string; url?: string; wait?: string }> }) {
   const { error = "", url = "", wait = "" } = await searchParams;
   const all = await listJobs();
   const jobs = all.filter((j) => j.site);
   let n = 1;
+  const featuredJob = jobs.find((j) => j.id === FEATURED);
+  const featured = featuredJob ? await loadSite(FEATURED) : null;
+  const featuredShot = featuredJob?.crawl?.pages[0]?.viewportShotFile;
   return (
     <>
       <AppHeader />
@@ -48,23 +47,30 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
         </section>
 
 
-        {/* How it works */}
-        <section className="container-gov pt-10">
-          <Reveal><SectionHead n={n++} title="How the agent works" deck="Paste one address. Within minutes the agent has read the whole site, found what is broken, and rebuilt it as a modern, accessible concept you can click through." aside={<span>Three Meta models, one pipeline</span>} /></Reveal>
-          <Reveal as="ol" stagger className="mt-8 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-5">
-            {STEPS.map((st, i) => (
-              <li key={st.title} className="relative flex flex-col border-t-2 border-kapwa-brand-900 pt-6">
-                <span aria-hidden className="absolute -top-0.5 left-0 h-1.5 w-12 bg-kapwa-yellow-400" />
-                <div className="text-5xl font-display font-normal tracking-tight tabular-nums text-kapwa-brand-900">{String(i + 1).padStart(2, "0")}</div>
-                <h3 className="mt-5 text-xl font-bold text-neutral-900">{st.title}</h3>
-                <p className="mt-2 text-[15px] leading-snug text-neutral-600">{st.body}</p>
-                <ul className="mt-auto pt-5 flex flex-wrap gap-2">
-                  {st.tools.map((t) => <li key={t.name} className={`inline-flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold ${t.meta ? "bg-kapwa-brand-900 text-white" : "border border-neutral-300 text-neutral-700"}`}>{t.meta && <span className="size-1.5 bg-kapwa-yellow-400" />}{t.name}</li>)}
-                </ul>
-              </li>
-            ))}
-          </Reveal>
-        </section>
+        {/* Featured reimagining */}
+        {featured && featuredShot && (
+          <section className="container-gov pt-10">
+            <Reveal><SectionHead n={n++} title="Featured reimagining" deck={`${featured.agency.name}: a site that was already modern, so the agent kept its identity and rebuilt every page around it, with art by Muse Image.`} aside={<span>{new URL(featured.origin).host}</span>} /></Reveal>
+            <Reveal className="mt-8 grid gap-6 lg:grid-cols-2">
+              <figure>
+                <figcaption className={`${eyebrow} text-neutral-500 pb-2`}>Before · {new URL(featured.origin).host}</figcaption>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/api/jobs/${FEATURED}/${featuredShot}`} alt={`The original ${featured.agency.short_name} homepage`} className="w-full border border-neutral-300 object-cover object-top" style={{ aspectRatio: "1440/900" }} />
+              </figure>
+              <figure>
+                <figcaption className={`${eyebrow} text-kapwa-brand-900 pb-2`}>After · unofficial RE:GOV concept</figcaption>
+                <Link href={`/preview/${FEATURED}`} className="block" aria-label={`Open the reimagined ${featured.agency.short_name}`}>
+                  <ScaledFrame src={`/preview/${FEATURED}?lang=en`} title={`The reimagined ${featured.agency.short_name} homepage`} className="border border-kapwa-brand-900" />
+                </Link>
+              </figure>
+            </Reveal>
+            <Reveal className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-3 text-[15px]">
+              <Link href={`/preview/${FEATURED}`} className="inline-flex h-11 items-center gap-2 bg-kapwa-brand-900 px-5 font-semibold text-white hover:bg-kapwa-brand-950">Open the concept →</Link>
+              <Link href={`/report/${FEATURED}`} className="font-semibold text-neutral-900 border-b-2 border-neutral-900 hover:text-kapwa-brand-900">Read the migration report</Link>
+              <span className="text-neutral-500">{featured.pages.filter((p) => !p.document).length} pages migrated · Muse Spark, SAM 3.1 and Muse Image</span>
+            </Reveal>
+          </section>
+        )}
 
         {jobs.length > 0 && (
           <section className="container-gov pt-14 pb-16">

@@ -197,7 +197,7 @@ export function Footer({ site }: { site: SiteModel }) {
   const colHead = `${eyebrow} text-neutral-400 pb-3 border-b border-white/15`;
 
   return (
-    <footer className="mt-20 bg-neutral-950 text-neutral-300 pb-24 lg:pb-0">
+    <footer className={`${site.design?.art ? "bg-[#0a1230]" : "mt-20 bg-neutral-950"} text-neutral-300 pb-24 lg:pb-0`}>
       <div className="container-gov py-16">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.9fr_0.9fr_1fr_1.1fr]">
           {/* Brand */}
