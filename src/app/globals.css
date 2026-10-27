@@ -6,7 +6,7 @@
 /* Site-wide aliases on top of Kapwa (BetterGov.ph) tokens */
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-display-src), Georgia, serif;
+  --font-display: "Larken", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --color-gov: var(--color-kapwa-brand-900);
   --color-gov-deep: var(--color-kapwa-brand-950);
   --color-gov-mid: var(--color-kapwa-brand-700);
@@ -25,8 +25,10 @@
   }
 }
 
-/* Display headings: Fraunces, crisp high-contrast cut (closest free match to Larken) */
-.font-display { font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144; }
+/* Display headings: Larken, the logo typeface. The files live in public/fonts but are
+   git- and docker-ignored until a web licence is bought, so the live site falls back to Inter. */
+@font-face { font-family: "Larken"; src: url("/fonts/Larken-Medium.otf") format("opentype"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Larken"; src: url("/fonts/Larken-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
 
 /* Reimagined sites: no single unbreakable string (emails, URLs, long codes) may widen the page */
 .site-shell { overflow-x: clip; }

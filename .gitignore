@@ -49,3 +49,6 @@ next-env.d.ts
 
 # session scratch
 /scratchpad/
+
+# Larken (logo typeface): trial files stay local until a web licence is bought
+/public/fonts/Larken-*
