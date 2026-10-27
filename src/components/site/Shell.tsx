@@ -292,11 +292,12 @@ export function PreviewBar({ site, currentSource }: { site: SiteModel; currentSo
       <div className="container-gov h-8 flex items-center gap-3 whitespace-nowrap overflow-hidden">
         <Link href="/" className="flex shrink-0 items-center gap-1.5 font-black tracking-tight" aria-label="RE:GOV home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/mark-ink.svg" alt="" className="h-4 w-auto" /><span>RE<span className="text-kapwa-red-700">:</span>GOV</span>
+          <img src="/brand/mark-ink.svg" alt="" className="h-4 w-auto" /><span className="hidden min-[360px]:inline">RE<span className="text-kapwa-red-700">:</span>GOV</span>
         </Link>
-        <span className="shrink-0 border border-amber-950/40 px-1.5 py-px text-[10px] font-bold uppercase tracking-[0.14em]">Unofficial concept</span>
-        <span className="truncate"><span className="hidden md:inline">{site.pages.filter((p) => !p.document).length} pages reimagined from {host} by an AI agent · </span>not affiliated with {site.agency.short_name || "the agency"}{site.lang === "fil" && <span lang="en"> · Filipino text machine-translated by Muse Spark</span>}</span>
-        <span className="ml-auto flex items-center gap-4 shrink-0">
+        {/* Phones get the short badge and no sentence so the links on the right are never clipped. */}
+        <span className="shrink-0 border border-amber-950/40 px-1.5 py-px text-[10px] font-bold uppercase tracking-[0.14em]">Unofficial<span className="hidden sm:inline"> concept</span></span>
+        <span className="hidden sm:block truncate"><span className="hidden md:inline">{site.pages.filter((p) => !p.document).length} pages reimagined from {host} by an AI agent · </span>not affiliated with {site.agency.short_name || "the agency"}{site.lang === "fil" && <span lang="en"> · Filipino text machine-translated by Muse Spark</span>}</span>
+        <span className="ml-auto flex items-center gap-3 sm:gap-4 shrink-0">
           {currentSource && <a className="underline" href={currentSource} target="_blank" rel="noreferrer">Official site ↗</a>}
           <Link className="underline" href={`/report/${site.jobId}`}>Report</Link>
           <Link className="underline hidden sm:inline" href="/">All jobs</Link>
