@@ -1,6 +1,6 @@
 // Persist job artifacts in R2 (S3 API) so container restarts keep the sites.
 //   npx tsx scripts/sync-jobs.ts push <jobId>     upload one job
-//   npx tsx scripts/sync-jobs.ts pull             restore every job (container boot)
+//   npx tsx scripts/sync-jobs.ts pull [core|shots] restore jobs (container boot: core first, shots after)
 import { S3Client, PutObjectCommand, ListObjectsV2Command, GetObjectCommand } from "@aws-sdk/client-s3";
 import { readdir, readFile, writeFile, mkdir, stat } from "node:fs/promises";
 import { join, relative, dirname } from "node:path";
@@ -37,24 +37,38 @@ export async function getFile(key: string): Promise<string | null> {
   const s3 = client(); if (!s3) return null;
   try { const g = await s3.send(new GetObjectCommand({ Bucket: R2_BUCKET, Key: key })); return await g.Body!.transformToString(); } catch { return null; }
 }
-export async function pullAll() {
+// Downloads run in parallel. "core" restores what pages need to render (status, site, assets) and
+// blocks boot; "shots" restores the source screenshots (most of the bytes) after the server is up.
+const SHOTS = /^[^/]+\/shots\//;
+export async function pullAll(part: "all" | "core" | "shots" = "all") {
   const s3 = client(); if (!s3) { console.log("[sync] R2 not configured, skipping"); return; }
-  let token: string | undefined, n = 0;
+  const keys: { key: string; size: number }[] = [];
+  let token: string | undefined;
   do {
     const r = await s3.send(new ListObjectsV2Command({ Bucket: R2_BUCKET, ContinuationToken: token }));
     for (const o of r.Contents ?? []) {
-      if (!o.Key) continue;
-      const dest = join(ROOT, o.Key);
-      try { const st = await stat(dest); if (st.size === o.Size) continue; } catch { /* missing */ }
-      const g = await s3.send(new GetObjectCommand({ Bucket: R2_BUCKET, Key: o.Key }));
-      await mkdir(dirname(dest), { recursive: true });
-      await writeFile(dest, Buffer.from(await g.Body!.transformToByteArray()));
-      n++;
+      if (!o.Key || (part === "core" && SHOTS.test(o.Key)) || (part === "shots" && !SHOTS.test(o.Key))) continue;
+      keys.push({ key: o.Key, size: o.Size ?? 0 });
     }
     token = r.IsTruncated ? r.NextContinuationToken : undefined;
   } while (token);
-  console.log(`[sync] restored ${n} files`);
+  let n = 0, i = 0;
+  const worker = async () => {
+    while (i < keys.length) {
+      const { key, size } = keys[i++];
+      const dest = join(ROOT, key);
+      try { const st = await stat(dest); if (st.size === size) continue; } catch { /* missing */ }
+      try {
+        const g = await s3.send(new GetObjectCommand({ Bucket: R2_BUCKET, Key: key }));
+        await mkdir(dirname(dest), { recursive: true });
+        await writeFile(dest, Buffer.from(await g.Body!.transformToByteArray()));
+        n++;
+      } catch (e) { console.error(`[sync] ${key}:`, (e as Error).message); }
+    }
+  };
+  await Promise.all(Array.from({ length: 24 }, worker));
+  console.log(`[sync] restored ${n} of ${keys.length} ${part} files`);
 }
 const [cmd, arg] = process.argv.slice(2);
 if (cmd === "push" && arg) pushJob(arg).catch((e) => { console.error(e); process.exit(1); });
-else if (cmd === "pull") pullAll().catch((e) => console.error("[sync] pull failed:", (e as Error).message));
+else if (cmd === "pull") pullAll((arg as "core" | "shots") || "all").catch((e) => console.error("[sync] pull failed:", (e as Error).message));

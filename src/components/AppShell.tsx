@@ -18,7 +18,7 @@ export function AppHeader({ crumb }: { crumb?: string }) {
     <header>
       <div className="container-gov h-16 flex items-center justify-between gap-6">
         <div className="flex items-center gap-4 min-w-0">
-          <Wordmark className="h-10 sm:h-11" />
+          <Wordmark className="h-12 sm:h-[52px]" />
           {crumb && <span className="hidden sm:flex items-center gap-4 min-w-0 text-sm text-neutral-500"><span className="h-5 w-px bg-neutral-300" /><span className="truncate">{crumb}</span></span>}
         </div>
         <nav aria-label="RE:GOV" className="flex items-center gap-5 text-sm font-semibold">
@@ -70,7 +70,7 @@ export function AppFooter() {
       <div className="container-gov pt-14 pb-8">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_repeat(4,minmax(0,1fr))]">
           <div className="max-w-sm">
-            <Wordmark className="h-12" tone="white" />
+            <Wordmark className="h-16" tone="white" />
             <p className="mt-3 text-[15px] leading-snug text-neutral-300">Reimagine Government. An autonomous agent that gives Philippine public websites a second life on the BetterGov Kapwa standard.</p>
             <p className="mt-4 text-sm text-neutral-400">Built solo for the Meta Global AI Developer Hackathon 2026, Indie track, by <a href="https://rmbergonia.com" className="font-semibold text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">Ruther Bergonia</a>, a software systems architect in Manila.</p>
             <div className="mt-5 flex flex-wrap gap-2">
