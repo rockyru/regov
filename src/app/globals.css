@@ -28,7 +28,11 @@
 
 /* Reimagined sites: no single unbreakable string (emails, URLs, long codes) may widen the page */
 .site-shell { overflow-x: clip; }
-.site-shell :is(h1, h2, h3, h4, p, a, li, dd, dt, td, th, figcaption, span) { overflow-wrap: anywhere; }
+.site-shell :is(h1, h2, h3, h4, p, a, li, dd, dt, figcaption, span) { overflow-wrap: anywhere; }
+/* Numbering (01, 02…) never splits across lines. */
+.site-shell .tabular-nums { overflow-wrap: normal; }
+/* Not "anywhere" in table cells: it lets auto layout squeeze a column to one letter wide. */
+.site-shell :is(td, th), .site-shell :is(td, th) :is(a, span, p) { overflow-wrap: break-word; }
 
 html { scroll-behavior: smooth; }
 
@@ -51,6 +55,16 @@ body { @apply bg-white text-neutral-900; }
 .prose-gov table { @apply w-full text-[15px] border-collapse my-4; }
 .prose-gov th { @apply text-left text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-600 px-3 py-2 border-b-2 border-neutral-900; }
 .prose-gov td { @apply px-3 py-2.5 border-b border-neutral-200 align-top; }
+/* Phones: each row of a headed table becomes a card, every cell labelled with its column (see Markdown.tsx). */
+@media (width < 40rem) {
+  .prose-gov table[data-stack], .prose-gov table[data-stack] :is(tbody, tr, td) { display: block; width: 100%; }
+  .prose-gov table[data-stack] thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .prose-gov table[data-stack] tr { @apply border-t border-neutral-900 py-3; }
+  .prose-gov table[data-stack] tr:last-child { @apply border-b; }
+  .prose-gov table[data-stack] td { @apply border-0 px-0 py-1; }
+  .prose-gov table[data-stack] td:empty { display: none; }
+  .prose-gov table[data-stack] td[data-label]::before { content: attr(data-label); @apply block text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-600; }
+}
 .prose-gov strong { @apply font-semibold text-neutral-900; }
 .prose-gov hr { @apply border-neutral-900 my-8; }
 

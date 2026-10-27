@@ -1,6 +1,6 @@
 import type { SitePage } from "@/pipeline/schema";
 import { previewHref } from "@/lib/jobs";
-import { Markdown } from "./Markdown";
+import { Markdown, hrefText, isBlank } from "./Markdown";
 import { knownGovUrl } from "@/lib/civic";
 
 type Block = SitePage["blocks"][number];
@@ -13,7 +13,7 @@ function A({ href, jobId, origin, className, children, label }: { href: string; 
   if (!href) return <span className={className}>{children}</span>;
   const h = previewHref(jobId, origin, href);
   const ext = /^https?:/.test(h);
-  return <a href={h} className={className} {...(ext ? { target: "_blank", rel: "noreferrer" } : {})}>{children}</a>;
+  return <a href={h} className={className} {...(ext ? { target: "_blank", rel: "noreferrer" } : {})}>{isBlank(children) ? hrefText(href) : children}</a>;
 }
 
 const H = ({ children }: { children: React.ReactNode }) => children ? <h2 className="text-2xl sm:text-[28px] font-bold tracking-tight leading-tight text-neutral-900 mb-4 pt-4 border-t-2 border-neutral-900 [[data-blocks]>:first-child_&]:border-t-0 [[data-blocks]>:first-child_&]:pt-0">{children}</h2> : null;
@@ -175,9 +175,9 @@ export function Block({ block, jobId, origin }: { block: Block; jobId: string; o
         return { label, value, extra };
       }).filter((r) => r.value);
       const Val = ({ v }: { v: string }) => {
-        if (/^[\w.+-]+@[\w-]+\.[\w.-]+$/.test(v)) return <a className="text-kapwa-brand-800 underline underline-offset-2 decoration-kapwa-brand-300 hover:decoration-kapwa-brand-800 break-all" href={`mailto:${v}`}>{v}</a>;
-        if (/^(\+?\d[\d\s().-]{6,})$/.test(v)) return <a className="text-kapwa-brand-800 underline underline-offset-2 decoration-kapwa-brand-300 hover:decoration-kapwa-brand-800" href={`tel:${v.replace(/[^+\d]/g, "")}`}>{v}</a>;
-        if (/^(https?:\/\/|www\.)/i.test(v)) return <a className="text-kapwa-brand-800 underline underline-offset-2 decoration-kapwa-brand-300 hover:decoration-kapwa-brand-800 break-all" href={v.startsWith("http") ? v : `https://${v}`} target="_blank" rel="noreferrer">{v.replace(/^https?:\/\//, "")}</a>;
+        if (/^[\w.+-]+@[\w-]+\.[\w.-]+$/.test(v)) return <a className="inline-block py-1 text-kapwa-brand-800 underline underline-offset-2 decoration-kapwa-brand-300 hover:decoration-kapwa-brand-800 break-all" href={`mailto:${v}`}>{v}</a>;
+        if (/^(\+?\d[\d\s().-]{6,})$/.test(v)) return <a className="inline-block py-1 text-kapwa-brand-800 underline underline-offset-2 decoration-kapwa-brand-300 hover:decoration-kapwa-brand-800" href={`tel:${v.replace(/[^+\d]/g, "")}`}>{v}</a>;
+        if (/^(https?:\/\/|www\.)/i.test(v)) return <a className="inline-block py-1 text-kapwa-brand-800 underline underline-offset-2 decoration-kapwa-brand-300 hover:decoration-kapwa-brand-800 break-all" href={v.startsWith("http") ? v : `https://${v}`} target="_blank" rel="noreferrer">{v.replace(/^https?:\/\//, "")}</a>;
         return <>{v}</>;
       };
       return (
