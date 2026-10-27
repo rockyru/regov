@@ -68,9 +68,14 @@ export async function listJobs() {
     if (hasCrawl) crawl = JSON.parse(await readFile(join(dir, "crawl.json"), "utf8"));
     if (hasSite) site = scrubOfficial(JSON.parse(await readFile(join(dir, "site.json"), "utf8")));
     if (hasStatus) try { status = settle(JSON.parse(await readFile(join(dir, "status.json"), "utf8"))); } catch { /* mid-write */ }
-    return { id, crawl, site, status, mtime: (await stat(dir)).mtimeMs };
+    const mtime = (await stat(dir)).mtimeMs;
+    // Newest build first: when it finished (or started, while running). The folder's own time moves whenever a
+    // later step such as the charter or portraits adds files, which would lift old sites above new ones.
+    const at = status ? (status.done && status.events.length ? status.events[status.events.length - 1].t : new Date(status.startedAt).getTime())
+      : hasSite ? (await stat(join(dir, "site.json"))).mtimeMs : mtime;
+    return { id, crawl, site, status, mtime, at };
   }));
-  return jobs.filter((j) => j.crawl || j.status).sort((a, b) => b.mtime - a.mtime);
+  return jobs.filter((j) => j.crawl || j.status).sort((a, b) => b.at - a.at);
 }
 
 const OFFICIAL_LEAD = /^\s*(the\s+)?official\s+(web\s?site|site|web\s?portal|portal|online\s+portal|home\s?page|page)\s+(of|for)\s+(the\s+)?/i;
