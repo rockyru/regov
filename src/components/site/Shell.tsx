@@ -61,7 +61,7 @@ export function Header({ site }: { site: SiteModel }) {
   const items = site.nav.filter((n) => n.slug !== "home" && (n.slug || n.children.length > 0));
   // A refined site keeps its own look, so the header stays clean instead of carrying our illustrated band.
   const band = site.assets.band && site.design?.mode !== "refine" ? `/api/jobs/${jobId}/${site.assets.band}?v=${encodeURIComponent(site.generated_at)}` : null;
-  const tab = "flex h-14 items-center gap-1.5 px-5 font-semibold border-b-4 border-transparent group-hover:bg-white/10 group-hover:border-kapwa-yellow-400 whitespace-nowrap";
+  const tab = "flex h-14 items-center gap-1.5 px-3 xl:px-5 font-semibold border-b-4 border-transparent group-hover:bg-white/10 group-hover:border-kapwa-yellow-400 whitespace-nowrap";
   return (
     <header>
       {/* Row 1: identity, with the Muse Image band fading in behind it */}
@@ -94,8 +94,8 @@ export function Header({ site }: { site: SiteModel }) {
       {/* Row 2: full-bleed primary navigation with mega menus */}
       <nav aria-label="Primary" className="sticky top-0 z-40 bg-kapwa-brand-900 text-white relative border-b border-black/20">
         <div className="container-gov flex items-stretch">
-          <Link href={navHref(jobId, "home")} className="hidden lg:flex items-center px-5 h-14 font-semibold border-b-4 border-transparent hover:bg-white/10 hover:border-kapwa-yellow-400">Home</Link>
-          <div className="hidden lg:flex items-stretch flex-1">
+          <Link href={navHref(jobId, "home")} className="hidden lg:flex shrink-0 items-center px-3 xl:px-5 h-14 font-semibold whitespace-nowrap border-b-4 border-transparent hover:bg-white/10 hover:border-kapwa-yellow-400">Home</Link>
+          <div className="hidden lg:flex flex-wrap items-stretch flex-1 min-w-0">
             {items.map((item) => {
               const cols = columns(item.children);
               return (
@@ -133,9 +133,9 @@ export function Header({ site }: { site: SiteModel }) {
               );
             })}
           </div>
-          <form role="search" className="flex flex-1 lg:flex-none items-center lg:ml-auto py-2">
+          <form role="search" className="flex flex-1 lg:flex-none lg:shrink-0 items-center lg:ml-auto py-2">
             <label className="sr-only" htmlFor="site-search">Search this site</label>
-            <input id="site-search" placeholder="Search services, forms, offices…" className="h-10 w-full lg:w-60 xl:w-80 border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
+            <input id="site-search" placeholder="Search services, forms, offices…" className="h-10 w-full lg:w-40 xl:w-80 border-0 bg-white px-4 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-kapwa-yellow-400" />
             <button type="submit" className="h-10 bg-kapwa-yellow-400 px-4 text-sm font-bold text-kapwa-brand-950 hover:bg-kapwa-yellow-300">Search</button>
           </form>
         </div>

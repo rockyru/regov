@@ -52,7 +52,8 @@ body { @apply bg-white text-neutral-900; }
 .prose-gov ul { @apply list-disc pl-6 space-y-1.5; }
 .prose-gov ol { @apply list-decimal pl-6 space-y-1.5; }
 .prose-gov blockquote { @apply border-l-2 border-neutral-900 pl-5 text-neutral-700 text-xl leading-snug; }
-.prose-gov table { @apply w-full text-[15px] border-collapse my-4; }
+.prose-gov .table-scroll { @apply my-4 overflow-x-auto; }
+.prose-gov table { @apply w-full text-[15px] border-collapse; }
 .prose-gov th { @apply text-left text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-600 px-3 py-2 border-b-2 border-neutral-900; }
 .prose-gov td { @apply px-3 py-2.5 border-b border-neutral-200 align-top; }
 /* Phones: each row of a headed table becomes a card, every cell labelled with its column (see Markdown.tsx). */

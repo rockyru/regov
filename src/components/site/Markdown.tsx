@@ -34,6 +34,8 @@ function rehypeStackTables() {
       // Muse Spark writes <br> for line breaks inside table cells; raw HTML is otherwise shown as text.
       n.children = n.children.map((c) => (c.type === "raw" && BR.test(c.value.trim()) ? { type: "element", tagName: "br", properties: {}, children: [] } : c)) as typeof n.children;
       for (const c of n.children) if (c.type === "element") { if (c.tagName === "table") label(c); walk(c); }
+      // A table wider than its column scrolls inside it instead of pushing the page sideways.
+      n.children = n.children.map((c) => (c.type === "element" && c.tagName === "table" ? { type: "element", tagName: "div", properties: { className: ["table-scroll"], tabIndex: 0, role: "region", ariaLabel: "Table" }, children: [c] } : c)) as typeof n.children;
     };
     walk(tree);
   };

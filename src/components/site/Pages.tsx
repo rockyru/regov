@@ -271,8 +271,9 @@ export function ContentPage({ site, page }: { site: SiteModel; page: SitePage })
           </div>
         </div>
       </div>
-      <div className="container-gov py-12 grid gap-12 lg:grid-cols-[240px_1fr_280px]">
-        <aside className="hidden lg:block self-start sticky top-24">
+      {/* Three columns only from xl: at 1024px they left the article about 300px wide. The section menu is also in the header. */}
+      <div className="container-gov py-12 grid gap-12 lg:grid-cols-[1fr_240px] xl:grid-cols-[240px_1fr_280px]">
+        <aside className="hidden xl:block self-start sticky top-24">
           {siblings.length > 1 && (<><h2 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{parent?.label}</h2>
             <ul className="mt-2 divide-y divide-neutral-100">
               {siblings.map((s) => <li key={s.slug}><Link href={navHref(jobId, s.slug)} aria-current={s.slug === page.slug ? "page" : undefined} className={`block py-2 text-sm ${s.slug === page.slug ? "text-kapwa-brand-900 font-semibold pl-3 border-l-2 border-kapwa-brand-900" : "text-neutral-600 hover:text-neutral-900 hover:pl-1 transition-[padding]"}`}>{s.label}</Link></li>)}
