@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join, resolve, sep } from "node:path";
-import { JOBS_ROOT } from "@/lib/jobs";
+import { JOBS_ROOT, jobOptedOut } from "@/lib/jobs";
 
 const TYPES: Record<string, string> = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", json: "application/json", html: "text/html; charset=utf-8" };
 
@@ -9,6 +9,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ jobId: string;
   const target = resolve(JOBS_ROOT, jobId, ...file);
   if (!target.startsWith(resolve(JOBS_ROOT, jobId) + sep)) return new Response("nope", { status: 400 });
   if (!/^(assets|shots)\//.test(file.join("/")) && file.join("/") !== "site.json") return new Response("not served", { status: 404 });
+  if (await jobOptedOut(jobId)) return new Response("taken down at the site owner's request", { status: 404 });
   try {
     // Screenshots are not restored at boot (see scripts/sync-jobs.ts): fetch from R2 on first use.
     let buf = await readFile(target).catch(() => null);

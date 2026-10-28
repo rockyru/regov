@@ -85,7 +85,7 @@ through environment variables:
 | `RUN_CONCURRENCY` | `2` | Pipelines allowed to run at once. Extra submissions wait in order and the job page shows their place. |
 | `RUN_QUEUE_MAX` | `8` | Waiting runs allowed. Past this the form answers "the agent is busy". |
 | `RUN_RATE_LIMIT` / `RUN_RATE_WINDOW_MIN` | `3` / `10` | Submissions per visitor IP per window. |
-| `RUN_DAILY_MAX` | `7` | Runs accepted per calendar day (Asia/Manila), counted from job status files so it survives restarts. Protects the Meta credit balance. |
+| `RUN_DAILY_MAX` | `7` | Runs accepted per day, resetting at 8:00 AM Asia/Manila, counted from job status files so it survives restarts. Protects the Meta credit balance. |
 | `RUN_STALL_MIN` | `20` | A run whose status has not changed for this long is killed and reported as stalled, freeing its slot. |
 | `RUN_DEDUPE_HOURS` | `24` | A host that is running, waiting, or finished within this window is not rebuilt again; the visitor is sent to that run. |
 

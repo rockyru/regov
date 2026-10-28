@@ -11,7 +11,7 @@ import { z } from "zod";
 import { meta, MUSE } from "../lib/meta";
 import { strictSchema } from "./schema";
 import { cached, pmap } from "./cache";
-import { UA } from "./crawl";
+import { UA, loadRobots } from "./robots";
 import type { CrawlResult } from "./types";
 
 export const Service = z.object({
@@ -73,7 +73,9 @@ async function download(url: string, archive?: string): Promise<Buffer> {
 export async function readCharters(jobDir: string, onDoc: (url: string, services: number) => void = () => {}): Promise<CharterFile> {
   const crawl = JSON.parse(await readFile(join(jobDir, "crawl.json"), "utf8")) as CrawlResult;
   const out: CharterFile = { generated_at: new Date().toISOString(), docs: [], skipped: [] };
+  const robots = await loadRobots(crawl.origin, crawl.archive?.timestamp);
   await pmap(charterCandidates(crawl), 3, async (url) => {
+    if (!robots.allows(url)) { out.skipped.push({ url, reason: "robots.txt disallows it" }); return; }
     try {
       const pdf = await download(url, crawl.archive?.timestamp);
       const hash = createHash("sha1").update(pdf).digest("hex").slice(0, 16);

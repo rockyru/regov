@@ -1,5 +1,7 @@
 import { isGovernmentHost, normalizeSiteUrl } from "@/lib/govdomain";
 import { runQueue } from "@/lib/runQueue";
+import { optedOut } from "@/lib/optout";
+import { loadRobots } from "@/pipeline/robots";
 
 function clientIp(req: Request) {
   return req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "local";
@@ -21,6 +23,7 @@ export async function POST(req: Request) {
   const host = parsed.hostname;
 
   if (process.env.SUBMISSIONS === "paused") return go(`/?error=paused&url=${encodeURIComponent(host)}`);
+  if (optedOut(host)) return go(`/?error=optout&url=${encodeURIComponent(host)}`);
 
   // Same site already in flight, waiting, or rebuilt recently: show that run instead of starting another.
   const existing = runQueue.existing(host);
@@ -33,6 +36,8 @@ export async function POST(req: Request) {
   const wait = runQueue.rateLimit(clientIp(req));
   if (wait > 0) return go(`/?error=ratelimit&wait=${wait}&url=${encodeURIComponent(host)}`);
   if (runQueue.full) return go(`/?error=busy&url=${encodeURIComponent(host)}`);
+  // A site whose robots.txt shuts REGOVBot out is refused here; the pipeline checks again (and checks the terms) before crawling.
+  if ((await loadRobots(parsed.origin)).blocksSite) return go(`/?error=robots&url=${encodeURIComponent(host)}`);
 
   const jobId = `${host.replace(/[^a-z0-9]+/gi, "-")}-${Date.now().toString(36)}`;
   runQueue.enqueue({ jobId, url, host, max, ip: clientIp(req) });

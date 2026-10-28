@@ -3,6 +3,9 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { crawl, BlockedError } from "../src/pipeline/crawl";
+import { loadRobots, type Robots } from "../src/pipeline/robots";
+import { checkTerms, TermsError } from "../src/pipeline/terms";
+import { optedOut } from "../src/lib/optout";
 import { pickReachable } from "../src/pipeline/reach";
 import { findSnapshot } from "../src/pipeline/archive";
 import { pushJob, pushFile } from "./sync-jobs";
@@ -16,10 +19,14 @@ import { findEvidence } from "../src/pipeline/evidence";
 import { withUsage } from "../src/lib/usage";
 
 const [inputUrl, jobId, max = "20"] = process.argv.slice(2);
+const ROBOTS_BLOCKED = "This site's robots.txt asks crawlers not to visit it, so RE:GOV will not rebuild it, not even from the Wayback Machine.";
+const OPTED_OUT = "This site is on RE:GOV's do-not-crawl list, so RE:GOV will not rebuild it.";
 let url = inputUrl;
 if (!url || !jobId) { console.error("usage: pipeline.ts <url> <jobId> [maxPages]"); process.exit(1); }
 const dir = join("jobs", jobId);
-const status = { url, jobId, startedAt: new Date().toISOString(), phase: "crawl", events: [] as unknown[], done: false, error: "" };
+const status = { url, jobId, startedAt: new Date().toISOString(), phase: "crawl", events: [] as unknown[], done: false, error: "",
+  // Set when the site's own rules stop the run: the job page explains it and the run does not use up the daily allowance.
+  refused: undefined as undefined | { reason: "terms" | "robots" | "optout"; quote?: string; urls?: string[] } };
 let flushing: Promise<void> = Promise.resolve();
 let lastMirror = 0;
 const flush = () => (flushing = flushing.then(async () => {
@@ -39,27 +46,56 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
     // Bare domain vs www., transient DNS misses: start from the variant that answers.
     const reach = await pickReachable(url);
     if (new URL(reach.url).hostname !== new URL(url).hostname) { log({ type: "redirect", from: url, to: reach.url, note: reach.note }); url = reach.url; status.url = url; }
-    const runCrawl = (archiveTimestamp?: string) => crawl(url, { jobId, maxPages: Number(max), onEvent: log, archiveTimestamp });
-    let why = "";
-    try {
-      const r = await runCrawl();
-      if (r.pages.length === 0) {
-        why = `The site could not be fetched (${r.skipped[0]?.reason ?? "no pages"})`;
-        log({ type: "unreachable", reason: r.skipped[0]?.reason ?? "no pages" });
+    if (optedOut(url)) throw new Error(OPTED_OUT);
+    const origin = new URL(url).origin;
+    // robots.txt first: a site that asks REGOVBot (or every crawler) to stay away is not rebuilt at all, not even from the archive.
+    const robots = await loadRobots(origin);
+    log({ type: "robots", state: robots.state, delayMs: robots.delayMs, blocksSite: robots.blocksSite });
+    if (robots.blocksSite) throw new Error(ROBOTS_BLOCKED);
+    // Terms of use next, before any page is collected. TermsError stops the run; anything else (homepage not
+    // fetchable, model error) leaves it to the archive pass or records that the terms could not be checked.
+    let termsChecked = false;
+    const gate = async (r: Robots, archiveTimestamp?: string) => {
+      try {
+        const t = await withUsage(dir, "run", "terms", () => checkTerms(dir, origin, r, archiveTimestamp));
+        log({ type: "terms", urls: t.urls, restricts: false, source: t.source });
+        termsChecked = true;
+      } catch (e) {
+        if (e instanceof TermsError) { log({ type: "terms", urls: e.result.urls, restricts: true, reason: e.result.reason, quote: e.result.quote }); throw e; }
+        log({ type: "terms", error: (e as Error).message.split("\n")[0].slice(0, 120) });
       }
-    } catch (e) {
-      if (!(e instanceof BlockedError)) throw e;
-      log({ type: "blocked", url: e.url, reason: e.reason });
-      why = e.message;
+    };
+    const runCrawl = (r: Robots, archiveTimestamp?: string) => crawl(url, { jobId, maxPages: Number(max), onEvent: log, archiveTimestamp, robots: r });
+    let why = "";
+    if (robots.state === "unreachable") {
+      why = "The site did not answer (robots.txt could not be read)";
+      log({ type: "unreachable", reason: "robots.txt unreachable" });
+    } else {
+      await gate(robots);
+      try {
+        const r = await runCrawl(robots);
+        if (r.pages.length === 0) {
+          why = `The site could not be fetched (${r.skipped[0]?.reason ?? "no pages"})`;
+          log({ type: "unreachable", reason: r.skipped[0]?.reason ?? "no pages" });
+        }
+      } catch (e) {
+        if (!(e instanceof BlockedError)) throw e;
+        log({ type: "blocked", url: e.url, reason: e.reason });
+        why = e.message;
+      }
     }
     if (why) {
-      // Dead, firewalled or bot-protected: rebuild from the Wayback Machine instead.
+      // Dead, firewalled or bot-protected: rebuild from the Wayback Machine instead, under the robots.txt and terms it captured.
       status.phase = "archive";
       const snap = await findSnapshot(url);
       if (!snap) throw new Error(`${why}. No Wayback Machine copy found either.`);
       log({ type: "archive", timestamp: snap.timestamp, captures: snap.captures });
-      await runCrawl(snap.timestamp);
+      const archived = await loadRobots(origin, snap.timestamp);
+      if (archived.blocksSite) throw new Error(ROBOTS_BLOCKED);
+      if (!termsChecked) await gate(archived, snap.timestamp);
+      await runCrawl(archived, snap.timestamp);
     }
+    if (!termsChecked) console.warn("[terms] could not be checked; see the terms events in status.json");
     status.phase = "build";
     await withUsage(dir, "run", "build", () => buildSite(jobId, (e) => { if (e.type === "phase") status.phase = e.phase; log(e); }));
     // Self-check: Muse Spark compares each rebuilt page with its original (never fails the run).
@@ -114,7 +150,9 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
     await pushJob(jobId).catch((e) => console.warn("[sync]", (e as Error).message));
   } catch (e) {
     status.error = (e as Error).message; status.phase = "error";
-    console.error(e);
+    status.refused = e instanceof TermsError ? { reason: "terms", quote: e.result.quote, urls: e.result.urls }
+      : status.error === ROBOTS_BLOCKED ? { reason: "robots" } : status.error === OPTED_OUT ? { reason: "optout" } : undefined;
+    if (status.refused) log({ type: "refused", ...status.refused }); else console.error(e);
   }
   await flush(); await flushing;
 })();

@@ -18,7 +18,7 @@ export default function HowItWorks() {
           <p>The same site is not rebuilt twice within a day; you are sent to the run that already exists. Model credits are limited, so there is a daily cap on new runs.</p>
         </> },
         { title: "Crawl", body: <>
-          <p>A real browser (Playwright) visits up to 30 pages on the same site at about one request a second, following robots.txt. For each page it keeps a full screenshot, the visible text, the links and any attached files. WordPress sites also give up their posts through the REST API.</p>
+          <p>A real browser (Playwright) visits up to 30 pages on the same site at about one request a second, following robots.txt and Crawl-delay. Before any page is collected, Muse Spark reads the site&rsquo;s terms of use; if they forbid automated access or republishing, the run stops. <Link href="/bot">More about the crawler</Link>. For each page it keeps a full screenshot, the visible text, the links and any attached files. WordPress sites also give up their posts through the REST API.</p>
           <p>If the site blocks crawlers or is down, the agent rebuilds from the <a href="https://web.archive.org">Wayback Machine</a> month with the most real pages, so even a dead site gets its content back.</p>
         </> },
         { title: "Understand", body: <>
