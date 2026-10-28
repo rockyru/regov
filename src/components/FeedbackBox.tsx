@@ -2,6 +2,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { FEEDBACK_TOPICS, MAX_MESSAGE, type FeedbackTopic } from "@/lib/feedbackTopics";
+import { Turnstile, type TurnstileHandle } from "./Turnstile";
 
 const PROMPTS: Record<FeedbackTopic, string> = {
   bug: "What happened, and on which page?",
@@ -16,8 +17,9 @@ const icon = { fill: "none", stroke: "currentColor", strokeLinecap: "square", st
 /**
  * Floating comment box on every RE:GOV page (src/app/api/feedback). Opens from its button, or from
  * any link to #feedback (the rebuilt sites' top bar links to /report/<job>#feedback).
+ * With a Turnstile sitekey, the form waits for Cloudflare's token and sends it along.
  */
-export function FeedbackBox() {
+export function FeedbackBox({ sitekey = "" }: { sitekey?: string }) {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
   const [error, setError] = useState("");
@@ -28,6 +30,8 @@ export function FeedbackBox() {
   const area = useRef<HTMLTextAreaElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const openedAt = useRef(0);
+  const [human, setHuman] = useState("");
+  const widget = useRef<TurnstileHandle | null>(null);
 
   useEffect(() => {
     const fromHash = () => { if (location.hash === "#feedback") setOpen(true); };
@@ -52,8 +56,9 @@ export function FeedbackBox() {
     const f = new FormData(e.currentTarget);
     setState("sending");
     setError("");
-    const res = await fetch("/api/feedback", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ topic, message: f.get("message"), email: f.get("email"), website: f.get("website"), page: path, elapsed: Date.now() - openedAt.current }) }).catch(() => null);
+    const res = await fetch("/api/feedback", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ topic, message: f.get("message"), email: f.get("email"), website: f.get("website"), page: path, elapsed: Date.now() - openedAt.current, turnstile: human }) }).catch(() => null);
     const out = (await res?.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+    widget.current?.reset(); // a token works once
     if (res?.ok && out?.ok) { setState("sent"); setLength(0); }
     else { setState("idle"); setError(out?.error ?? "That didn't go through. Please try again."); }
   }
@@ -112,12 +117,14 @@ export function FeedbackBox() {
               {/* Honeypot: hidden from people and screen readers. */}
               <input name="website" tabIndex={-1} autoComplete="off" aria-hidden className="absolute -left-[9999px] h-px w-px" />
 
+              {sitekey && <Turnstile sitekey={sitekey} action="feedback" onToken={setHuman} ref={widget} className="mt-4 empty:hidden" />}
+
               {error && <p role="alert" className="mt-3 border-l-4 border-kapwa-red-700 bg-kapwa-red-50 px-3 py-2 text-sm font-semibold text-kapwa-red-700">{error}</p>}
 
               <div className="mt-5 flex items-center justify-between gap-3">
                 <p className="text-[12px] leading-snug text-neutral-500">No account needed. <a href="/privacy" className="underline hover:text-neutral-900">Privacy</a></p>
-                <button type="submit" disabled={state === "sending"} className="group inline-flex h-11 cursor-pointer items-center gap-2 bg-kapwa-brand-900 px-5 text-sm font-semibold text-white transition-colors hover:bg-kapwa-brand-950 disabled:cursor-wait disabled:opacity-70">
-                  {state === "sending" ? "Sending…" : "Send"}
+                <button type="submit" disabled={state === "sending" || (!!sitekey && !human)} title={sitekey && !human ? "Checking your browser…" : undefined} className="group inline-flex h-11 cursor-pointer items-center gap-2 bg-kapwa-brand-900 px-5 text-sm font-semibold text-white transition-colors hover:bg-kapwa-brand-950 disabled:cursor-wait disabled:opacity-70">
+                  {state === "sending" ? "Sending…" : sitekey && !human ? "Checking…" : "Send"}
                   <svg viewBox="0 0 24 24" strokeWidth="2" className="size-4 transition-transform motion-safe:group-hover:translate-x-0.5" {...icon}><path d="M4 12h15M13 6l6 6-6 6" /></svg>
                 </button>
               </div>

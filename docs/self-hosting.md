@@ -40,6 +40,7 @@ All settings are environment variables, listed in `.env.example`. The important 
 | `PUBLIC_ORIGIN` | Your own address, for links in exports and emails |
 | `R2_*` | Optional backup of jobs to Cloudflare R2 |
 | `FEEDBACK_TO`, `FEEDBACK_FROM`, `CLOUDFLARE_EMAIL_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Optional email delivery of feedback |
+| `TURNSTILE_SITEKEY`, `TURNSTILE_SECRET`, `TURNSTILE_HOSTNAMES` | Optional Cloudflare Turnstile on the feedback and Reimagine forms; `TURNSTILE_HOSTNAMES` is your domain only, never localhost, in production |
 | `OPT_OUT_DOMAINS` | More domains to refuse, comma-separated |
 
 ## If you host it publicly

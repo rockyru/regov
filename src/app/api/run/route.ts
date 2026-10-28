@@ -2,6 +2,7 @@ import { isGovernmentHost, normalizeSiteUrl } from "@/lib/govdomain";
 import { runQueue } from "@/lib/runQueue";
 import { optedOut } from "@/lib/optout";
 import { loadRobots } from "@/pipeline/robots";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 function clientIp(req: Request) {
   return req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "local";
@@ -36,6 +37,8 @@ export async function POST(req: Request) {
   const wait = runQueue.rateLimit(clientIp(req));
   if (wait > 0) return go(`/?error=ratelimit&wait=${wait}&url=${encodeURIComponent(host)}`);
   if (runQueue.full) return go(`/?error=busy&url=${encodeURIComponent(host)}`);
+  // A person, not a script: each run spends model credit (src/lib/turnstile.ts).
+  if (!(await verifyTurnstile(form.get("cf-turnstile-response"), "reimagine", clientIp(req)))) return go(`/?error=verify&url=${encodeURIComponent(host)}`);
   // A site whose robots.txt shuts REGOVBot out is refused here; the pipeline checks again (and checks the terms) before crawling.
   if ((await loadRobots(parsed.origin)).blocksSite) return go(`/?error=robots&url=${encodeURIComponent(host)}`);
 

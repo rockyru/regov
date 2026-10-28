@@ -21,6 +21,7 @@ open one with the "Idea" template.
 - [x] Markdown export with front matter, alongside the static HTML export
 - [x] Accessibility gate: axe-core WCAG 2.2 A/AA on desktop and phone, in CI
 - [x] Feedback box, delivered by email
+- [x] Cloudflare Turnstile on the feedback and Reimagine forms
 
 ## Next: trust and staying current
 

@@ -1,4 +1,5 @@
 import { cleanFeedback, feedbackAdmit, feedbackRateLimit, saveFeedback } from "@/lib/feedback";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 const MAX_BODY = 16_000;
 /** Faster than a person can open the box and type. */
@@ -20,7 +21,7 @@ const ok = () => Response.json({ ok: true });
 const no = (error: string, status: number, headers?: HeadersInit) => Response.json({ error }, { status, headers });
 
 /**
- * A comment from the feedback box. JSON: { message, email?, page?, elapsed (ms the box was open), website (honeypot) }.
+ * A comment from the feedback box. JSON: { topic, message, email?, page?, elapsed (ms the box was open), website (honeypot), turnstile (token) }.
  * Bots that trip the honeypot or the timer, and repeats, get a normal "ok" so they learn nothing.
  */
 export async function POST(req: Request) {
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
   if (typeof fb === "string") return no(fb, 400);
   const wait = feedbackRateLimit(clientIp(req));
   if (wait) return no(wait > 120 ? "Thanks, that's plenty for now. Please try again later." : `Please wait ${wait} seconds before sending another.`, 429, { "retry-after": String(wait) });
+  if (!(await verifyTurnstile(body.turnstile, "feedback", clientIp(req)))) return no("We couldn't confirm you're a person. Please try again.", 403);
   const admit = feedbackAdmit(fb.message);
   if (admit === "drop") return ok();
   if (admit === "full") return no("The comment box is full for today. Please write to hello@regov.app instead.", 503);

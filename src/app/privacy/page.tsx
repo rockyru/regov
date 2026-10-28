@@ -20,7 +20,7 @@ export default function Privacy() {
           <li><strong>Meta Model API.</strong> Page text, screenshots and images from the crawled site are sent to Meta&rsquo;s models (Muse Spark, SAM 3.1, Muse Image) to be read, segmented and illustrated. Meta processes them under its own terms.</li>
           <li><strong>Internet Archive.</strong> When a site blocks crawlers, RE:GOV requests its public captures from the Wayback Machine.</li>
           <li><strong>Open-Meteo.</strong> For local governments, a forecast is requested by place name only.</li>
-          <li><strong>Cloudflare.</strong> Hosting, storage of job files, the domain, and delivery of comments by email (Cloudflare Email Service).</li>
+          <li><strong>Cloudflare.</strong> Hosting, storage of job files, the domain, and delivery of comments by email (Cloudflare Email Service). The feedback and Reimagine forms use Cloudflare Turnstile to check that a person, not a script, is sending them; Turnstile looks at signals from your browser under <a href="https://www.cloudflare.com/turnstile-privacy-policy/">its own privacy terms</a> and sets no tracking cookies.</li>
         </ul>
         <p>No data is sold, shared for advertising, or used to train models by RE:GOV.</p>
       </> },

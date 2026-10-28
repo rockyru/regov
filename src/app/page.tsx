@@ -8,6 +8,7 @@ import { Reveal } from "@/components/Reveal";
 import { QueueStrip } from "@/components/QueueStrip";
 import { queueStrip } from "@/lib/queueStrip";
 import { runQueue } from "@/lib/runQueue";
+import { turnstileSitekey } from "@/lib/turnstile";
 
 export const dynamic = "force-dynamic";
 
@@ -49,7 +50,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
             <span className={left ? "font-semibold text-kapwa-green-800" : "font-semibold text-kapwa-red-700"}>{left ? `${left} left today` : "Used up until 8:00 AM"}</span>
           </p>
           <div className="mx-auto mt-4 max-w-2xl">
-            <ReimagineBox initialError={error} initialUrl={url} initialWait={Number(wait) || 0} />
+            <ReimagineBox initialError={error} initialUrl={url} initialWait={Number(wait) || 0} sitekey={turnstileSitekey()} />
           </div>
           <p className="mx-auto mt-5 max-w-2xl text-lg sm:text-xl text-neutral-600 leading-snug">Public websites deserve a second life. Paste a Philippine government site and an agent crawls it, understands it, and rebuilds it on the BetterGov Kapwa standard.</p>
           <p className="mx-auto mt-4 max-w-2xl text-[13px] text-neutral-500">Government domains only: agencies, LGUs, state universities, hospitals. Sites behind bot protection are rebuilt from their Wayback Machine archive. Output is an unofficial concept.</p>
