@@ -29,24 +29,25 @@
 .ih-word { display: contents; }
 
 /* Nav: a liquid-glass capsule fixed at the top centre of the screen through every section */
-.xp-nav.xp-liquid { position: fixed; z-index: 50; top: 5.5vh; left: 50%; translate: -50% 0; display: flex; gap: 4px; padding: 5px; animation: ih-fade 1s ease-out 0.5s both; }
-.xp-nav a { position: relative; padding: 10px 22px; border-radius: 999px !important; font-size: 16px; text-decoration: none; color: rgb(255 255 255 / 0.92); white-space: nowrap; transition: background 0.35s, color 0.35s, box-shadow 0.35s; }
+.xp-nav.xp-liquid { position: fixed; z-index: 50; top: 5.5vh; left: 50%; translate: -50% 0; display: flex; gap: 4px; padding: 5px; animation: ih-fade 1s ease-out 0.5s both; transition: translate 0.6s var(--ease), visibility 0.6s; }
+/* The footer has its own section links, so the capsule slides away over it */
+.xp-nav.xp-liquid.is-gone { translate: -50% calc(-100% - 6vh); visibility: hidden; }
+.xp-nav a { position: relative; padding: 10px 22px; border-radius: 999px !important; font-size: 16px; text-decoration: none; color: rgb(255 255 255 / 0.95); text-shadow: 0 1px 8px rgb(0 0 0 / 0.35); white-space: nowrap; transition: background 0.35s, color 0.35s, box-shadow 0.35s; }
 .xp-nav a:hover { background: rgb(255 255 255 / 0.14); color: #fff; }
-.xp-nav a[aria-current] { color: #16181c; font-weight: 600; background: linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(255 255 255 / 0.72)); box-shadow: inset 0 1px 0 #fff, inset 0 -1px 2px rgb(0 0 0 / 0.08), 0 4px 14px -4px rgb(0 0 0 / 0.3); }
+.xp-nav a[aria-current] { color: #16181c; font-weight: 600; text-shadow: none; background: linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(255 255 255 / 0.72)); box-shadow: inset 0 1px 0 #fff, inset 0 -1px 2px rgb(0 0 0 / 0.08), 0 4px 14px -4px rgb(0 0 0 / 0.3); }
 
-/* Liquid glass: frosted and saturated, a bright rim, a specular sheen across the top */
+/* Liquid glass. Safari and Firefox cannot refract the backdrop, so they get clear frosted glass:
+   a strong blur and lift, a thin tint, and a specular rim lit from the top left drawn with inset shadows */
 .xp-liquid {
   position: relative; isolation: isolate; border-radius: 999px !important;
-  background: linear-gradient(160deg, rgb(255 255 255 / 0.26), rgb(255 255 255 / 0.06) 50%, rgb(255 255 255 / 0.14));
-  backdrop-filter: blur(16px) saturate(185%) brightness(1.06);
-  border: 1px solid rgb(255 255 255 / 0.45);
-  box-shadow: inset 0 1.5px 1px rgb(255 255 255 / 0.7), inset 0 -8px 16px rgb(255 255 255 / 0.1), 0 16px 40px -14px rgb(0 0 0 / 0.45);
+  background: radial-gradient(120% 140% at 20% 0%, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.05) 60%), rgb(255 255 255 / 0.04);
+  -webkit-backdrop-filter: blur(14px) saturate(180%) brightness(1.04); backdrop-filter: blur(14px) saturate(180%) brightness(1.04);
+  border: 1px solid rgb(255 255 255 / 0.22);
+  box-shadow: inset 1.5px 1.5px 1px -0.5px rgb(255 255 255 / 0.85), inset -1px -1px 1px -0.5px rgb(255 255 255 / 0.45), inset 0 0 14px rgb(255 255 255 / 0.1), 0 16px 40px -14px rgb(0 0 0 / 0.45);
 }
-/* Refracting (Chromium): nearly clear, so the bending reads; a stronger specular rim, light from the top left */
+/* Refracting (Chromium): nearly clear, so the bending reads */
 .xp-liquid[data-refract] { background: linear-gradient(160deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.02) 45%, rgb(255 255 255 / 0.08));
   box-shadow: inset 1.5px 1.5px 1px -0.5px rgb(255 255 255 / 0.85), inset -1px -1px 1px -0.5px rgb(255 255 255 / 0.5), inset 0 0 12px rgb(255 255 255 / 0.12), 0 16px 40px -14px rgb(0 0 0 / 0.4); border-color: rgb(255 255 255 / 0.28); }
-.xp-liquid[data-refract]::before { display: none; }
-.xp-liquid::before { content: ""; position: absolute; z-index: -1; inset: 2px 18px auto; height: 48%; border-radius: 999px !important; background: linear-gradient(180deg, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0)); pointer-events: none; }
 
 /* Letters: each cut by its own cells, rising into place on load */
 .ih-letter { overflow: hidden; pointer-events: none; }
@@ -363,7 +364,7 @@
 
 /* ---- The footer (Footer.tsx): the town's photograph, darkened, under everything ---- */
 /* It slides up under the end of the Plan section and fades in over it, so there is no seam */
-.xf { --lap: 30vh; position: relative; isolation: isolate; overflow: hidden; margin-top: calc(var(--lap) * -1); padding: calc(var(--lap) + 16vh) 4vw 5vh; text-align: center; background: #0b0c0e;
+.xf { --lap: min(30vh, 240px); position: relative; isolation: isolate; overflow: hidden; margin-top: calc(var(--lap) * -1); padding: calc(var(--lap) + min(16vh, 140px)) 4vw 5vh; text-align: center; background: #0b0c0e;
   -webkit-mask-image: linear-gradient(180deg, transparent, #000 var(--lap)); mask-image: linear-gradient(180deg, transparent, #000 var(--lap)); }
 .xf-bg { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.38) saturate(1.1); }
 .xf::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgb(11 12 14 / 0.6), transparent 30%, transparent 60%, rgb(11 12 14 / 0.92)); }
@@ -371,8 +372,8 @@
 .xf-sites { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
 .xf-sites a { display: inline-flex; gap: 8px; padding: 11px 20px; border: 1px solid rgb(255 255 255 / 0.4); border-radius: 999px !important; font-size: 14px; font-weight: 600; color: #fff; text-decoration: none; transition: background 0.3s, color 0.3s; }
 .xf-sites a:hover { background: #fff; color: #0b0c0e; }
-.xf-mid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 5vw; align-items: center; margin-top: 20vh; text-align: left; }
-.xf-say { font-size: clamp(56px, 7.4vw, 128px); line-height: 0.9; }
+.xf-mid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 5vw; align-items: center; margin-top: clamp(64px, 14vh, 160px); text-align: left; }
+.xf-say { font-size: clamp(56px, 7.4vw, 128px); line-height: 1; }
 .xf-say span { display: block; }
 .xf-lede { max-width: 440px; margin-top: 5vh; font-size: 16px; line-height: 1.6; color: rgb(255 255 255 / 0.85); }
 .xf-source { display: inline-block; margin-top: 14px; font-size: 12px; color: rgb(255 255 255 / 0.7); text-decoration: underline; text-underline-offset: 3px; }
@@ -380,14 +381,14 @@
 .xf-picks a { position: relative; display: block; aspect-ratio: 2 / 5; overflow: hidden; border: 1px solid rgb(255 255 255 / 0.35); color: #fff; text-decoration: none; }
 .xf-picks img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.82); transition: scale 0.9s cubic-bezier(0.2, 0.7, 0.1, 1), filter 0.5s; }
 .xf-picks a:hover img { scale: 1.06; filter: brightness(1); }
-.xf-picks span { position: absolute; left: 14px; right: 14px; bottom: 14px; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; text-shadow: 0 1px 10px rgb(0 0 0 / 0.5); }
-.xf-rule { height: 1px; margin: 12vh 6vw 0; background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.6), transparent); }
-.xf-mark { margin-top: 9vh; font-size: clamp(64px, 9vw, 150px); line-height: 1; }
-.xf-nav { display: flex; justify-content: center; align-items: baseline; flex-wrap: wrap; gap: 8px 3.4vw; margin-top: 7vh; }
+.xf-picks a::after { content: ""; position: absolute; inset: 50% 0 0; background: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.65)); pointer-events: none; }
+.xf-picks span { position: absolute; z-index: 1; left: 14px; right: 14px; bottom: 14px; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; text-shadow: 0 1px 10px rgb(0 0 0 / 0.5); }
+.xf-rule { height: 1px; margin: clamp(56px, 10vh, 120px) 6vw 0; background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.6), transparent); }
+.xf-mark { margin-top: clamp(36px, 7vh, 90px); font-size: clamp(64px, 9vw, 150px); line-height: 1; }
+.xf-nav { display: flex; justify-content: center; align-items: baseline; flex-wrap: wrap; gap: 8px 3.4vw; margin-top: clamp(24px, 5vh, 60px); }
 .xf-nav a { font-size: 17px; color: rgb(255 255 255 / 0.85); text-decoration: none; }
 .xf-nav a:hover { color: #fff; text-decoration: underline; text-underline-offset: 5px; }
-.xf-nav .is-home { order: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: #fff; }
-.xf-legal { max-width: 720px; margin: 7vh auto 0; font-size: 12px; line-height: 1.6; color: rgb(255 255 255 / 0.65); }
+.xf-legal { max-width: 720px; margin: clamp(32px, 6vh, 72px) auto 0; font-size: 12px; line-height: 1.6; color: rgb(255 255 255 / 0.65); }
 .xf-legal a { color: #fff; text-decoration: underline; }
 
 /* ---- An event's page (EventView): when, big, beside its facts ---- */
@@ -399,7 +400,7 @@
 .evp-more { margin: 0; }
 
 /* ---- Plan your trip: Muse Image illustrations, the LGU's facts set over them (Plan.tsx) ---- */
-.tp { padding-bottom: 40vh; }
+.tp { padding-bottom: calc(min(30vh, 240px) + min(10vh, 100px)); }
 .tp-intro { display: flex; justify-content: space-between; align-items: end; gap: 4vw; padding: 12vh 4vw 6vh; }
 .tp-route { position: relative; margin: 0 4vw; overflow: hidden; border-radius: 26px !important; aspect-ratio: 21 / 9; box-shadow: 0 30px 70px -40px rgb(0 0 0 / 0.7); }
 .tp-route-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
@@ -475,7 +476,7 @@
 .evp-more { margin: 0; }
 
 /* ---- Plan your trip: Muse Image illustrations, the LGU's facts set over them (Plan.tsx) ---- */
-.tp { padding-bottom: 40vh; }
+.tp { padding-bottom: calc(min(30vh, 240px) + min(10vh, 100px)); }
 .tp-intro { display: flex; justify-content: space-between; align-items: end; gap: 4vw; padding: 12vh 4vw 6vh; }
 .tp-route { position: relative; margin: 0 4vw; overflow: hidden; border-radius: 26px !important; aspect-ratio: 21 / 9; box-shadow: 0 30px 70px -40px rgb(0 0 0 / 0.7); }
 .tp-route-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
@@ -737,7 +738,7 @@
   .tp-modes, .tp-help, .tp-fee-notes { grid-template-columns: 1fr; }
   .tp-lines { grid-template-columns: 1fr 1fr; column-gap: 16px; }
   .tp-call { font-size: 12vw; }
-  .xf { --lap: 22vh; padding: calc(var(--lap) + 12vh) 16px 5vh; }
+  .xf { --lap: min(22vh, 180px); padding: calc(var(--lap) + 12vh) 16px 5vh; }
   .xf-mid { grid-template-columns: 1fr; gap: 6vh; margin-top: 12vh; }
   .xf-say { font-size: 64px; }
   .xf-picks span { font-size: 12px; left: 8px; right: 8px; bottom: 10px; }
@@ -751,6 +752,12 @@
   .tp-split-bar { width: calc(var(--s) * 1%); min-width: 96px; }
   .tp-modes { margin: 5vh 16px 0; gap: 18px; }
   .tp-fee, .tp-help { margin: 9vh 16px 0; }
+}
+
+/* Tablets in portrait: the headline gets the full width, the picks sit below it */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .xf-mid { grid-template-columns: 1fr; gap: 6vh; }
+  .xf-picks a { aspect-ratio: 3 / 4; }
 }
 
 @media (prefers-reduced-motion: reduce) {

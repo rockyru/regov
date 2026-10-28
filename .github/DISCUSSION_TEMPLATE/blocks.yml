@@ -1,0 +1,30 @@
+title: "Block: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Today a rebuilt page is made of twelve block types: richtext, list, cards, people, contact, faq,
+        table, links, timeline, image, callout and steps (`src/pipeline/schema.ts`). Propose a new one, or a
+        change to an existing one, with a real government page that needs it.
+  - type: input
+    id: block
+    attributes:
+      label: Block
+      description: A new type, or the existing one you want changed.
+      placeholder: e.g. "fees" or "steps"
+    validations:
+      required: true
+  - type: input
+    id: example
+    attributes:
+      label: A government page that needs it
+      placeholder: https://….gov.ph/…
+    validations:
+      required: true
+  - type: textarea
+    id: shape
+    attributes:
+      label: What it holds and how it should look
+      description: The fields it needs, and a sketch or screenshot if you have one.
+    validations:
+      required: true

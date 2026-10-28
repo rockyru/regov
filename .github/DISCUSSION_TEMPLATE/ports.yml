@@ -1,0 +1,49 @@
+title: "Port: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        RE:GOV's rebuilt sites are one content model (`site.json`, defined in `src/pipeline/schema.ts`)
+        drawn by twelve block renderers (`src/components/site/Blocks.tsx`). A port renders the same model on
+        another platform, or imports a RE:GOV export into one. Claim a platform here so work is not doubled.
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - WordPress (blocks or importer plugin)
+        - React / Tailwind (component registry)
+        - Plain HTML and CSS
+        - Wix
+        - Other (say which below)
+    validations:
+      required: true
+  - type: textarea
+    id: plan
+    attributes:
+      label: What you plan to build
+      description: Importer, theme, block library, starter template… and which of the twelve block types it covers first.
+    validations:
+      required: true
+  - type: dropdown
+    id: status
+    attributes:
+      label: Status
+      options:
+        - Looking for someone to build it
+        - I am building it
+        - Working version, link below
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Repository or demo
+      placeholder: https://github.com/…
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Ground rules
+      options:
+        - label: Anything the port renders from a RE:GOV export keeps the "unofficial concept" labels until the agency itself adopts the content.
+          required: true

@@ -153,6 +153,11 @@ bucket or a plain web server. Open \`index.html\` locally to review it first.
 2. Replace the "Unofficial concept" bar and footer notice only once the agency owns and has approved the content.
 3. Have the pages tested with a keyboard and a screen reader (automated WCAG checks catch about a third of issues).
 
+## Questions and ports
+
+Ask, or share what you built from this export, at https://github.com/rockyru/regov/discussions
+(Sites for this concept, Ports for WordPress and other platforms, Show and tell for live sites).
+
 Files in this export: ${count + 1}.
 `;
 }

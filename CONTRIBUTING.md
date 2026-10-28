@@ -14,6 +14,8 @@ accessibility, design systems or crawling.
 - **Accessibility is a requirement.** CI runs axe-core on the sample site; serious and critical
   WCAG 2.2 A/AA violations fail the build.
 - Be kind. See the [code of conduct](CODE_OF_CONDUCT.md).
+- Talk it through first in [Discussions](https://github.com/rockyru/regov/discussions): **Ports** to claim
+  a platform, **Blocks** to propose a block type, **Sites** for what a concept got wrong.
 
 ## Set up without a model key
 
