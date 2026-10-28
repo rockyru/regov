@@ -52,7 +52,7 @@ export function FeedbackBox() {
           className="w-[min(22rem,calc(100vw-2rem))] border border-kapwa-brand-900 bg-white shadow-[0_16px_40px_-12px_rgba(0,0,0,0.45)]">
           <div className="flex items-center justify-between gap-3 bg-kapwa-brand-900 px-4 py-3 text-white">
             <h2 id={`${id}-title`} className="text-[15px] font-semibold">Send us a comment</h2>
-            <button type="button" onClick={close} aria-label="Close" className="-mr-1 grid size-8 place-items-center hover:bg-white/10">
+            <button type="button" onClick={close} aria-label="Close" className="-mr-1 cursor-pointer grid size-8 place-items-center hover:bg-white/10">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" aria-hidden className="size-4"><path d="M6 6l12 12M18 6 6 18" /></svg>
             </button>
           </div>
@@ -60,7 +60,7 @@ export function FeedbackBox() {
             <div role="status" className="px-4 py-5 text-[15px] text-neutral-800">
               <p className="font-semibold text-neutral-900">Thank you. It&rsquo;s on its way.</p>
               <p className="mt-1 text-neutral-600">We read every comment. If you left an email address, we may write back.</p>
-              <button type="button" onClick={() => setState("idle")} className="mt-4 text-sm font-semibold text-kapwa-brand-900 border-b-2 border-kapwa-brand-900">Send another</button>
+              <button type="button" onClick={() => setState("idle")} className="mt-4 cursor-pointer text-sm font-semibold text-kapwa-brand-900 border-b-2 border-kapwa-brand-900">Send another</button>
             </div>
           ) : (
             <form onSubmit={send} className="px-4 py-4">
@@ -75,14 +75,14 @@ export function FeedbackBox() {
               {error && <p role="alert" className="mt-3 text-sm font-semibold text-kapwa-red-700">{error}</p>}
               <div className="mt-4 flex items-center justify-between gap-3">
                 <a href="/privacy" className="text-[13px] text-neutral-500 underline">Privacy</a>
-                <button type="submit" disabled={state === "sending"} className="inline-flex h-10 items-center bg-kapwa-brand-900 px-5 text-sm font-semibold text-white hover:bg-kapwa-brand-950 disabled:opacity-60">{state === "sending" ? "Sending…" : "Send"}</button>
+                <button type="submit" disabled={state === "sending"} className="inline-flex h-10 cursor-pointer items-center bg-kapwa-brand-900 px-5 text-sm font-semibold text-white hover:bg-kapwa-brand-950 disabled:cursor-wait disabled:opacity-60">{state === "sending" ? "Sending…" : "Send"}</button>
               </div>
             </form>
           )}
         </div>
       )}
       <button ref={toggle} type="button" onClick={() => (open ? close() : setOpen(true))} aria-expanded={open}
-        className="inline-flex h-12 items-center gap-2 border border-black/30 bg-kapwa-brand-900 px-4 text-sm font-semibold text-white shadow-[0_12px_32px_-8px_rgba(0,0,0,0.5)] hover:bg-kapwa-brand-950">
+        className="inline-flex h-12 cursor-pointer items-center gap-2 border border-black/30 bg-kapwa-brand-900 px-4 text-sm font-semibold text-white shadow-[0_12px_32px_-8px_rgba(0,0,0,0.5)] hover:bg-kapwa-brand-950">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="square" strokeLinejoin="miter" aria-hidden className="size-5"><path d="M4 5h16v11H9l-5 4z" /></svg>
         Feedback
       </button>
