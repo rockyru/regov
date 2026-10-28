@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test
+      - name: Site model schema is up to date
+        run: npx tsx scripts/schema.ts --check
+      - name: Build
+        run: npm run build
+
+      # Accessibility gate: the fictional sample site must have no serious or critical WCAG 2.2 A/AA violations.
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start the app with the sample site
+        run: |
+          npm run sample
+          npx next start -p 3000 > next.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://127.0.0.1:3000/api/health > /dev/null && exit 0; sleep 1; done
+          cat next.log; exit 1
+      - name: Accessibility (axe-core, desktop and phone)
+        run: npm run a11y -- --base http://127.0.0.1:3000
+      - name: Server log
+        if: failure()
+        run: cat next.log || true

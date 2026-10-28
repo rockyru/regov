@@ -1,19 +1,23 @@
 {
-  "name": "meta-hackaton",
+  "name": "regov",
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
   "scripts": {
-    "deploy:vps": "ssh root@72.62.255.82 'bash -s' < scripts/vps/deploy.sh",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test test/*.test.ts",
+    "schema": "tsx scripts/schema.ts",
+    "sample": "tsx scripts/sample.ts",
+    "a11y": "tsx scripts/a11y.ts",
+    "deploy:vps": "ssh root@72.62.255.82 'bash -s' < scripts/vps/deploy.sh"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1157.0",
     "@bettergov/kapwa": "^1.4.1",
-    "@cloudflare/containers": "^0.3.7",
     "@meta-sam/parser": "^0.1.0",
     "axe-core": "^4.14.0",
     "cheerio": "^1.2.0",
@@ -28,7 +32,6 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20261026.1",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -37,7 +40,6 @@
     "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
-    "typescript": "^5",
-    "wrangler": "^4.153.0"
+    "typescript": "^5"
   }
 }

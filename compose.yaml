@@ -1,0 +1,13 @@
+# Self-hosting: docker compose up -d --build (see docs/self-hosting.md)
+services:
+  regov:
+    build: .
+    env_file: .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - jobs:/app/jobs
+    shm_size: "1gb"   # Chromium needs more than Docker's 64 MB default
+    restart: unless-stopped
+volumes:
+  jobs:

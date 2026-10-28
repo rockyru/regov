@@ -1,0 +1,19 @@
+{
+  "url": "https://halimbawa.example",
+  "jobId": "sample",
+  "startedAt": "2026-10-28T00:00:00.000Z",
+  "phase": "done",
+  "done": true,
+  "error": "",
+  "events": [
+    {
+      "t": 1793145600000,
+      "type": "start",
+      "origin": "https://halimbawa.example"
+    },
+    {
+      "t": 1793145900000,
+      "type": "done"
+    }
+  ]
+}

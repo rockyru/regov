@@ -99,7 +99,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                 {list.map((r) => (
                   <tr key={r.host} className="border-b border-neutral-200 align-top">
                     <td className="py-2"><input type="checkbox" name="job" value={r.doneId ?? r.jobId} defaultChecked={r.state === "failed"} disabled={r.state === "running" || r.state === "queued"} aria-label={`Rerun ${r.host}`} className="size-4 accent-kapwa-brand-900" /></td>
-                    <td className="py-2 pr-4"><Link href={`/jobs/${r.jobId}`} className="font-semibold text-neutral-900 hover:text-kapwa-brand-900">{r.host}</Link></td>
+                    <td className="py-2 pr-4"><Link href={`/jobs/${r.jobId}`} className="font-semibold text-neutral-900 hover:text-kapwa-brand-900">{r.host}</Link>{r.doneId && <Link href={`/edit/${r.doneId}?token=${encodeURIComponent(token)}`} className="ml-3 text-[13px] text-neutral-500 underline hover:text-kapwa-brand-900">Review</Link>}</td>
                     <td className="py-2 pr-4"><span className={r.state === "failed" ? "font-semibold text-kapwa-red-700" : r.state === "done" ? "text-neutral-700" : "font-semibold text-kapwa-brand-900"}>{r.state}</span>{r.error && <span className="block max-w-md truncate text-xs text-neutral-500" title={r.error}>{r.error}</span>}</td>
                     <td className="py-2 pr-4 text-neutral-600">{r.design ?? ""}</td>
                     <td className="py-2 pr-4 tabular-nums">{r.done}</td>

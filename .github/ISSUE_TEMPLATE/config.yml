@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: An agency asking for a change or removal
+    url: mailto:hello@regov.app
+    about: Write to hello@regov.app. Removal requests from agencies are honoured without argument.
+  - name: Security problem
+    url: https://github.com/rockyru/regov/security/advisories/new
+    about: Report vulnerabilities privately, please.

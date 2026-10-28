@@ -8,7 +8,8 @@ const GUESSES = ["/sitemap.xml", "/sitemap_index.xml", "/wp-sitemap.xml"];
 const MAX_CHILDREN = 6;
 const MAX_URLS = 1000;
 
-const locs = (xml: string) => [...xml.matchAll(/<loc>\s*(?:<!\[CDATA\[)?\s*([^<\]\s]+)\s*(?:\]\]>)?\s*<\/loc>/gi)].map((m) => m[1].replace(/&amp;/g, "&"));
+/** The <loc> URLs of a sitemap or sitemap index, CDATA and &amp; unwrapped. */
+export const locs = (xml: string) => [...xml.matchAll(/<loc>\s*(?:<!\[CDATA\[)?\s*([^<\]\s]+)\s*(?:\]\]>)?\s*<\/loc>/gi)].map((m) => m[1].replace(/&amp;/g, "&"));
 
 async function read(url: string): Promise<string> {
   const r = await fetchAsBot(url, 15_000);

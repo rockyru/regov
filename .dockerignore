@@ -1,9 +1,7 @@
 node_modules
 .next
 jobs
+scratchpad
 .env
-.env.*
-.git
-.wrangler
-worker
-*.png
+.env.local
+*.tsbuildinfo

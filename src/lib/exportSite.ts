@@ -21,7 +21,7 @@ export const exportName = (site: SiteModel) => `${new URL(site.origin).host.repl
 export async function exportSite(jobId: string): Promise<{ site: SiteModel; zip: Buffer } | null> {
   const site = await loadSite(jobId);
   if (!site) return null;
-  const key = createHash("sha1").update(`${VERSION}|${site.generated_at}`).digest("hex").slice(0, 12);
+  const key = createHash("sha1").update(`${VERSION}|${site.generated_at}|${site.edited_at ?? ""}`).digest("hex").slice(0, 12);
   const file = join(JOBS_ROOT, jobId, "export", `${key}.zip`);
   const hit = await readFile(file).catch(() => null);
   if (hit) return { site, zip: hit };
@@ -93,20 +93,27 @@ async function build(site: SiteModel): Promise<Buffer> {
     }
   }
 
-  // Old address → new page, for the agency's web server when it switches over.
-  const rows: [string, string][] = [];
-  for (const p of site.pages) {
-    try { const u = new URL(p.source_url); const from = (u.pathname + u.search).replace(/^\/web\/\d+(id_)?\/https?:\/\/[^/]+/, "") || "/"; rows.push([from, p.slug === "home" ? "/" : `/${p.slug}/`]); } catch { /* not a URL */ }
-  }
-  for (const r of site.redirects ?? []) if (r.from && r.to) rows.push([r.from, r.to === "home" ? "/" : `/${r.to.replace(/^\//, "")}/`.replace(/\/\/$/, "/")]);
-  const redirects = [...new Map(rows.filter(([f, t]) => f.replace(/\/+$/, "") !== t.replace(/\/+$/, "")).map((r) => [r[0], r])).values()];
+  const redirects = redirectMap(site);
   files.set("_redirects", Buffer.from(redirects.map(([f, t]) => `${f} ${t} 301`).join("\n") + "\n"));
-  files.set("redirects.csv", Buffer.from("old_path,new_path\n" + redirects.map(([f, t]) => `"${f.replace(/"/g, '""')}","${t}"`).join("\n") + "\n"));
+  files.set("redirects.csv", Buffer.from(redirectsCsv(redirects)));
   files.set("site.json", Buffer.from(JSON.stringify(site, null, 2)));
   files.set("README.md", Buffer.from(readme(site, files.size, redirects.length, pub)));
 
   return zip([...files].sort(([a], [b]) => (a === "README.md" ? -1 : b === "README.md" ? 1 : a.localeCompare(b))).map(([name, data]) => ({ name, data })));
 }
+
+/** Old address → new page, for the agency's web server when it switches over. */
+export function redirectMap(site: SiteModel): [string, string][] {
+  const rows: [string, string][] = [];
+  for (const p of site.pages) {
+    try { const u = new URL(p.source_url); const from = (u.pathname + u.search).replace(/^\/web\/\d+(id_)?\/https?:\/\/[^/]+/, "") || "/"; rows.push([from, p.slug === "home" ? "/" : `/${p.slug}/`]); } catch { /* not a URL */ }
+  }
+  for (const r of site.redirects ?? []) if (r.from && r.to) rows.push([r.from, r.to === "home" ? "/" : `/${r.to.replace(/^\//, "")}/`.replace(/\/\/$/, "/")]);
+  return [...new Map(rows.filter(([f, t]) => f.replace(/\/+$/, "") !== t.replace(/\/+$/, "")).map((r) => [r[0], r])).values()];
+}
+
+/** The same CSV the static export ships. */
+export const redirectsCsv = (rows: [string, string][]) => "old_path,new_path\n" + rows.map(([f, t]) => `"${f.replace(/"/g, '""')}","${t}"`).join("\n") + "\n";
 
 function readme(site: SiteModel, count: number, redirects: number, pub: string) {
   const host = new URL(site.origin).host;

@@ -1,0 +1,673 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://regov.app/schema/site-model.v1.json",
+  "title": "RE:GOV site model",
+  "description": "A rebuilt government website: its information architecture, every page as typed content blocks, and where each came from. Every site in this format is an unofficial concept.",
+  "type": "object",
+  "properties": {
+    "site_kind": {
+      "type": "string",
+      "enum": [
+        "national_agency",
+        "regional_office",
+        "attached_agency",
+        "goc_corporation",
+        "constitutional_body",
+        "legislature",
+        "judiciary",
+        "embassy",
+        "province",
+        "city_municipality",
+        "barangay",
+        "university",
+        "school",
+        "hospital",
+        "research_institute",
+        "other"
+      ],
+      "description": "what kind of government body this site belongs to"
+    },
+    "locality": {
+      "type": "object",
+      "properties": {
+        "province": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "province",
+        "region",
+        "city"
+      ],
+      "description": "where it is; empty strings if unknown or national"
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "official",
+              "hotline",
+              "barangay",
+              "program",
+              "campus",
+              "unit",
+              "service_window",
+              "facility"
+            ],
+            "description": "official = elected officials first (mayor/governor/captain, vice, council members), then heads of office; detail is the exact position; hotline = emergency/office number; barangay = component barangay or LGU; program = degree/course/training program; campus = campus or branch; unit = college, department, division, office; service_window = frontline service with requirements/fees; facility = hospital ward, lab, library, museum"
+          },
+          "name": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string",
+            "description": "position for an official; number for a hotline; level/unit for a program; address for a campus; one line otherwise"
+          },
+          "slug": {
+            "type": "string",
+            "description": "page slug with more about it, or empty"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "detail",
+          "slug"
+        ]
+      },
+      "description": "every official, hotline, barangay, program, campus, unit, service window and facility found on the pages; nothing invented"
+    },
+    "agency": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "short_name": {
+          "type": "string"
+        },
+        "tagline": {
+          "type": "string",
+          "description": "one line, citizen-facing: a promise, mandate or welcome. Never 'official website of ...' or any claim of being official"
+        },
+        "description": {
+          "type": "string",
+          "description": "2-3 sentences about the agency"
+        },
+        "parent": {
+          "type": "string",
+          "description": "e.g. Republic of the Philippines, or parent department"
+        }
+      },
+      "required": [
+        "name",
+        "short_name",
+        "tagline",
+        "description",
+        "parent"
+      ]
+    },
+    "nav": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "1-2 words, e.g. Services, Offices, Laws, About"
+          },
+          "slug": {
+            "type": "string",
+            "description": "landing page slug for this section, or empty"
+          },
+          "description": {
+            "type": "string",
+            "description": "one line shown in the dropdown explaining what citizens find here"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "descriptive, 2-4 words, e.g. 'Memorandum circulars', 'Board of Directors', 'Chairman's corner'; never a single vague word"
+                },
+                "slug": {
+                  "type": "string",
+                  "description": "page slug; empty only for a heading-only group"
+                },
+                "group": {
+                  "type": "string",
+                  "description": "column heading inside the dropdown this link sits under, e.g. 'Register', 'Comply', 'Learn'; empty if the dropdown has no columns"
+                }
+              },
+              "required": [
+                "label",
+                "slug",
+                "group"
+              ]
+            },
+            "description": "max 9; repetitive series (regions, years, issues) collapse into one hub link"
+          }
+        },
+        "required": [
+          "label",
+          "slug",
+          "description",
+          "children"
+        ]
+      },
+      "description": "Home plus 4-6 sections. Services and what citizens come for first; About/legal last"
+    },
+    "hubs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "hub page slug"
+          },
+          "heading": {
+            "type": "string"
+          },
+          "slugs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "slug",
+          "heading",
+          "slugs"
+        ]
+      },
+      "description": "pages not in nav, grouped under the hub page that lists them (e.g. all regional news pages under the extension offices page)"
+    },
+    "popular_services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "slug"
+        ]
+      },
+      "description": "4-6 things citizens most often come for"
+    },
+    "home_sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "heading": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "slugs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "heading",
+          "description",
+          "slugs"
+        ]
+      },
+      "description": "2-4 curated homepage sections pointing at page slugs"
+    },
+    "footer": {
+      "type": "object",
+      "properties": {
+        "quick_links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "descriptive, 2-4 words, e.g. 'Memorandum circulars', 'Board of Directors', 'Chairman's corner'; never a single vague word"
+              },
+              "slug": {
+                "type": "string",
+                "description": "page slug; empty only for a heading-only group"
+              },
+              "group": {
+                "type": "string",
+                "description": "column heading inside the dropdown this link sits under, e.g. 'Register', 'Comply', 'Learn'; empty if the dropdown has no columns"
+              }
+            },
+            "required": [
+              "label",
+              "slug",
+              "group"
+            ]
+          }
+        },
+        "address": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "hours": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "quick_links",
+        "address",
+        "email",
+        "phone",
+        "hours"
+      ]
+    },
+    "redirects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ]
+      },
+      "description": "old paths that should redirect to a new slug when pages were merged"
+    },
+    "site_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "site-wide migration findings"
+    },
+    "jobId": {
+      "type": "string"
+    },
+    "origin": {
+      "type": "string",
+      "description": "origin of the original site, e.g. https://www.example.gov.ph"
+    },
+    "generated_at": {
+      "type": "string",
+      "description": "ISO time the rebuild was generated"
+    },
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "clean page title without the site name suffix"
+          },
+          "page_type": {
+            "type": "string",
+            "enum": [
+              "home",
+              "about",
+              "service",
+              "news",
+              "contact",
+              "directory",
+              "person",
+              "legal",
+              "faq",
+              "generic"
+            ]
+          },
+          "summary": {
+            "type": "string",
+            "description": "1-2 sentence plain-language summary for citizens"
+          },
+          "section": {
+            "type": "string",
+            "description": "top-level section this page belongs to, e.g. About Us, Services"
+          },
+          "hero": {
+            "type": "object",
+            "properties": {
+              "heading": {
+                "type": "string"
+              },
+              "subheading": {
+                "type": "string"
+              },
+              "primary_cta_label": {
+                "type": "string"
+              },
+              "primary_cta_href": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "heading",
+              "subheading",
+              "primary_cta_label",
+              "primary_cta_href"
+            ]
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "richtext",
+                    "list",
+                    "cards",
+                    "people",
+                    "contact",
+                    "faq",
+                    "table",
+                    "links",
+                    "timeline",
+                    "image",
+                    "callout",
+                    "steps"
+                  ]
+                },
+                "heading": {
+                  "type": "string"
+                },
+                "body_markdown": {
+                  "type": "string",
+                  "description": "prose for this block in Markdown; for tables, a GFM table; empty if items carry everything"
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "href": {
+                        "type": "string",
+                        "description": "link target if any, else empty"
+                      },
+                      "meta": {
+                        "type": "string",
+                        "description": "date, position, phone, or other short secondary text; empty if none"
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "description",
+                      "href",
+                      "meta"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "type",
+                "heading",
+                "body_markdown",
+                "items"
+              ]
+            },
+            "description": "ALL meaningful content of the page in reading order, nothing dropped"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "fil",
+              "mixed"
+            ]
+          },
+          "a11y_issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "accessibility or usability problems visible in the old page"
+          },
+          "migration_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "content that is image-only, outdated, broken, or needs a human"
+          },
+          "slug": {
+            "type": "string",
+            "description": "path of the page in the rebuilt site; \"home\" for the homepage"
+          },
+          "source_url": {
+            "type": "string",
+            "description": "the original page this one was rebuilt from"
+          },
+          "source_screenshot": {
+            "type": "string",
+            "description": "screenshot of the original page, relative to the job folder"
+          },
+          "document": {
+            "description": "set on pages built from a linked document (a Citizen's Charter PDF) rather than a crawled page",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "page_type",
+          "summary",
+          "section",
+          "hero",
+          "blocks",
+          "language",
+          "a11y_issues",
+          "migration_notes",
+          "slug",
+          "source_url",
+          "source_screenshot"
+        ]
+      }
+    },
+    "news": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "excerpt": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "date",
+          "excerpt",
+          "href"
+        ]
+      }
+    },
+    "assets": {
+      "type": "object",
+      "properties": {
+        "logo": {
+          "type": "string",
+          "description": "the agency's seal or logo, relative to the job folder"
+        },
+        "logo_box": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "logo width and height in px"
+        },
+        "band": {
+          "description": "header illustration",
+          "type": "string"
+        },
+        "cover": {
+          "type": "string"
+        },
+        "band_brief": {
+          "description": "the art brief the illustration was painted from",
+          "type": "string"
+        }
+      },
+      "required": [
+        "logo",
+        "logo_box"
+      ]
+    },
+    "design": {
+      "description": "from assess.ts; missing on sites built before the design check, treated as redesign",
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "redesign",
+            "refine"
+          ],
+          "description": "refine keeps a modern site's identity; redesign uses the Kapwa look"
+        },
+        "score": {
+          "type": "number"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "primary": {
+          "type": "string",
+          "description": "the original site's primary colour"
+        },
+        "hero": {
+          "type": "string"
+        },
+        "art": {
+          "description": "art-directed homepage (src/pipeline/artDirect.ts)"
+        }
+      },
+      "required": [
+        "mode",
+        "score",
+        "reason",
+        "primary"
+      ]
+    },
+    "tokens": {
+      "description": "model tokens the rebuild used",
+      "type": "number"
+    },
+    "edited_at": {
+      "description": "ISO time a person last edited this file in the review editor",
+      "type": "string"
+    },
+    "reviewed": {
+      "description": "page slug → ISO time a person marked the page as checked against the original",
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "portraits": {
+      "description": "officials' photos keyed by personKey; added at load time, not stored",
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string"
+          },
+          "alt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "src",
+          "alt"
+        ]
+      }
+    },
+    "lang": {
+      "description": "set at render time on the Filipino edition, not stored",
+      "type": "string",
+      "enum": [
+        "en",
+        "fil"
+      ]
+    }
+  },
+  "required": [
+    "site_kind",
+    "locality",
+    "entities",
+    "agency",
+    "nav",
+    "hubs",
+    "popular_services",
+    "home_sections",
+    "footer",
+    "redirects",
+    "site_notes",
+    "jobId",
+    "origin",
+    "generated_at",
+    "pages",
+    "news",
+    "assets"
+  ]
+}
