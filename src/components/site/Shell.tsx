@@ -300,6 +300,7 @@ export function PreviewBar({ site, currentSource }: { site: SiteModel; currentSo
         <span className="ml-auto flex items-center gap-3 sm:gap-4 shrink-0">
           {currentSource && <a className="underline" href={currentSource} target="_blank" rel="noreferrer">Official site ↗</a>}
           <Link className="underline" href={`/report/${site.jobId}`}>Report</Link>
+          <Link className="underline" href={`/report/${site.jobId}#feedback`}>Feedback</Link>
           <Link className="underline hidden sm:inline" href="/">All jobs</Link>
         </span>
       </div>

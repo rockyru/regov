@@ -105,3 +105,18 @@ body { @apply bg-white text-neutral-900; }
 @media (prefers-reduced-motion: reduce) {
   [data-reveal], [data-reveal][data-stagger] > * { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
+
+/* Tailwind v4 leaves buttons with the default arrow; every clickable control gets the hand, here and on rebuilt sites. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  select:not(:disabled),
+  label:has(> input[type="checkbox"]:not(:disabled)),
+  label:has(> input[type="radio"]:not(:disabled)),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled),
+  input[type="submit"]:not(:disabled) {
+    cursor: pointer;
+  }
+}

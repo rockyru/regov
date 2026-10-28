@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FeedbackBox } from "./FeedbackBox";
 
 export const eyebrow = "text-[11px] font-bold uppercase tracking-[0.18em]";
 export const nn = (i: number) => String(i + 1).padStart(2, "0");
@@ -53,6 +54,7 @@ export function AppHeader({ crumb }: { crumb?: string }) {
         </nav>
       </div>
       <AppBottomNav />
+      <FeedbackBox />
     </header>
   );
 }
