@@ -44,6 +44,7 @@ const FOOTER_COLS: { heading: string; links: { label: string; href: string; ext?
     { label: "Report an issue", href: "https://github.com/rockyru/regov/issues", ext: true },
     { label: "Privacy", href: "/privacy" },
     { label: "Terms of use", href: "/terms" },
+    { label: "About the crawler", href: "/bot" },
   ] },
   { heading: "Built with", links: [
     { label: "Meta Model API · Muse Spark 1.3", href: "https://ai.meta.com", ext: true },

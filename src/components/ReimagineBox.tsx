@@ -9,13 +9,15 @@ const INITIAL: Record<string, (url: string, wait: number) => string> = {
   invalid: () => "That doesn't look like a website address.",
   ratelimit: (_u, w) => `You have started a few runs already. Please wait about ${w >= 90 ? `${Math.ceil(w / 60)} minutes` : `${w} seconds`} before starting another.`,
   busy: () => "The agent is busy right now and its queue is full. Please try again in a few minutes, or browse the showcase meanwhile.",
-  quota: () => "Today's batch of rebuilds is used up. The agent takes new sites again after midnight Manila time. Browse the showcase meanwhile.",
+  quota: () => "Today's batch of rebuilds is used up. The agent takes new sites again at 8:00 AM Philippine time. Browse the showcase meanwhile.",
+  robots: (u) => `${u} asks crawlers not to visit it in its robots.txt, so RE:GOV will not rebuild it.`,
+  optout: (u) => `${u} is on RE:GOV's do-not-crawl list (its owner asked, or its terms forbid it), so it will not be rebuilt.`,
   paused: () => "New runs are paused for now while the current batch finishes. Browse the showcase meanwhile, or check back later.",
 };
 
 export function ReimagineBox({ done = [], initialError = "", initialUrl = "", initialWait = 0 }: { done?: string[]; initialError?: string; initialUrl?: string; initialWait?: number }) {
   const examples = EXAMPLES.filter((e) => !done.includes(e)).slice(0, 4);
-  const [url, setUrl] = useState(initialError === "ratelimit" || initialError === "busy" || initialError === "paused" || initialError === "quota" ? "" : initialUrl);
+  const [url, setUrl] = useState(["ratelimit", "busy", "paused", "quota", "robots", "optout"].includes(initialError) ? "" : initialUrl);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(INITIAL[initialError]?.(initialUrl, initialWait) ?? "");
   const check = (v: string) => {

@@ -7,6 +7,7 @@ import { AppHeader, AppFooter, SectionHead, eyebrow } from "@/components/AppShel
 import { Reveal } from "@/components/Reveal";
 import { QueueStrip } from "@/components/QueueStrip";
 import { queueStrip } from "@/lib/queueStrip";
+import { runQueue } from "@/lib/runQueue";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
   const all = await listJobs();
   const jobs = all.filter((j) => j.site);
   let n = 1;
+  const { today } = runQueue.snapshot();
+  const left = Math.max(0, today.max - today.used);
   const featuredJob = jobs.find((j) => j.id === FEATURED);
   const featured = featuredJob ? await loadSite(FEATURED) : null;
   const featuredShot = featuredJob?.crawl?.pages[0]?.viewportShotFile;
@@ -42,7 +45,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
           <div className="mx-auto mt-10 max-w-2xl">
             <ReimagineBox done={jobs.map((j) => new URL(j.crawl!.origin).host.replace(/^www\./, ""))} initialError={error} initialUrl={url} initialWait={Number(wait) || 0} />
           </div>
-          <p className="mx-auto mt-6 max-w-2xl text-[13px] text-neutral-500">Government domains only: agencies, LGUs, state universities, hospitals. Sites behind bot protection are rebuilt from their Wayback Machine archive. Output is an unofficial concept.</p>
+          {/* Daily allowance notice: resets at 8:00 AM Manila (src/lib/runQueue.ts) */}
+          <p role="status" className="mx-auto mt-6 inline-flex max-w-2xl flex-wrap items-center justify-center gap-x-3 gap-y-1 border border-kapwa-brand-900/20 bg-white/80 px-4 py-2 text-sm text-neutral-700">
+            <span className="font-semibold text-neutral-900">Up to {today.max} new sites a day</span>
+            <span aria-hidden className="hidden text-neutral-400 sm:inline">·</span>
+            <span>Resets daily at <span className="font-semibold text-neutral-900">8:00 AM</span> Philippine time</span>
+            <span aria-hidden className="hidden text-neutral-400 sm:inline">·</span>
+            <span className={left ? "font-semibold text-kapwa-green-800" : "font-semibold text-kapwa-red-700"}>{left ? `${left} left today` : "Used up until 8:00 AM"}</span>
+          </p>
+          <p className="mx-auto mt-4 max-w-2xl text-[13px] text-neutral-500">Government domains only: agencies, LGUs, state universities, hospitals. Sites behind bot protection are rebuilt from their Wayback Machine archive. Output is an unofficial concept.</p>
           </Reveal>
         </section>
 

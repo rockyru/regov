@@ -2,6 +2,7 @@
 // bare name (bir.gov.ph, gov.ph) and only work as www., or the other way round; container DNS
 // also misses now and then. Resolve first, retry a miss once, then ask the server for a header.
 import { lookup } from "node:dns/promises";
+import { UA } from "./robots";
 
 export interface Reach { url: string; note?: string; resolvable: boolean; answered: boolean }
 
@@ -18,7 +19,7 @@ async function resolves(host: string): Promise<boolean> {
 
 async function answers(url: string): Promise<boolean> {
   // Any HTTP response counts, even 403: the crawler's bot-protection path handles those.
-  try { await fetch(url, { method: "HEAD", redirect: "manual", signal: AbortSignal.timeout(12_000), headers: { "user-agent": "Mozilla/5.0 (compatible; RE:GOV crawler)" } }); return true; } catch { return false; }
+  try { await fetch(url, { method: "HEAD", redirect: "manual", signal: AbortSignal.timeout(12_000), headers: { "user-agent": UA } }); return true; } catch { return false; }
 }
 
 export async function pickReachable(startUrl: string): Promise<Reach> {

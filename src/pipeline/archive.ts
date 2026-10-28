@@ -1,5 +1,5 @@
 /** Wayback Machine helpers: find a snapshot and translate archive URLs. */
-const UA = "Mozilla/5.0 (compatible; SiteResurrectionBot/0.1)";
+import { UA } from "./robots";
 const ARCHIVE_RE = /^https?:\/\/web\.archive\.org\/web\/(\d{4,14})(?:[a-z]{2}_)?\/(.+)$/i;
 
 export const BLOCKED_TITLE = /just a moment|security verification|attention required|access denied|verify you are human|checking your browser|403 forbidden|cloudflare/i;

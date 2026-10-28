@@ -6,6 +6,7 @@ import { slugOf } from "@/pipeline/slug";
 import { fixPageTitles } from "@/pipeline/titles";
 import { withCharter } from "./charterPages";
 import { personKey } from "./people";
+import { optedOut } from "./optout";
 
 export const JOBS_ROOT = resolve(process.cwd(), "jobs");
 
@@ -75,7 +76,8 @@ export async function listJobs() {
       : hasSite ? (await stat(join(dir, "site.json"))).mtimeMs : mtime;
     return { id, crawl, site, status, mtime, at };
   }));
-  return jobs.filter((j) => j.crawl || j.status).sort((a, b) => b.at - a.at);
+  // Opted-out sites (src/lib/optout.ts) drop out of every listing.
+  return jobs.filter((j) => (j.crawl || j.status) && !optedOut(j.crawl?.origin ?? j.status?.url ?? "")).sort((a, b) => b.at - a.at);
 }
 
 const OFFICIAL_LEAD = /^\s*(the\s+)?official\s+(web\s?site|site|web\s?portal|portal|online\s+portal|home\s?page|page)\s+(of|for)\s+(the\s+)?/i;
@@ -104,12 +106,24 @@ export async function loadSite(jobId: string): Promise<SiteModel | null> {
   await ensureRestored();
   let site: SiteModel;
   try { site = scrubOfficial(JSON.parse(await readFile(join(JOBS_ROOT, jobId, "site.json"), "utf8"))); } catch { return null; }
+  if (optedOut(site.origin)) return null; // taken down at the agency's request
   try {
     const p = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/portraits.json"), "utf8")) as { people: { name: string; file: string; alt: string }[] };
     const v = encodeURIComponent(site.generated_at);
     site.portraits = Object.fromEntries(p.people.map((x) => [personKey(x.name), { src: `/api/jobs/${jobId}/${x.file}?v=${v}`, alt: x.alt }]));
   } catch { /* no portraits for this site */ }
   return withCharter(site, join(JOBS_ROOT, jobId));
+}
+
+/** True when the site behind this job is on the opt-out list (its screenshots and assets are withheld too). */
+export async function jobOptedOut(jobId: string): Promise<boolean> {
+  for (const f of ["crawl.json", "status.json"]) {
+    try {
+      const j = JSON.parse(await readFile(join(JOBS_ROOT, jobId, f), "utf8")) as { origin?: string; url?: string };
+      return optedOut(j.origin ?? j.url ?? "");
+    } catch { /* try the next file */ }
+  }
+  return false;
 }
 
 export function findPage(site: SiteModel, slug: string): SitePage | undefined {

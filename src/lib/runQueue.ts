@@ -8,7 +8,8 @@ import { existsSync, mkdirSync, openSync, readdirSync, readFileSync, statSync, w
 import { resolve } from "node:path";
 
 export interface QueueInfo { position: number; of: number; running: number }
-export interface RunStatusFile { url: string; jobId: string; startedAt: string; phase: string; events: unknown[]; done: boolean; error: string; queue?: QueueInfo }
+export type Refusal = { reason: "terms" | "robots" | "optout"; quote?: string; urls?: string[] };
+export interface RunStatusFile { url: string; jobId: string; startedAt: string; phase: string; events: unknown[]; done: boolean; error: string; queue?: QueueInfo; refused?: Refusal }
 interface Job { jobId: string; url: string; host: string; max: string; enqueuedAt: number; ip: string }
 
 const num = (k: string, d: number) => { const v = Number(process.env[k]); return Number.isFinite(v) && v > 0 ? v : d; };
@@ -26,11 +27,16 @@ const ROOT = process.cwd();
 export const IS_PROD = process.env.NODE_ENV === "production";
 const JOBS = resolve(ROOT, "jobs");
 const hostKey = (h: string) => h.toLowerCase().replace(/^www\./, "");
-/** Epoch ms of the most recent midnight in Asia/Manila (UTC+8, no DST). */
-export function manilaMidnight(now = Date.now()): number {
-  const DAY = 86_400_000, OFFSET = 8 * 3_600_000;
-  return Math.floor((now + OFFSET) / DAY) * DAY - OFFSET;
+/** The daily run allowance resets at this hour, Asia/Manila (UTC+8, no DST). */
+export const RESET_HOUR = 8;
+const DAY = 86_400_000, HOUR = 3_600_000;
+/** Epoch ms of the most recent reset (8:00 AM Manila). */
+export function quotaWindowStart(now = Date.now()): number {
+  const shift = (8 - RESET_HOUR) * HOUR; // Manila offset minus the reset hour
+  return Math.floor((now + shift) / DAY) * DAY - shift;
 }
+/** Epoch ms of the next reset. */
+export const nextQuotaReset = (now = Date.now()) => quotaWindowStart(now) + DAY;
 export const LOST = "The agent restarted while this run was in progress, so the run was lost. Please start it again.";
 
 class RunQueue {
@@ -103,15 +109,16 @@ class RunQueue {
     return best ? { jobId: best.jobId, state: "done" } : null;
   }
 
-  /** Runs started since midnight Manila time, counted from status files (survives restarts). */
+  /** Runs started since the last 8:00 AM Manila reset, counted from status files (survives restarts). */
   usedToday(): number {
-    const start = manilaMidnight();
+    const start = quotaWindowStart();
     let n = 0;
     try {
       for (const id of readdirSync(JOBS)) {
         try {
           const s = JSON.parse(readFileSync(resolve(JOBS, id, "status.json"), "utf8")) as RunStatusFile;
-          if (new Date(s.startedAt).getTime() >= start) n++;
+          // Runs the site's own rules refused (terms, robots.txt, opt-out) do not use up the allowance.
+          if (new Date(s.startedAt).getTime() >= start && !s.refused) n++;
         } catch { /* not a job */ }
       }
     } catch { /* no jobs dir */ }

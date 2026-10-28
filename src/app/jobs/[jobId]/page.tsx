@@ -2,7 +2,7 @@ import Link from "next/link";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { JOBS_ROOT, loadSite, settle, typicalRunMs } from "@/lib/jobs";
-import { runQueue, LIMITS, type QueueInfo } from "@/lib/runQueue";
+import { runQueue, type Refusal, LIMITS, type QueueInfo } from "@/lib/runQueue";
 import { AppHeader, AppFooter, SectionHead, eyebrow, btn, nn } from "@/components/AppShell";
 import { LiveRefresh } from "@/components/LiveRefresh";
 import { STEPS, progressOf } from "@/lib/progress";
@@ -10,7 +10,7 @@ import { fmtMs, fmtBytes } from "@/lib/scores";
 
 export const dynamic = "force-dynamic";
 type Ev = { t: number; type: string; [k: string]: unknown };
-type Status = { url: string; phase: string; events: Ev[]; done: boolean; error: string; startedAt: string; queue?: QueueInfo };
+type Status = { url: string; phase: string; events: Ev[]; done: boolean; error: string; startedAt: string; queue?: QueueInfo; refused?: Refusal };
 
 
 const mins = (ms: number) => Math.max(1, Math.round(ms / 60_000));
@@ -83,7 +83,8 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
   const leftMs = Math.max(0, typical * (1 - pct / 100));
   // A job at place p starts when p slots have freed up; running jobs are assumed half done.
   const waitMs = queued ? (Math.ceil(queued.position / LIMITS.concurrency) - 0.5) * typical : 0;
-  const state = queued ? "Waiting in line" : live ? "Reimagining" : status?.error ? "Stopped" : "Reimagined";
+  const refused = status?.refused;
+  const state = queued ? "Waiting in line" : live ? "Reimagining" : refused ? "Not rebuilt" : status?.error ? "Stopped" : "Reimagined";
   const existingNote = existing === "done" ? "This site was reimagined recently, so the agent is showing that run instead of starting another."
     : existing === "running" ? "The agent is already working on this site. You are watching that run."
     : existing === "queued" ? "This site is already in the queue. You are watching that run." : "";
@@ -96,7 +97,7 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
       <main className="flex-1">
         <div className="container-gov pt-10 pb-16">
           {/* Title block */}
-          <p className={`${eyebrow} flex items-center gap-3 ${status?.error ? "text-kapwa-red-700" : "text-kapwa-brand-900"}`}>
+          <p className={`${eyebrow} flex items-center gap-3 ${refused ? "text-neutral-600" : status?.error ? "text-kapwa-red-700" : "text-kapwa-brand-900"}`}>
             {live && <span className="size-2 bg-kapwa-brand-600 animate-pulse" />}{state}{live && <span className="font-medium normal-case tracking-normal text-neutral-500 tabular-nums">· {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, "0")}{!queued && ` · ${pct}% · ${leftMs < 60_000 ? "almost done" : `about ${mins(leftMs)} min left`}`}</span>}
           </p>
           <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 pb-2">
@@ -198,7 +199,27 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
             </section>
           )}
 
-          {status?.error && (
+          {/* The site's own rules said no: explain it plainly, with the clause, and offer no retry. */}
+          {refused && (
+            <section className="mt-10 border-l-4 border-kapwa-yellow-400 bg-kapwa-yellow-50 p-6 sm:p-8">
+              <p className={`${eyebrow} text-neutral-600`}>Not rebuilt · the site&rsquo;s rules</p>
+              <h2 className="mt-2 text-2xl font-display font-normal tracking-tight text-neutral-900">{refused.reason === "terms" ? "This site’s terms of use don’t allow it" : refused.reason === "robots" ? "This site asks crawlers to stay away" : "This site is on the do-not-crawl list"}</h2>
+              <p className="mt-3 max-w-3xl text-neutral-800">{refused.reason === "terms"
+                ? `Before collecting any page, the agent read ${host}’s terms of use. They forbid ${status!.error.includes("automated") ? "automated access to the site" : "republishing its content without permission"}, so RE:GOV stopped here. No pages were collected and nothing was published.`
+                : refused.reason === "robots"
+                ? `${host}’s robots.txt asks crawlers not to visit it, so RE:GOV stopped before collecting any page. It does not rebuild such sites from the Wayback Machine either.`
+                : `${host} is on RE:GOV’s do-not-crawl list, either because its owner asked or because its terms of use forbid what RE:GOV does. No pages were collected.`}</p>
+              {refused.quote && <blockquote className="mt-4 max-w-3xl border-l-2 border-neutral-400 pl-4 text-neutral-700 italic">&ldquo;{refused.quote}&rdquo;</blockquote>}
+              <p className="mt-4 text-sm text-neutral-600">This run did not use up today&rsquo;s allowance.</p>
+              <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+                <Link href="/#reimagine" className={btn.primary}>Try another address →</Link>
+                {refused.urls?.[0] && <a href={refused.urls[0]} target="_blank" rel="noreferrer" className="text-sm font-semibold text-kapwa-brand-900 hover:underline">Read the site&rsquo;s terms ↗</a>}
+                <Link href="/bot" className="text-sm font-semibold text-kapwa-brand-900 hover:underline">How RE:GOV follows site rules</Link>
+              </div>
+            </section>
+          )}
+
+          {status?.error && !refused && (
             <section className="mt-10 border-l-4 border-kapwa-red-600 bg-kapwa-red-50 p-6">
               <h2 className="font-bold text-neutral-900">RE:GOV could not finish this site</h2>
               <p className="mt-1 text-neutral-800">{status.error}</p>

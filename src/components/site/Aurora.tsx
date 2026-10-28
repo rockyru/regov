@@ -21,7 +21,8 @@ const anchor = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replac
 const glass = "border border-white bg-white/70 shadow-[0_30px_80px_-45px_color-mix(in_oklab,var(--au-deep)_55%,transparent)] backdrop-blur-xl";
 // Brand colour into a deeper shade of it: both ends stay well above 4.5:1 on the pale canvas.
 const grad = "bg-[linear-gradient(95deg,var(--au-deep)_0%,color-mix(in_oklab,var(--au-deep)_55%,var(--au-ink))_100%)] bg-clip-text text-transparent";
-const pad = "px-4 sm:px-8 lg:pl-[200px] lg:pr-[216px]";
+// The wide drafting margins start at xl; at 1024-1279px they left the text too narrow.
+const pad = "px-4 sm:px-8 lg:pl-[150px] lg:pr-16 xl:pl-[200px] xl:pr-[216px]";
 
 export function auroraVars(site: SiteModel): CSSProperties {
   const p = site.design!.art!.palette;
@@ -66,16 +67,16 @@ export function AuroraNav({ site, here, overlay }: { site: SiteModel; here: stri
             ? <img src={logo} alt="" className="h-9 w-auto max-w-[84px] object-contain" />
             : <span className="font-bold">{site.agency.short_name}</span>}
         </Link>
-        <nav aria-label="Primary" className="hidden flex-1 items-center gap-12 pl-[100px] text-[19px] tracking-[-0.01em] lg:flex">
+        <nav aria-label="Primary" className="hidden flex-1 items-center gap-8 whitespace-nowrap pl-12 text-[17px] tracking-[-0.01em] [overflow-wrap:normal] lg:flex xl:gap-12 xl:pl-[100px] xl:text-[19px]">
           {items.slice(0, 5).map((n) => <Link key={n.label} href={n.href} className="hover:text-[var(--au-deep)]">{n.label}</Link>)}
         </nav>
         <div className="ml-auto flex items-stretch">
           <a href={langHref(fil ? "en" : "fil", here)} lang={fil ? "en" : "fil"} hrefLang={fil ? "en" : "fil"} className="hidden items-center px-6 text-[15px] hover:text-[var(--au-deep)] sm:flex">{fil ? "English" : "Filipino"}</a>
           <AuroraMenu {...menuProps(site, here)} />
-          <Link href={navHref(jobId, has(art.corner_cta.slug) ? art.corner_cta.slug : "home")} className="flex items-center gap-3 bg-white px-5 text-sm font-semibold uppercase tracking-[0.02em] hover:bg-[var(--au-haze)] sm:px-8 lg:w-[320px] lg:justify-center lg:text-[19px]">{art.corner_cta.label}<span aria-hidden>↓</span></Link>
+          <Link href={navHref(jobId, has(art.corner_cta.slug) ? art.corner_cta.slug : "home")} className="flex items-center gap-3 bg-white px-5 text-sm font-semibold uppercase tracking-[0.02em] hover:bg-[var(--au-haze)] sm:px-8 lg:w-[240px] lg:justify-center lg:whitespace-nowrap xl:w-[320px] xl:text-[19px]">{art.corner_cta.label}<span aria-hidden>↓</span></Link>
         </div>
       </div>
-      <div aria-hidden className="pointer-events-none absolute bottom-0 left-[100px] right-[320px] hidden h-px bg-[var(--au-ink)]/15 lg:block">
+      <div aria-hidden className="pointer-events-none absolute bottom-0 left-[100px] right-[240px] hidden h-px xl:right-[320px] bg-[var(--au-ink)]/15 lg:block">
         <span className="absolute -left-[4px] -top-[4px] size-[9px] rounded-full bg-[var(--au-ink)]" />
       </div>
       <MobileNav nav={site.nav} jobId={jobId} lang={site.lang} />
@@ -117,18 +118,20 @@ function Masthead({ site, here }: { site: SiteModel; here: string }) {
       <div aria-hidden className="absolute inset-0 hidden bg-[linear-gradient(90deg,color-mix(in_oklab,var(--au-canvas)_25%,transparent)_0%,color-mix(in_oklab,var(--au-canvas)_55%,transparent)_30%,transparent_55%)] lg:block" />
       <AuroraNav site={site} here={here} overlay />
 
-      <div className={`relative pt-[470px] sm:pt-[610px] lg:pb-24 lg:pt-[230px] ${pad}`}>
+      <div className={`relative pt-[470px] sm:pt-[610px] lg:pb-24 lg:pt-[200px] xl:pt-[230px] ${pad}`}>
         <p className="sr-only">{site.agency.parent}</p>
-        <h1 className="max-w-[13ch] text-[clamp(3rem,6.6vw,7rem)] font-medium leading-[0.95] tracking-[-0.045em] text-[var(--au-ink)]">
-          {sentences.join(" ")}{tail && <> <span className="whitespace-nowrap text-[var(--au-deep)]">{tail}</span></>}
-        </h1>
-
+        {/* Headline with the lede beside it, bottom-aligned */}
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,14rem)] lg:items-end lg:gap-12">
+          <h1 className="text-[clamp(3rem,5.3vw,6.6rem)] font-medium leading-[0.95] tracking-[-0.045em] text-[var(--au-ink)] [overflow-wrap:normal]">
+            {sentences.join(" ")}{tail && <> <span className="whitespace-nowrap text-[var(--au-deep)]">{tail}</span></>}
+          </h1>
+          <p className="text-xl font-medium leading-[1.25] tracking-[-0.01em] text-[var(--au-ink)]/80 lg:mb-2 lg:border-l lg:border-[var(--au-ink)]/20 lg:pl-6">{art.lede}</p>
+        </div>
 
         <div className="mt-12 grid gap-10 lg:mt-28 lg:grid-cols-[minmax(0,1fr)_minmax(0,min(818px,52vw))]">
           <div className="flex flex-col">
-            <p className="max-w-[13em] text-xl font-medium leading-[1.2] tracking-[-0.01em] lg:text-[23px]">{art.lede}</p>
-            <div className="relative mt-10 lg:mt-auto lg:pt-16">
-              <Rule className="-ml-[100px] hidden w-[100vw] lg:block" />
+            <div className="relative lg:mt-auto lg:pt-16">
+              <Rule className="-ml-[50px] hidden w-[100vw] lg:block xl:-ml-[100px]" />
               <p className="lg:mt-14">
                 <span className="block whitespace-nowrap text-7xl font-normal leading-none tracking-[-0.05em] lg:text-[5.4rem]">{art.stat.value}</span>
                 <span className="mt-3 block text-lg">{art.stat.label}</span>
@@ -188,7 +191,7 @@ function HomeSection({ site, b, n, last }: { site: SiteModel; b: Block_; n: numb
   if (b.type === "callout") {
     return (
       <section id={id} className={`relative py-24 lg:py-32 ${pad}`}>
-        <Rule className="mb-16 -ml-[100px] hidden w-[calc(100%+316px)] lg:block" />
+        <Rule className="mb-16 -ml-[50px] hidden w-[calc(100%+114px)] lg:block xl:-ml-[100px] xl:w-[calc(100%+316px)]" />
         <p className="max-w-[22ch] text-[clamp(2rem,4.4vw,4.2rem)] font-normal leading-[1.02] tracking-[-0.045em]"><span className={grad}>{b.heading}</span></p>
         {b.body_markdown && <div className="mt-8 max-w-2xl text-xl leading-relaxed text-[var(--au-ink)]/75"><Markdown text={b.body_markdown} jobId={jobId} origin={site.origin} /></div>}
       </section>

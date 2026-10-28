@@ -17,6 +17,7 @@ import type { CharterFile } from "@/pipeline/charter";
 import type { PortraitFile } from "@/pipeline/portraits";
 import type { VerifyFile } from "@/pipeline/verify";
 import type { EvidenceFile } from "@/pipeline/evidence";
+import type { TermsResult } from "@/pipeline/terms";
 import { loadUsage, type UsageFile } from "@/lib/usage";
 import { STEP_LABEL, usd, totalOf } from "@/lib/usageLabels";
 
@@ -64,6 +65,31 @@ function Sec({ n, title, aside, children }: { n: number; title: string; aside?: 
       </div>
       <div className="min-w-0">{children}</div>
     </section>
+  );
+}
+
+type RobotsEvent = { state: "rules" | "none" | "unreachable"; delayMs: number };
+
+/** What the site's own rules said before anything was collected: robots.txt and its terms of use (src/pipeline/terms.ts). */
+function SiteRulesSection({ n, robots, terms, archived }: { n: number; robots: RobotsEvent | null; terms: TermsResult | null; archived: boolean }) {
+  const before = "Not recorded: this site was rebuilt before RE:GOV began checking site rules (October 28, 2026).";
+  const robotsText = !robots ? before
+    : robots.state === "rules" ? `Read and followed. Nothing in it blocks REGOVBot from the pages used here${robots.delayMs ? `; its Crawl-delay of ${robots.delayMs / 1000} s was kept` : ""}.`
+    : robots.state === "none" ? "The site publishes no robots.txt, so no crawling rules apply."
+    : "The live site did not answer, so the rules come from the Wayback Machine's capture of its robots.txt.";
+  const termsText = !terms ? before
+    : terms.urls.length === 0 ? "The homepage links to no terms of use, legal notice or disclaimer."
+    : `Read by Muse Spark before any page was collected: nothing in them forbids automated access or republishing with credit. ${terms.summary}`;
+  return (
+    <Sec n={n} title="Site rules" aside="Checked before any page was collected">
+      <dl className="grid gap-x-8 gap-y-4 text-[15px] sm:grid-cols-[10rem_1fr] print:grid-cols-[30mm_1fr] print:text-[9pt]">
+        <dt className={`${eyebrow} pt-1 text-neutral-500`}>robots.txt</dt>
+        <dd className="text-neutral-800">{robotsText}</dd>
+        <dt className={`${eyebrow} pt-1 text-neutral-500`}>Terms of use</dt>
+        <dd className="text-neutral-800">{termsText}{terms?.urls.map((u) => <a key={u} href={u} className="ml-2 break-all text-kapwa-brand-900 underline decoration-neutral-300 underline-offset-4">{u.replace(/^https?:\/\//, "")}</a>)}{terms && archived && terms.source === "archive" ? " (archived copy)" : ""}</dd>
+      </dl>
+      <p className="mt-4 max-w-3xl text-[13px] text-neutral-600 print:text-[8pt]">RE:GOV stops a run when a site&rsquo;s robots.txt shuts crawlers out or its terms forbid automated access or republishing, and site owners can opt out at any time. <Link href="/bot" className="text-kapwa-brand-900 underline decoration-neutral-300 underline-offset-4">How the crawler works</Link>.</p>
+    </Sec>
   );
 }
 
@@ -356,6 +382,9 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
   let charter: CharterFile | null = null;
   try { charter = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/charter.json"), "utf8")); } catch {}
   const crawl = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "crawl.json"), "utf8")) as CrawlResult;
+  let terms: TermsResult | null = null, robotsEv: RobotsEvent | null = null;
+  try { terms = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/terms.json"), "utf8")); } catch {}
+  try { robotsEv = (JSON.parse(await readFile(join(JOBS_ROOT, jobId, "status.json"), "utf8")) as { events: (RobotsEvent & { type: string })[] }).events.find((e) => e.type === "robots") ?? null; } catch {}
   let wcag: RebuiltAudit | null = null;
   try { wcag = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/wcag.json"), "utf8")); } catch {}
   const axeBefore = crawl.pages.flatMap((p) => p.axe?.violations ?? []);
@@ -404,10 +433,10 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
         <table className="container-gov block max-w-[1400px] pt-10 pb-16 print:table print:w-full print:max-w-none print:p-0">
           <thead className="block print:table-header-group">
             <tr className="block print:table-row"><td className="block print:table-cell print:pb-6">
-              {/* Letterhead */}
-              <div className="grid grid-cols-[auto_1fr] items-center gap-x-12 gap-y-3 border-b border-neutral-300 pb-6 sm:grid-cols-[13rem_1fr_1.4fr] print:grid-cols-[42mm_1fr_1.4fr] print:gap-x-6 print:pb-4">
+              {/* Letterhead. On screen the site header already carries the logo, so it shows only in the PDF. */}
+              <div className="grid grid-cols-1 items-center gap-x-12 gap-y-3 border-b border-neutral-300 pb-6 sm:grid-cols-[1fr_1.4fr] print:grid-cols-[42mm_1fr_1.4fr] print:gap-x-6 print:pb-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/brand/logo.svg" alt="RE:GOV. Reimagine Government." className="h-12 w-auto print:h-[12mm]" />
+                <img src="/brand/logo.svg" alt="RE:GOV. Reimagine Government." className="hidden h-12 w-auto print:block print:h-[12mm]" />
                 <div className="text-[13px] leading-relaxed text-neutral-800 print:text-[8.5pt]"><div>RE:GOV</div><div>regov.app</div></div>
                 <div className="hidden text-[13px] leading-relaxed text-neutral-800 sm:block print:block print:text-[8.5pt]"><div>{site.agency.short_name || site.agency.name} · {host}</div><div>Migration report</div></div>
               </div>
@@ -448,6 +477,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
               </ol>
             )}
           </Sec>
+
+          <SiteRulesSection n={n++} robots={robotsEv} terms={terms} archived={!!crawl.archive} />
 
           {scores?.rebuilt && <ScoresSection n={n++} s={scores} />}
 

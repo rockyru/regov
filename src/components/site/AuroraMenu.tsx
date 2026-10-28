@@ -32,12 +32,12 @@ export function AuroraMenu({ items, extras, cta, search, label, vars }: {
         <div role="dialog" aria-modal="true" aria-label={label} style={vars} className="fixed inset-0 z-[60] overflow-y-auto bg-[var(--au-canvas)] text-[var(--au-ink)]">
           <div aria-hidden className="pointer-events-none absolute -right-40 -top-40 size-[44rem] rounded-full bg-[var(--au-haze)] blur-3xl" />
           <div aria-hidden className="pointer-events-none absolute inset-y-0 left-[100px] hidden w-px bg-[var(--au-ink)]/12 lg:block" />
-          <div className="relative flex h-20 items-center justify-end border-b border-[var(--au-ink)]/12 px-4 sm:px-8 lg:h-[107px] lg:pl-[200px] lg:pr-[216px]">
+          <div className="relative flex h-20 items-center justify-end border-b border-[var(--au-ink)]/12 px-4 sm:px-8 lg:h-[107px] lg:pl-[150px] lg:pr-16 xl:pl-[200px] xl:pr-[216px]">
             <button type="button" onClick={close} autoFocus className="inline-flex items-center gap-3 text-[15px] font-medium hover:text-[var(--au-deep)]">
               Close<span aria-hidden className="text-3xl font-light leading-none">×</span>
             </button>
           </div>
-          <div className="relative grid gap-14 px-4 py-12 sm:px-8 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-20 lg:py-20 lg:pl-[200px] lg:pr-[216px]">
+          <div className="relative grid gap-14 px-4 py-12 sm:px-8 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-20 lg:py-20 lg:pl-[150px] lg:pr-16 xl:pl-[200px] xl:pr-[216px]">
             <nav aria-label="Site menu">
               <ol className="border-t border-[var(--au-ink)]/15">
                 {items.map((it, i) => (

@@ -8,6 +8,9 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { CrawlResult, CrawledPage, CrawlEvent, WpRest } from "./types";
 import { BLOCKED_TITLE, PARKED_TITLE, fromArchive, toArchive, hostKey } from "./archive";
+import { UA, loadRobots, type Robots } from "./robots";
+
+export { UA };
 
 export class BlockedError extends Error { constructor(public url: string, public reason: string) { super(`Blocked by bot protection: ${reason}`); } }
 
@@ -22,9 +25,10 @@ export interface CrawlOptions {
   onEvent?: (e: CrawlEvent) => void;
   /** Crawl the Wayback Machine copy at this timestamp instead of the live site. */
   archiveTimestamp?: string;
+  /** robots.txt already read by the caller; loaded here otherwise. */
+  robots?: Robots;
 }
 
-export const UA = "Mozilla/5.0 (compatible; SiteResurrectionBot/0.1; +https://github.com/rockyru) Chrome/120";
 const FILE_RE = /\.(pdf|docx?|xlsx?|pptx?|zip|rar|jpe?g|png|gif|webp|svg|mp4|mp3|csv|txt)(\?.*)?$/i;
 const TRACKING = /^(utm_|fbclid|gclid|_ga)/;
 
@@ -42,29 +46,6 @@ export function normalizeUrl(raw: string, base: string): string | null {
     return u.toString();
   } catch {
     return null;
-  }
-}
-
-async function robotsDisallows(origin: string): Promise<RegExp[]> {
-  try {
-    const res = await fetch(`${origin}/robots.txt`, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(10_000) });
-    if (!res.ok) return [];
-    const txt = await res.text();
-    const out: RegExp[] = [];
-    let applies = false;
-    for (const line of txt.split(/\r?\n/)) {
-      const [k, ...rest] = line.split("#")[0].split(":");
-      const v = rest.join(":").trim();
-      if (!k) continue;
-      const key = k.trim().toLowerCase();
-      if (key === "user-agent") applies = v === "*";
-      else if (applies && key === "disallow" && v) {
-        out.push(new RegExp("^" + v.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*")));
-      }
-    }
-    return out;
-  } catch {
-    return [];
   }
 }
 
@@ -138,7 +119,7 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     jobId, jobsRoot = "jobs", maxPages = 20, maxDepth = 3, viewport = { width: 1280, height: 900 },
     maxFullPageHeight = 6000, onEvent = () => {}, archiveTimestamp,
   } = opts;
-  const delayMs = opts.delayMs ?? (archiveTimestamp ? 2500 : 1000);
+  const baseDelay = opts.delayMs ?? (archiveTimestamp ? 2500 : 1000);
   const start = normalizeUrl(startUrl, startUrl);
   if (!start) throw new Error(`Bad start URL: ${startUrl}`);
   const origin = new URL(start).origin;
@@ -150,11 +131,13 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
   await mkdir(join(dir, "html"), { recursive: true });
   await mkdir(join(dir, "shots"), { recursive: true });
 
-  const disallow = archiveTimestamp ? [] : await robotsDisallows(origin);
-  const blocked = (u: string) => disallow.some((re) => re.test(new URL(u).pathname));
+  // The site's own robots.txt (its Wayback capture in archive mode) governs every page we fetch.
+  const robots = opts.robots ?? (await loadRobots(origin, archiveTimestamp));
+  const blocked = (u: string) => !robots.allows(u);
+  const delayMs = Math.max(baseDelay, robots.delayMs);
 
   onEvent({ type: "start", origin, archive: archiveTimestamp });
-  const wpPromise = archiveTimestamp ? Promise.resolve(undefined) : fetchWpRest(origin);
+  const wpPromise = archiveTimestamp || blocked(`${origin}/wp-json/wp/v2/pages`) ? Promise.resolve(undefined) : fetchWpRest(origin);
 
   const browser = await chromium.launch({ args: ["--disable-dev-shm-usage", "--disable-gpu", "--no-zygote"] });
   const ctx = await browser.newContext({ viewport, userAgent: UA, ignoreHTTPSErrors: true });
