@@ -1,7 +1,9 @@
 node_modules
 .next
+.git
 jobs
 scratchpad
 .env
-.env.local
+.env.*
+!.env.example
 *.tsbuildinfo
