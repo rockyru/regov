@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FeedbackBox } from "./FeedbackBox";
 import { turnstileSitekey } from "@/lib/turnstile";
+import { sponsorUrl } from "@/lib/sponsor";
 
 export const eyebrow = "text-[11px] font-bold uppercase tracking-[0.18em]";
 export const nn = (i: number) => String(i + 1).padStart(2, "0");
@@ -100,6 +101,7 @@ const FOOTER_COLS: { heading: string; links: { label: string; href: string; ext?
 ];
 
 export function AppFooter() {
+  const sponsor = sponsorUrl();
   return (
     <footer className="mt-auto bg-kapwa-brand-950 text-neutral-300 pb-24 lg:pb-0">
       <div className="container-gov pt-14 pb-8">
@@ -111,6 +113,7 @@ export function AppFooter() {
             <div className="mt-5 flex flex-wrap gap-2">
               <a href="https://rmbergonia.com" className="inline-flex h-9 items-center bg-white px-3.5 text-sm font-semibold text-kapwa-brand-950 hover:bg-kapwa-yellow-400">Portfolio ↗</a>
               <a href="https://github.com/rockyru/regov" className="inline-flex h-9 items-center border border-white/30 px-3.5 text-sm font-semibold text-white hover:border-white">GitHub ↗</a>
+              {sponsor && <Link href="/support" className="inline-flex h-9 items-center border border-kapwa-yellow-400/60 px-3.5 text-sm font-semibold text-kapwa-yellow-400 hover:border-kapwa-yellow-400">Support RE:GOV</Link>}
             </div>
           </div>
           {FOOTER_COLS.map((c) => (
@@ -139,7 +142,7 @@ export function AppFooter() {
         </div>
 
         <div className="mt-8 border-t border-white/15 pt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[13px] text-neutral-400">
-          <p>© {new Date().getFullYear()} <a href="https://rmbergonia.com" className="hover:text-white">Ruther Bergonia</a> · RE:GOV is an independent civic-tech project, not a government service. · <Link href="/privacy" className="hover:text-white">Privacy</Link> · <Link href="/terms" className="hover:text-white">Terms</Link></p>
+          <p>© {new Date().getFullYear()} <a href="https://rmbergonia.com" className="hover:text-white">Ruther Bergonia</a> · RE:GOV is an independent civic-tech project, not a government service. · <Link href="/privacy" className="hover:text-white">Privacy</Link> · <Link href="/terms" className="hover:text-white">Terms</Link>{sponsor && <> · <Link href="/support" className="hover:text-white">Support</Link></>}</p>
           <p>Muse Spark 1.3 · SAM 3.1 · Muse Image · Kapwa by BetterGov.ph · WikiBayan</p>
         </div>
       </div>

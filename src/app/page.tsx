@@ -9,6 +9,7 @@ import { QueueStrip } from "@/components/QueueStrip";
 import { queueStrip } from "@/lib/queueStrip";
 import { runQueue } from "@/lib/runQueue";
 import { turnstileSitekey } from "@/lib/turnstile";
+import { sponsorUrl } from "@/lib/sponsor";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +49,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
             <span>Resets daily at <span className="font-semibold text-neutral-900">8:00 AM</span> Philippine time</span>
             <span aria-hidden className="hidden text-neutral-400 sm:inline">·</span>
             <span className={left ? "font-semibold text-kapwa-green-800" : "font-semibold text-kapwa-red-700"}>{left ? `${left} left today` : "Used up until 8:00 AM"}</span>
+            {!left && sponsorUrl() && <><span aria-hidden className="hidden text-neutral-400 sm:inline">·</span><Link href="/support" className="font-semibold text-kapwa-brand-900 underline decoration-kapwa-brand-900/30 underline-offset-4 hover:decoration-kapwa-brand-900">Help cover the costs</Link></>}
           </p>
           <div className="mx-auto mt-4 max-w-2xl">
             <ReimagineBox initialError={error} initialUrl={url} initialWait={Number(wait) || 0} sitekey={turnstileSitekey()} />
