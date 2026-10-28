@@ -58,16 +58,19 @@
   animation: ih-rise 1.3s cubic-bezier(0.2, 0.75, 0.1, 1) var(--d) both;
 }
 /* One letter per column, left to right, dipping like a swell; cuts stay light so the word reads */
-.ih-l0 { grid-column: 2; grid-row: 2 / 4; --cut: -0.04em; }
-.ih-l1 { grid-column: 3; grid-row: 3 / 5; --cut: 0.1em; }
-.ih-l2 { grid-column: 4; grid-row: 4 / 6; --cut: 0.04em; }
-.ih-l3 { grid-column: 5; grid-row: 3 / 5; --cut: -0.02em; }
-.ih-l4 { grid-column: 6; grid-row: 2 / 4; --cut: 0.08em; }
+/* The lowest letter sits in row 4, clear of the screen's bottom edge, and every letter stands whole
+   on its cell's bottom rule (--cut lifts the baseline past the round letters' overshoot) */
+.ih-letter { --cut: -0.02em; }
+.ih-l0 { grid-column: 2; grid-row: 1 / 3; }
+.ih-l1 { grid-column: 3; grid-row: 2 / 4; }
+.ih-l2 { grid-column: 4; grid-row: 3 / 5; }
+.ih-l3 { grid-column: 5; grid-row: 2 / 4; }
+.ih-l4 { grid-column: 6; grid-row: 1 / 3; }
 
 /* Words */
 .ih-link { align-self: center; justify-self: center; font-size: 17px; font-weight: 600; color: #fff; text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1.5px; animation: ih-fade 1s ease-out 0.9s both; }
 .ih-link:hover { text-decoration-thickness: 3px; }
-.ih-plan { grid-column: 1; grid-row: 4; }
+.ih-plan { grid-column: 1; grid-row: 4; padding-inline: 8px; text-align: center; }
 .ih-call { grid-column: 8; grid-row: 3; text-align: center; max-width: 80%; }
 .ih-since { grid-column: 2; grid-row: 4 / 6; display: grid; place-items: end center; padding-bottom: 6vh; animation: ih-fade 1s ease-out 1s both; }
 .ih-since span { display: flex; flex-direction: column; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 16px; line-height: 1.2; }
