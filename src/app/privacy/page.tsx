@@ -22,6 +22,7 @@ export default function Privacy() {
           <li><strong>Open-Meteo.</strong> For local governments, a forecast is requested by place name only.</li>
           <li><strong>Cloudflare.</strong> Hosting, storage of job files, the domain, and delivery of comments by email (Cloudflare Email Service). The feedback and Reimagine forms use Cloudflare Turnstile to check that a person, not a script, is sending them; Turnstile looks at signals from your browser under <a href="https://www.cloudflare.com/turnstile-privacy-policy/">its own privacy terms</a> and sets no tracking cookies.</li>
         </ul>
+        <p>If you sponsor RE:GOV, that happens on GitHub Sponsors, under <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub&rsquo;s privacy statement</a>. RE:GOV only links there; it embeds no payment script and never sees your payment details.</p>
         <p>No data is sold, shared for advertising, or used to train models by RE:GOV.</p>
       </> },
       { title: "How long it is kept", body: <>
