@@ -14,6 +14,7 @@ export function FeedbackBox() {
   const id = useId();
   const area = useRef<HTMLTextAreaElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
+  const openedAt = useRef(0);
 
   useEffect(() => {
     const fromHash = () => { if (location.hash === "#feedback") setOpen(true); };
@@ -21,7 +22,11 @@ export function FeedbackBox() {
     addEventListener("hashchange", fromHash);
     return () => removeEventListener("hashchange", fromHash);
   }, []);
-  useEffect(() => { if (open && state !== "sent") area.current?.focus(); }, [open, state]);
+  useEffect(() => {
+    if (!open || state === "sent") return;
+    openedAt.current = Date.now();
+    area.current?.focus();
+  }, [open, state]);
 
   const close = () => {
     setOpen(false);
@@ -34,7 +39,7 @@ export function FeedbackBox() {
     const f = new FormData(e.currentTarget);
     setState("sending");
     setError("");
-    const res = await fetch("/api/feedback", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ message: f.get("message"), email: f.get("email"), website: f.get("website"), page: path }) }).catch(() => null);
+    const res = await fetch("/api/feedback", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ message: f.get("message"), email: f.get("email"), website: f.get("website"), page: path, elapsed: Date.now() - openedAt.current }) }).catch(() => null);
     const out = (await res?.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
     if (res?.ok && out?.ok) setState("sent");
     else { setState("idle"); setError(out?.error ?? "That didn't go through. Please try again."); }
