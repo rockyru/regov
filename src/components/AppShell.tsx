@@ -13,22 +13,46 @@ export function Wordmark({ className = "", tone = "ink" }: { className?: string;
   );
 }
 
+const BOTTOM_TABS: { label: string; href: string; ext?: boolean; icon: React.ReactNode }[] = [
+  { label: "How it works", href: "/how-it-works", icon: <><path d="M4 5h16v14H4z" /><path d="M8 9h8M8 13h8M8 17h5" /></> },
+  { label: "Case study", href: "/case-study", icon: <><path d="M4 4h7a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z" /><path d="M20 4h-7a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h7z" /></> },
+  { label: "Showcase", href: "/showcase", icon: <path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" /> },
+  { label: "GitHub", href: "https://github.com/rockyru/regov", ext: true, icon: <><path d="m8 8-5 4 5 4" /><path d="m16 8 5 4-5 4" /><path d="m14 5-4 14" /></> },
+];
+
+/** Floating bottom bar below lg, the same pattern as the rebuilt sites' MobileNav. */
+function AppBottomNav() {
+  const tab = "flex flex-1 flex-col items-center justify-center gap-1 h-16 min-w-0 px-1 text-[11px] font-semibold tracking-wide text-white/80 hover:text-white hover:bg-white/10";
+  return (
+    <nav aria-label="RE:GOV (mobile)" className="lg:hidden fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 sm:mx-auto sm:max-w-md bg-kapwa-brand-900 text-white border border-black/30 shadow-[0_12px_32px_-8px_rgba(0,0,0,0.5),0_2px_6px_rgba(0,0,0,0.25)]">
+      <ul className="flex items-stretch divide-x divide-white/15">
+        {BOTTOM_TABS.map((t) => {
+          const inner = <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="square" strokeLinejoin="miter" aria-hidden className="size-6 shrink-0">{t.icon}</svg><span className="truncate max-w-full">{t.label}</span></>;
+          return <li key={t.label} className="flex flex-1 min-w-0">{t.ext ? <a href={t.href} className={tab}>{inner}</a> : <Link href={t.href} className={tab}>{inner}</Link>}</li>;
+        })}
+      </ul>
+    </nav>
+  );
+}
+
+/** Below lg the links move to a bottom bar. */
 export function AppHeader({ crumb }: { crumb?: string }) {
   return (
-    <header>
+    <header className="pt-4 lg:pt-0">
       <div className="container-gov h-16 flex items-center justify-between gap-6">
         <div className="flex items-center gap-4 min-w-0">
           <Wordmark className="h-12 sm:h-[52px] translate-y-1" />
-          {crumb && <span className="hidden sm:flex items-center gap-4 min-w-0 text-sm text-neutral-500"><span className="h-5 w-px bg-neutral-300" /><span className="truncate">{crumb}</span></span>}
+          {crumb && <span className="hidden lg:flex items-center gap-4 min-w-0 text-sm text-neutral-500"><span className="h-5 w-px bg-neutral-300" /><span className="truncate">{crumb}</span></span>}
         </div>
-        <nav aria-label="RE:GOV" className="flex items-center gap-5 text-sm font-semibold">
-          <Link href="/how-it-works" className="hidden md:inline hover:text-kapwa-brand-900">How it works</Link>
-          <Link href="/case-study" className="hidden md:inline hover:text-kapwa-brand-900">Case study</Link>
+        <nav aria-label="RE:GOV" className="hidden lg:flex items-center gap-5 text-sm font-semibold">
+          <Link href="/how-it-works" className="hover:text-kapwa-brand-900">How it works</Link>
+          <Link href="/case-study" className="hover:text-kapwa-brand-900">Case study</Link>
           <Link href="/showcase" className="hover:text-kapwa-brand-900">Showcase</Link>
           <a href="https://github.com/rockyru/regov" className="hover:text-kapwa-brand-900">GitHub ↗</a>
-          <Link href="/#reimagine" className="hidden sm:inline-flex h-9 items-center bg-kapwa-brand-900 px-4 text-white hover:bg-kapwa-brand-950">Reimagine a site</Link>
+          <Link href="/#reimagine" className="inline-flex h-9 items-center bg-kapwa-brand-900 px-4 text-white hover:bg-kapwa-brand-950">Reimagine a site</Link>
         </nav>
       </div>
+      <AppBottomNav />
     </header>
   );
 }
@@ -74,7 +98,7 @@ const FOOTER_COLS: { heading: string; links: { label: string; href: string; ext?
 
 export function AppFooter() {
   return (
-    <footer className="mt-auto bg-kapwa-brand-950 text-neutral-300">
+    <footer className="mt-auto bg-kapwa-brand-950 text-neutral-300 pb-24 lg:pb-0">
       <div className="container-gov pt-14 pb-8">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_repeat(4,minmax(0,1fr))]">
           <div className="max-w-sm">

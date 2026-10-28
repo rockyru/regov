@@ -1,7 +1,7 @@
 import type { Tally, UsageFile } from "./usage";
 
 export const STEP_LABEL: Record<string, string> = {
-  understand: "Understand pages", plan: "Plan the site", segment: "Find the seal", design: "Design check", band: "Header artwork",
+  understand: "Understand pages", plan: "Plan the site", segment: "Find the seal", regions: "Text in images", design: "Design check", band: "Header artwork",
   build: "Build (other)", build_early: "Build (before per-step records)", verify: "Self-check", charter: "Citizen's Charter", portraits: "Portraits", evidence: "Evidence",
   translate: "Filipino version", ask: "Ask this site",
 };

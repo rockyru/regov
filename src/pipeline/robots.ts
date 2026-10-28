@@ -21,6 +21,8 @@ export type Robots = {
   state: "rules" | "none" | "unreachable";
   /** The site asks REGOVBot (or every crawler) to stay away entirely. */
   blocksSite: boolean;
+  /** Sitemap URLs the file lists (they apply to every crawler). */
+  sitemaps: string[];
 };
 
 const toRe = (p: string) => {
@@ -28,15 +30,18 @@ const toRe = (p: string) => {
   return new RegExp("^" + (end ? p.slice(0, -1) : p).replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") + (end ? "$" : ""));
 };
 
-export function parseRobots(txt: string, agent = BOT): { rules: Rule[]; delay: number } {
+export function parseRobots(txt: string, agent = BOT): { rules: Rule[]; delay: number; sitemaps: string[] } {
   type Group = { agents: string[]; rules: Rule[]; delay: number };
   const groups: Group[] = [];
+  const sitemaps: string[] = [];
   let cur: Group | null = null, lastWasAgent = false;
   for (const raw of txt.split(/\r?\n/)) {
     const line = raw.split("#")[0].trim();
     const i = line.indexOf(":");
     if (i < 0) continue;
     const key = line.slice(0, i).trim().toLowerCase(), val = line.slice(i + 1).trim();
+    // Sitemap lines stand outside the groups and do not end one.
+    if (key === "sitemap") { if (/^https?:\/\//i.test(val)) sitemaps.push(val); continue; }
     if (key === "user-agent") {
       if (!cur || !lastWasAgent) groups.push((cur = { agents: [], rules: [], delay: 0 }));
       cur.agents.push(val.toLowerCase());
@@ -50,11 +55,11 @@ export function parseRobots(txt: string, agent = BOT): { rules: Rule[]; delay: n
   }
   const mine = groups.filter((g) => g.agents.some((a) => a !== "*" && agent.toLowerCase().includes(a)));
   const use = mine.length ? mine : groups.filter((g) => g.agents.includes("*"));
-  return { rules: use.flatMap((g) => g.rules), delay: Math.max(0, ...use.map((g) => g.delay)) };
+  return { rules: use.flatMap((g) => g.rules), delay: Math.max(0, ...use.map((g) => g.delay)), sitemaps };
 }
 
 export function robotsFrom(state: Robots["state"], txt = ""): Robots {
-  const { rules, delay } = state === "rules" ? parseRobots(txt) : { rules: [], delay: 0 };
+  const { rules, delay, sitemaps } = state === "rules" ? parseRobots(txt) : { rules: [], delay: 0, sitemaps: [] as string[] };
   const allows = (url: string) => {
     if (state === "none") return true;
     if (state === "unreachable") return false;
@@ -69,7 +74,7 @@ export function robotsFrom(state: Robots["state"], txt = ""): Robots {
     }
     return best ? best.allow : true;
   };
-  return { allows, delayMs: Math.min(delay * 1000, 30_000), state, blocksSite: state === "rules" && !allows("https://x/") };
+  return { allows, delayMs: Math.min(delay * 1000, 30_000), state, blocksSite: state === "rules" && !allows("https://x/"), sitemaps };
 }
 
 /** GET as REGOVBot, tolerating the broken certificate chains many government sites have (as the crawler's browser does). */

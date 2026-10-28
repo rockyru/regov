@@ -7,6 +7,7 @@ import { AppHeader, AppFooter, SectionHead, eyebrow, btn, nn } from "@/component
 import { LiveRefresh } from "@/components/LiveRefresh";
 import { STEPS, progressOf } from "@/lib/progress";
 import { fmtMs, fmtBytes } from "@/lib/scores";
+import { ModelsPanel } from "@/components/ModelsPanel";
 
 export const dynamic = "force-dynamic";
 type Ev = { t: number; type: string; [k: string]: unknown };
@@ -22,12 +23,18 @@ function describe(e: Ev): { text: string; tag?: string } {
     case "skip": return { text: `Skipped ${e.url} (${e.reason})`, tag: "crawl" };
     case "wp-rest": return { text: `WordPress REST API found: ${e.pages} pages, ${e.posts} posts`, tag: "crawl" };
     case "done": return { text: `Crawl finished with ${e.count} pages`, tag: "crawl" };
-    case "blocked": return { text: `Blocked by bot protection (${e.reason}). Looking for an archived copy…`, tag: "warn" };
+    case "blocked": return { text: String(e.reason).startsWith("blank page") ? `The homepage came back blank (${e.reason}). Looking for an archived copy…` : `Blocked by bot protection (${e.reason}). Looking for an archived copy…`, tag: "warn" };
+    case "insufficient": return { text: `Too little text to rebuild: ${e.reason}. Looking for an archived copy…`, tag: "warn" };
+    case "sitemap": return { text: `Read ${(e.sources as string[]).length === 1 ? "the sitemap" : `${(e.sources as string[]).length} sitemaps`}: ${e.urls} addresses listed`, tag: "crawl" };
+    case "rate-limited": return { text: `The site asked the agent to slow down (429). Waiting ${Math.round(Number(e.waitMs) / 1000)} s and crawling more slowly`, tag: "warn" };
+    case "quality": { const c = e.coverage as { crawled: number; discovered: number } | undefined; return { text: `${e.status === "complete" ? "Complete crawl" : e.status === "partial" ? "Partial crawl" : "Too little content"}${c ? `: ${c.crawled} of ${c.discovered} pages found` : ""}${(e.reasons as string[])?.length ? ` · ${(e.reasons as string[]).join(" · ")}` : ""}`, tag: e.status === "insufficient" ? "warn" : "crawl" }; }
     case "unreachable": return { text: `The site did not answer (${String(e.reason).replace(/^page\.goto: /, "")}). Looking for an archived copy…`, tag: "warn" };
     case "redirect": return { text: String(e.note ?? `Using ${e.to}`), tag: "crawl" };
     case "archive": return { text: `Using the Wayback Machine snapshot of ${String(e.timestamp).slice(0, 4)}-${String(e.timestamp).slice(4, 6)}-${String(e.timestamp).slice(6, 8)} · ${e.captures} archived pages`, tag: "archive" };
     case "phase": return { text: `${STEPS.find((s) => s.key === e.phase)?.label ?? e.phase}${e.detail ? ` · ${e.detail}` : ""}`, tag: "phase" };
     case "plan": return { text: `Site plan for ${e.agency}: ${(e.nav as string[]).join(" · ")}`, tag: "spark" };
+    case "regions": return { text: Number(e.spotted) ? `Muse Spark spotted ${e.spotted} ${Number(e.spotted) === 1 ? "image" : "images"} with text on the homepage; SAM 3.1 located ${e.located} and cut ${Number(e.located) === 1 ? "it" : "them"} out at full resolution` : "No images with text on the homepage", tag: "sam" };
+    case "image-text": { const c = `Muse Spark read the ${Number(e.regions) === 1 ? "crop" : `${e.regions} crops`}`; return { text: Number(e.read) ? `${c} and moved what ${Number(e.regions) === 1 ? "it says" : `${e.read} of them say`} into the rebuilt homepage` : `${c}; the page text already says everything in ${Number(e.regions) === 1 ? "it" : "them"}`, tag: "spark" }; }
     case "segment": return { text: `SAM 3.1 found ${e.regions} regions${e.logo ? " and cut out the seal" : ""}`, tag: "sam" };
     case "wcag": return { text: Number(e.violations) === 0 ? `WCAG 2.2 AA check: no automated violations on ${e.pages} rebuilt pages` : `WCAG 2.2 AA check: ${e.violations} automated issues on ${e.pages} rebuilt pages`, tag: "phase" };
     case "scores": { const b = e.before as { load_ms: number; bytes: number } | null, a = e.after as { load_ms: number; bytes: number } | null; return { text: a ? `Homepage ${b ? `${fmtMs(b.load_ms)}, ${fmtBytes(b.bytes)} before → ` : ""}${fmtMs(a.load_ms)}, ${fmtBytes(a.bytes)} rebuilt` : "Speed check skipped", tag: "phase" }; }
@@ -199,12 +206,16 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
             </section>
           )}
 
+          {site && <ModelsPanel jobId={jobId} site={site} />}
+
           {/* The site's own rules said no: explain it plainly, with the clause, and offer no retry. */}
           {refused && (
             <section className="mt-10 border-l-4 border-kapwa-yellow-400 bg-kapwa-yellow-50 p-6 sm:p-8">
-              <p className={`${eyebrow} text-neutral-600`}>Not rebuilt · the site&rsquo;s rules</p>
-              <h2 className="mt-2 text-2xl font-display font-normal tracking-tight text-neutral-900">{refused.reason === "terms" ? "This site’s terms of use don’t allow it" : refused.reason === "robots" ? "This site asks crawlers to stay away" : "This site is on the do-not-crawl list"}</h2>
-              <p className="mt-3 max-w-3xl text-neutral-800">{refused.reason === "terms"
+              <p className={`${eyebrow} text-neutral-600`}>Not rebuilt · {refused.reason === "insufficient" ? "nothing to rebuild from" : <>the site&rsquo;s rules</>}</p>
+              <h2 className="mt-2 text-2xl font-display font-normal tracking-tight text-neutral-900">{refused.reason === "terms" ? "This site’s terms of use don’t allow it" : refused.reason === "robots" ? "This site asks crawlers to stay away" : refused.reason === "insufficient" ? "The site showed the agent almost no content" : "This site is on the do-not-crawl list"}</h2>
+              <p className="mt-3 max-w-3xl text-neutral-800">{refused.reason === "insufficient"
+                ? `${host} answered, but its pages came back blank or nearly empty, and the Wayback Machine had no fuller copy. That usually means the site builds its pages in a way crawlers cannot see, or sits behind a check that hides them. RE:GOV stops rather than publish a rebuild with nothing in it.`
+                : refused.reason === "terms"
                 ? `Before collecting any page, the agent read ${host}’s terms of use. They forbid ${status!.error.includes("automated") ? "automated access to the site" : "republishing its content without permission"}, so RE:GOV stopped here. No pages were collected and nothing was published.`
                 : refused.reason === "robots"
                 ? `${host}’s robots.txt asks crawlers not to visit it, so RE:GOV stopped before collecting any page. It does not rebuild such sites from the Wayback Machine either.`

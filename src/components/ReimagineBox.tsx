@@ -2,8 +2,6 @@
 import { useState } from "react";
 import { isGovernmentHost, normalizeSiteUrl } from "@/lib/govdomain";
 
-const EXAMPLES = ["region10.dilg.gov.ph", "isu.edu.ph", "bulacan.gov.ph", "nrcp.dost.gov.ph", "philsa.gov.ph", "launion.gov.ph", "pchrd.dost.gov.ph", "region5.dilg.gov.ph"];
-
 const INITIAL: Record<string, (url: string, wait: number) => string> = {
   notgov: (u) => `${u} is not a government domain.`,
   invalid: () => "That doesn't look like a website address.",
@@ -15,8 +13,7 @@ const INITIAL: Record<string, (url: string, wait: number) => string> = {
   paused: () => "New runs are paused for now while the current batch finishes. Browse the showcase meanwhile, or check back later.",
 };
 
-export function ReimagineBox({ done = [], initialError = "", initialUrl = "", initialWait = 0 }: { done?: string[]; initialError?: string; initialUrl?: string; initialWait?: number }) {
-  const examples = EXAMPLES.filter((e) => !done.includes(e)).slice(0, 4);
+export function ReimagineBox({ initialError = "", initialUrl = "", initialWait = 0 }: { initialError?: string; initialUrl?: string; initialWait?: number }) {
   const [url, setUrl] = useState(["ratelimit", "busy", "paused", "quota", "robots", "optout"].includes(initialError) ? "" : initialUrl);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(INITIAL[initialError]?.(initialUrl, initialWait) ?? "");
@@ -41,12 +38,6 @@ export function ReimagineBox({ done = [], initialError = "", initialUrl = "", in
         <input type="hidden" name="max" value="30" />
       </div>
       {error && <p id="url-error" role="alert" className="mt-2 text-center text-sm font-medium text-kapwa-red-700">{error}</p>}
-      {examples.length > 0 && <p className="mt-3 text-center text-sm text-neutral-500">
-        <span className="font-semibold text-neutral-700">Try</span>{" "}
-        {examples.map((e, i) => (
-          <span key={e}>{i > 0 && <span className="text-neutral-300"> / </span>}<button type="button" onClick={() => setUrl(`https://${e}`)} className="underline decoration-neutral-300 underline-offset-4 hover:text-kapwa-brand-900 hover:decoration-kapwa-brand-900">{e}</button></span>
-        ))}
-      </p>}
     </form>
   );
 }

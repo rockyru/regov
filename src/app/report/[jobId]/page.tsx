@@ -4,7 +4,9 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { JOBS_ROOT, loadSite } from "@/lib/jobs";
 import type { CrawlResult } from "@/pipeline/types";
-import type { Box } from "@/pipeline/segment";
+import { REGION_PROMPTS, type Box } from "@/pipeline/segment";
+import type { RegionsFile } from "@/pipeline/imageText";
+import type { SiteModel } from "@/pipeline/schema";
 import { AppHeader, AppFooter, eyebrow, btn, nn } from "@/components/AppShell";
 import { PrintButton } from "@/components/PrintButton";
 import { WCAG22, scSort, wcagForFinding } from "@/pipeline/wcag";
@@ -244,6 +246,85 @@ function EvidenceSection({ n, e, jobId }: { n: number; e: EvidenceFile; jobId: s
   );
 }
 
+/** What the crawl found, what it collected and what it left out, so a partial rebuild never reads as a complete one. */
+function CoverageSection({ n, crawl }: { n: number; crawl: CrawlResult }) {
+  const c = crawl.coverage!, q = crawl.quality;
+  const rows: [number, string][] = [[c.discovered, "pages found in links and sitemaps"], [c.crawled, "collected and rebuilt from"], [c.not_reached, `not reached (page cap of ${c.limit})`], [c.robots, "excluded by robots.txt"], [c.duplicate, "duplicates of a page already collected"], [c.empty + c.failed, "blank, or could not be fetched"]];
+  return (
+    <Sec n={n} title="Crawl coverage" aside={q ? <span className={q.status === "complete" ? "font-semibold text-kapwa-green-800" : "font-semibold text-kapwa-orange-800"}>{q.status === "complete" ? "Complete" : "Partial"}</span> : undefined}>
+      <p className="max-w-3xl text-neutral-700 print:text-[10pt]">{q?.status === "complete" ? "Every page the agent found was collected." : "The rebuild covers part of the site. Pages it leaves out are still on the original."} {c.sitemaps.length ? `The site's ${c.sitemaps.length === 1 ? "sitemap lists" : `${c.sitemaps.length} sitemaps list`} ${c.sitemap.toLocaleString("en-PH")} ${c.sitemap === 1 ? "page" : "pages"}.` : "The site has no sitemap the agent could read, so pages were found by following links."}</p>
+      {q && q.reasons.length > 0 && <ul className="mt-3 max-w-3xl list-disc pl-5 text-[15px] text-neutral-800 print:text-[9pt]">{q.reasons.map((r) => <li key={r}>{r}.</li>)}</ul>}
+      <dl className="mt-6 grid grid-cols-2 md:grid-cols-3 border-t border-l border-kapwa-brand-900 print:grid-cols-3 print:break-inside-avoid">
+        {rows.map(([v, l]) => <div key={l} className="border-r border-b border-kapwa-brand-900 p-4 print:p-2.5"><dd className="text-3xl font-display font-normal tracking-tight tabular-nums text-neutral-900 print:text-[18pt]">{v.toLocaleString("en-PH")}</dd><dt className="mt-1 text-[13px] text-neutral-600 print:text-[8pt]">{l}</dt></div>)}
+      </dl>
+    </Sec>
+  );
+}
+
+/** Images on the old homepage whose words exist only in the picture: Muse Spark spotted them, SAM 3.1 cut them out, Muse Spark read the crops. */
+function ImageTextSection({ n, r, jobId }: { n: number; r: RegionsFile; jobId: string }) {
+  const pct = (v: number, of: number) => `${(v / of) * 100}%`;
+  const v = encodeURIComponent(r.generated_at);
+  return (
+    <Sec n={n} title="Text in images" aside="Spotted by Muse Spark, cut out by SAM 3.1, read by Muse Spark">
+      <p className="max-w-3xl text-neutral-700 print:text-[10pt]">Some of the old homepage says things only inside pictures, which screen readers and search engines cannot read. Muse Spark spotted {r.spotted === 1 ? "one such image" : `${r.spotted} such images`}, SAM 3.1 located {r.regions.length === r.spotted ? (r.regions.length === 1 ? "it" : "each one") : `${r.regions.length} of them`} on the screenshot, and the full-resolution crops went back to Muse Spark while it rebuilt the homepage, so it read them as text instead of squinting at a scaled-down page.</p>
+      <div className="mt-6 grid gap-8 xl:grid-cols-[1fr_380px] print:grid-cols-[1fr_64mm] print:gap-5">
+        <div className="relative self-start overflow-hidden border border-kapwa-brand-900 bg-white print:break-inside-avoid" style={{ aspectRatio: `${r.width}/${r.height}` }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`/api/jobs/${jobId}/${r.shot}?v=${v}`} alt="The original homepage with numbered outlines on the images that hold text" className="absolute inset-0 h-full w-full" />
+          {r.regions.map((x) => (
+            <div key={x.n} aria-hidden className="absolute border-[3px] border-kapwa-brand-700 [print-color-adjust:exact]" style={{ left: pct(x.box.left, r.width), top: pct(x.box.top, r.height), width: pct(x.box.right - x.box.left, r.width), height: pct(x.box.bottom - x.box.top, r.height) }}>
+              <span className="absolute -left-[3px] -top-[3px] grid size-7 place-items-center bg-kapwa-brand-700 text-sm font-bold text-white tabular-nums">{x.n}</span>
+            </div>
+          ))}
+        </div>
+        <ol className="space-y-5 self-start">
+          {r.regions.map((x) => (
+            <li key={x.n} className="print:break-inside-avoid">
+              <div className="grid grid-cols-[1.75rem_1fr] gap-x-3">
+                <span className="grid size-7 place-items-center bg-kapwa-brand-700 text-sm font-bold text-white tabular-nums [print-color-adjust:exact]">{x.n}</span>
+                <span>
+                  <span className="block font-semibold leading-snug text-neutral-900">{x.label}</span>
+                  <span className="mt-0.5 block text-[12px] text-neutral-500">{x.kind} · SAM 3.1 &ldquo;{x.prompt}&rdquo; · {(x.confidence * 100).toFixed(0)}%</span>
+                </span>
+              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/api/jobs/${jobId}/${x.file}?v=${v}`} alt={x.read?.summary || x.label} loading="lazy" className="mt-2 max-h-40 w-full border border-neutral-300 bg-neutral-100 object-contain" />
+              <p className="mt-2 text-[13px] leading-snug text-neutral-700 print:text-[8.5pt]">{!x.read ? "Not read: the homepage was rebuilt before this step existed." : x.read.text_found ? <><span className="font-semibold text-kapwa-brand-900">Muse Spark read:</span> {x.read.summary}{x.read.block_heading && <> → now in &ldquo;{x.read.block_heading}&rdquo; on the rebuilt homepage</>}</> : <><span className="font-semibold">Muse Spark read it:</span> {x.read.summary || "nothing the page text does not already say"}.</>}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </Sec>
+  );
+}
+
+/** Generated artwork next to the original, labelled for what it is. */
+function ArtworkSection({ n, site, jobId, original }: { n: number; site: SiteModel; jobId: string; original: string }) {
+  const v = encodeURIComponent(site.generated_at);
+  const art = (site.design as { art?: { image?: string } } | undefined)?.art?.image;
+  const made: [string, string][] = [[site.design?.mode === "refine" ? "" : site.assets.band ?? "", "Header band"], [site.assets.cover ?? "", "Cover for cards and previews"], [art ?? "", "Homepage backdrop"]].filter(([f]) => f) as [string, string][];
+  return (
+    <Sec n={n} title="Generated artwork" aside="Painted by Muse Image">
+      <p className="max-w-3xl text-neutral-700 print:text-[10pt]">The old site&rsquo;s photos stay where they carry facts (officials, events). New artwork is generated only for decoration, from a brief Muse Spark wrote from the site plan{site.assets.band_brief ? <>: &ldquo;{site.assets.band_brief}&rdquo;</> : "."} Muse Image is told never to draw text, seals or logos. The artwork is decoration only (screen readers skip it), and every page of the rebuilt site says it is an unofficial, AI-generated concept.</p>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 print:grid-cols-2 print:gap-3">
+        <figure className="print:break-inside-avoid">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`/api/jobs/${jobId}/${original}`} alt="The original homepage" loading="lazy" className="aspect-[16/10] w-full border border-neutral-300 object-cover object-top" />
+          <figcaption className="mt-1.5 text-[13px] text-neutral-600 print:text-[8pt]"><span className="font-semibold text-neutral-900">Original</span> · the old homepage, first screen</figcaption>
+        </figure>
+        {made.map(([f, l]) => (
+          <figure key={f} className="print:break-inside-avoid">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`/api/jobs/${jobId}/${f}?v=${v}`} alt="" loading="lazy" className="aspect-[16/10] w-full border border-neutral-300 object-cover" />
+            <figcaption className="mt-1.5 text-[13px] text-neutral-600 print:text-[8pt]"><span className="font-semibold text-neutral-900">{l}</span> · generated by Muse Image</figcaption>
+          </figure>
+        ))}
+      </div>
+    </Sec>
+  );
+}
+
 /** Model calls and tokens this site has used: the run, then on-demand use by visitors. */
 function UsageSection({ n, u, legacy }: { n: number; u: UsageFile | null; legacy?: number }) {
   // Sites built before per-step records keep their build total (site.tokens) as one row.
@@ -369,7 +450,7 @@ function Seal({ src, alt }: { src: string; alt: string }) {
   return <img src={src} alt={alt} className="max-h-24" />;
 }
 
-const COLORS: Record<string, string> = { logo: "#fcd116", "navigation menu": "#35b0ff", banner: "#ff6878", sidebar: "#3deb8e", footer: "#fdad3a" };
+const COLORS: Record<string, string> = { logo: "#fcd116", "search box": "#35b0ff", map: "#3deb8e", infographic: "#ff6878", photograph: "#fdad3a" };
 
 export default async function Report({ params }: { params: Promise<{ jobId: string }> }) {
   const { jobId } = await params;
@@ -396,6 +477,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
   try { verify = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/verify.json"), "utf8")); } catch {}
   let portraits: PortraitFile | null = null;
   try { portraits = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/portraits.json"), "utf8")); } catch {}
+  let regions: RegionsFile | null = null;
+  try { regions = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/regions.json"), "utf8")); } catch {}
   let segments: Box[] = [];
   try { segments = JSON.parse(await readFile(join(JOBS_ROOT, jobId, "assets/segments.json"), "utf8")); } catch {}
   const home = crawl.pages[0];
@@ -418,6 +501,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
   const meta: [string, string][] = [
     ["Reference", jobId],
     ["Source", crawl.archive ? `Wayback Machine capture, ${crawl.archive.date.slice(0, 10)}` : "Live site"],
+    ...(crawl.coverage ? [["Crawl", `${crawl.quality?.status === "complete" ? "Complete" : "Partial"} · ${crawl.coverage.crawled} of ${crawl.coverage.discovered.toLocaleString("en-PH")} pages found`] as [string, string]] : []),
     ["Generated", generated.toLocaleString("en-PH", { dateStyle: "long", timeStyle: "short", timeZone: "Asia/Manila" })],
     ["Models", "Muse Spark 1.3 · SAM 3.1 · Muse Image"],
     ["Standard", "Kapwa by BetterGov.ph"],
@@ -478,6 +562,8 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
             )}
           </Sec>
 
+          {crawl.coverage && <CoverageSection n={n++} crawl={crawl} />}
+
           <SiteRulesSection n={n++} robots={robotsEv} terms={terms} archived={!!crawl.archive} />
 
           {scores?.rebuilt && <ScoresSection n={n++} s={scores} />}
@@ -510,7 +596,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
           <Sec n={n++} title="Source analysis" aside="What SAM 3.1 saw on the old homepage">
             <div className="grid gap-8 xl:grid-cols-[1fr_260px] print:grid-cols-[1fr_38mm] print:gap-5">
               <div className="print:break-inside-avoid">
-                <p className="text-neutral-600 print:text-[9pt]">Noun-phrase prompts (logo, navigation menu, banner, sidebar, footer) on the original screenshot. The seal was cut out and reused as the new site&rsquo;s brand mark.</p>
+                <p className="text-neutral-600 print:text-[9pt]">Noun-phrase prompts ({REGION_PROMPTS.join(", ")}) on the original first screen, before any page was rewritten. The seal was cut out and reused as the new site&rsquo;s brand mark.</p>
                 <div className="mt-4 relative overflow-hidden border border-kapwa-brand-900 bg-white" style={{ aspectRatio: `${vw}/${vh}` }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={`/api/jobs/${jobId}/${home.viewportShotFile}`} alt="Original homepage" className="absolute inset-0 w-full h-full" />
@@ -537,6 +623,10 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
               </div>
             </div>
           </Sec>
+
+          {regions && regions.regions.length > 0 && <ImageTextSection n={n++} r={regions} jobId={jobId} />}
+
+          {(site.assets.band || site.assets.cover) && <ArtworkSection n={n++} site={site} jobId={jobId} original={home.viewportShotFile} />}
 
           {portraits && portraits.people.length > 0 && (
             <Sec n={n++} title="People" aside="Found by SAM 3.1, named by Muse Spark">

@@ -6,9 +6,12 @@ import { chromium, type Page } from "playwright";
 import { axeAudit } from "./wcag";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { createHash } from "node:crypto";
 import type { CrawlResult, CrawledPage, CrawlEvent, WpRest } from "./types";
 import { BLOCKED_TITLE, PARKED_TITLE, fromArchive, toArchive, hostKey } from "./archive";
 import { UA, loadRobots, type Robots } from "./robots";
+import { sitemapUrls } from "./sitemap";
+import { crawlQuality } from "./quality";
 
 export { UA };
 
@@ -134,9 +137,12 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
   // The site's own robots.txt (its Wayback capture in archive mode) governs every page we fetch.
   const robots = opts.robots ?? (await loadRobots(origin, archiveTimestamp));
   const blocked = (u: string) => !robots.allows(u);
-  const delayMs = Math.max(baseDelay, robots.delayMs);
+  // Raised when the site answers 429 Too Many Requests; never below its Crawl-delay.
+  let delayMs = Math.max(baseDelay, robots.delayMs);
 
   onEvent({ type: "start", origin, archive: archiveTimestamp });
+  // Sitemaps fill in pages the menus hide (JavaScript menus, deep sections). Live sites only: the archive rarely holds them.
+  const sitemapPromise = archiveTimestamp ? Promise.resolve({ urls: [] as string[], sources: [] as string[] }) : sitemapUrls(origin, robots).catch(() => ({ urls: [] as string[], sources: [] as string[] }));
   const wpPromise = archiveTimestamp || blocked(`${origin}/wp-json/wp/v2/pages`) ? Promise.resolve(undefined) : fetchWpRest(origin);
 
   const browser = await chromium.launch({ args: ["--disable-dev-shm-usage", "--disable-gpu", "--no-zygote"] });
@@ -147,14 +153,26 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
     return t === "media" || t === "font" ? route.abort() : route.continue();
   });
 
-  const queue: { url: string; depth: number }[] = [{ url: start, depth: 0 }];
+  const queue: { url: string; depth: number; tries?: number }[] = [{ url: start, depth: 0 }];
   const seen = new Set<string>([start]);
+  const digests = new Map<string, string>();
+  const pageUrl = (u: string) => { const n = normalizeUrl(u, start); return n && sameSite(n) && !FILE_RE.test(n) ? n : null; };
+  let sitemapQueued = false;
   const pages: CrawledPage[] = [];
   const skipped: CrawlResult["skipped"] = [];
   const startedAt = new Date().toISOString();
 
-  while (queue.length && pages.length < maxPages) {
-    const { url, depth } = queue.shift()!;
+  while (pages.length < maxPages) {
+    // Links first; the sitemap's pages join once the links run out.
+    if (!queue.length && !sitemapQueued) {
+      sitemapQueued = true;
+      const sm = await sitemapPromise;
+      const fresh = [...new Set(sm.urls.map(pageUrl).filter((u): u is string => !!u && !seen.has(u)))];
+      if (sm.sources.length) onEvent({ type: "sitemap", urls: sm.urls.length, sources: sm.sources });
+      for (const l of diverse(fresh)) { seen.add(l); queue.push({ url: l, depth: 1 }); }
+    }
+    if (!queue.length) break;
+    const { url, depth, tries = 0 } = queue.shift()!;
     if (blocked(url)) { skipped.push({ url, reason: "robots" }); onEvent({ type: "skip", url, reason: "robots" }); continue; }
     const idx = pages.length;
     const key = String(idx).padStart(3, "0");
@@ -163,6 +181,18 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
       const res = await page.goto(fetchUrl(url), { waitUntil: "domcontentloaded", timeout: 45_000 });
       status = res?.status() ?? 0;
       await page.waitForLoadState("networkidle", { timeout: 8_000 }).catch(() => {});
+      // Too many requests: wait as asked (or back off), slow the whole crawl, and retry twice.
+      if (status === 429) {
+        const ra = Number(res?.headers()["retry-after"]);
+        const waitMs = Math.min(60_000, ra > 0 ? ra * 1000 : 10_000 * (tries + 1));
+        delayMs = Math.min(30_000, Math.max(delayMs * 2, 3000));
+        onEvent({ type: "rate-limited", url, waitMs });
+        if (tries < 2) { queue.unshift({ url, depth, tries: tries + 1 }); await new Promise((r) => setTimeout(r, waitMs)); continue; }
+        if (pages.length === 0) { await browser.close(); throw new BlockedError(url, "429 Too Many Requests"); }
+        skipped.push({ url, reason: "rate limited (429)" });
+        onEvent({ type: "skip", url, reason: "rate limited (429)" });
+        continue;
+      }
       const ct = res?.headers()["content-type"] || "";
       if (!ct.includes("html")) { skipped.push({ url, reason: `content-type ${ct}` }); continue; }
 
@@ -177,7 +207,22 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
 
       if (PARKED_TITLE.test(title)) { skipped.push({ url, reason: `parked/suspended page "${title.slice(0, 40)}"` }); continue; }
 
-      const ex = await extract(page, archiveTimestamp ? "https://web.archive.org" : origin);
+      let ex = await extract(page, archiveTimestamp ? "https://web.archive.org" : origin);
+      // A blank page may still be rendering; give it a few more seconds before judging it.
+      const blank = (x: Extracted) => x.text.trim().length < 80 && x.headings.length === 0;
+      if (blank(ex)) { await page.waitForTimeout(5000); ex = await extract(page, archiveTimestamp ? "https://web.archive.org" : origin); }
+      if (blank(ex)) {
+        // A blank homepage is usually a JavaScript challenge or an app that renders nothing for crawlers: try the archive.
+        const reason = `blank page, no text after waiting${title ? ` ("${title.slice(0, 40)}")` : ""}`;
+        if (pages.length === 0 && !archiveTimestamp) { await browser.close(); throw new BlockedError(url, reason); }
+        skipped.push({ url, reason: "no text on the page" });
+        onEvent({ type: "skip", url, reason: "no text on the page" });
+        continue;
+      }
+      // http/https, www, ?lang= and print variants of one page: keep the first.
+      const digest = createHash("sha1").update(ex.text.replace(/\s+/g, " ").trim()).digest("hex");
+      if (digests.has(digest)) { skipped.push({ url, reason: `duplicate of ${digests.get(digest)}` }); continue; }
+      digests.set(digest, url);
       if (archiveTimestamp) {
         // translate archive links back to the original site
         ex.all = ex.all.map(fromArchive).filter(sameSite);
@@ -227,7 +272,18 @@ export async function crawl(startUrl: string, opts: CrawlOptions): Promise<Crawl
   const wp = await wpPromise;
   if (wp) onEvent({ type: "wp-rest", pages: wp.pages.length, posts: wp.posts.length });
 
-  const result: CrawlResult = { jobId, startUrl: start, origin, startedAt, finishedAt: new Date().toISOString(), pages, skipped, wp };
+  const sm = await sitemapPromise;
+  const listed = new Set(sm.urls.map(pageUrl).filter((u): u is string => !!u));
+  const discovered = new Set([...seen, ...listed]).size;
+  const count = (re: RegExp) => skipped.filter((x) => re.test(x.reason)).length;
+  const robotsN = count(/^robots$/), duplicate = count(/^duplicate of /), empty = count(/^no text on the page$/);
+  const coverage = {
+    limit: maxPages, discovered, sitemap: listed.size, sitemaps: sm.sources, crawled: pages.length,
+    robots: robotsN, duplicate, empty, failed: skipped.length - robotsN - duplicate - empty,
+    not_reached: Math.max(0, discovered - pages.length - skipped.length),
+  };
+  const result: CrawlResult = { jobId, startUrl: start, origin, startedAt, finishedAt: new Date().toISOString(), pages, skipped, wp, coverage };
+  result.quality = crawlQuality(result);
   if (archiveTimestamp) {
     const d = `${archiveTimestamp.slice(0, 4)}-${archiveTimestamp.slice(4, 6)}-${archiveTimestamp.slice(6, 8)}`;
     result.archive = { timestamp: archiveTimestamp, date: d, note: `Live site is behind bot protection; content comes from the Wayback Machine capture of ${d}.` };

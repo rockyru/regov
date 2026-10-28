@@ -36,12 +36,41 @@ export interface CrawlResult {
   wp?: WpRest;
   /** Set when the live site was blocked and the Wayback Machine copy was crawled instead. */
   archive?: { timestamp: string; date: string; note: string };
+  /** What the crawl found and what it left out (runs from Oct 28 2026). */
+  coverage?: Coverage;
+  quality?: Quality;
 }
+
+export interface Coverage {
+  /** Page cap for the run. */
+  limit: number;
+  /** Distinct same-site page addresses found in links and sitemaps, the start page included. */
+  discovered: number;
+  /** Addresses listed in the site's sitemaps, and the sitemaps read. */
+  sitemap: number;
+  sitemaps: string[];
+  crawled: number;
+  /** Disallowed by robots.txt. */
+  robots: number;
+  /** Same text as a page already collected. */
+  duplicate: number;
+  /** Loaded but showed no text. */
+  empty: number;
+  /** Errors, timeouts, rate limits, non-HTML answers, bot protection on an inner page. */
+  failed: number;
+  /** Found but never fetched because the run reached its page cap. */
+  not_reached: number;
+}
+
+/** complete: every page found was collected; partial: some were left out (reasons say which); insufficient: too little text to rebuild. */
+export interface Quality { status: "complete" | "partial" | "insufficient"; reasons: string[]; chars: number }
 
 export type CrawlEvent =
   | { type: "start"; origin: string; archive?: string }
   | { type: "blocked"; url: string; reason: string }
   | { type: "page"; url: string; index: number; title: string; status: number }
   | { type: "skip"; url: string; reason: string }
+  | { type: "sitemap"; urls: number; sources: string[] }
+  | { type: "rate-limited"; url: string; waitMs: number }
   | { type: "wp-rest"; pages: number; posts: number }
   | { type: "done"; count: number };

@@ -21,12 +21,13 @@ import { withUsage } from "../src/lib/usage";
 const [inputUrl, jobId, max = "20"] = process.argv.slice(2);
 const ROBOTS_BLOCKED = "This site's robots.txt asks crawlers not to visit it, so RE:GOV will not rebuild it, not even from the Wayback Machine.";
 const OPTED_OUT = "This site is on RE:GOV's do-not-crawl list, so RE:GOV will not rebuild it.";
+const THIN = "The site gave the agent too little text to rebuild, live or in the Wayback Machine.";
 let url = inputUrl;
 if (!url || !jobId) { console.error("usage: pipeline.ts <url> <jobId> [maxPages]"); process.exit(1); }
 const dir = join("jobs", jobId);
 const status = { url, jobId, startedAt: new Date().toISOString(), phase: "crawl", events: [] as unknown[], done: false, error: "",
   // Set when the site's own rules stop the run: the job page explains it and the run does not use up the daily allowance.
-  refused: undefined as undefined | { reason: "terms" | "robots" | "optout"; quote?: string; urls?: string[] } };
+  refused: undefined as undefined | { reason: "terms" | "robots" | "optout" | "insufficient"; quote?: string; urls?: string[] } };
 let flushing: Promise<void> = Promise.resolve();
 let lastMirror = 0;
 const flush = () => (flushing = flushing.then(async () => {
@@ -65,8 +66,14 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
         log({ type: "terms", error: (e as Error).message.split("\n")[0].slice(0, 120) });
       }
     };
-    const runCrawl = (r: Robots, archiveTimestamp?: string) => crawl(url, { jobId, maxPages: Number(max), onEvent: log, archiveTimestamp, robots: r });
+    const runCrawl = async (r: Robots, archiveTimestamp?: string) => {
+      const res = await crawl(url, { jobId, maxPages: Number(max), onEvent: log, archiveTimestamp, robots: r });
+      if (res.pages.length) log({ type: "quality", ...res.quality, coverage: res.coverage, archive: !!archiveTimestamp });
+      return res;
+    };
     let why = "";
+    // Set when the live site answered but showed (almost) no text; with no archive copy either, the run is refused, not failed.
+    let thin = false;
     if (robots.state === "unreachable") {
       why = "The site did not answer (robots.txt could not be read)";
       log({ type: "unreachable", reason: "robots.txt unreachable" });
@@ -77,23 +84,29 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
         if (r.pages.length === 0) {
           why = `The site could not be fetched (${r.skipped[0]?.reason ?? "no pages"})`;
           log({ type: "unreachable", reason: r.skipped[0]?.reason ?? "no pages" });
+        } else if (r.quality?.status === "insufficient") {
+          why = `The site showed too little text to rebuild (${r.quality.reasons[0]})`;
+          thin = true;
+          log({ type: "insufficient", reason: r.quality.reasons[0] });
         }
       } catch (e) {
         if (!(e instanceof BlockedError)) throw e;
         log({ type: "blocked", url: e.url, reason: e.reason });
         why = e.message;
+        thin = e.reason.startsWith("blank page");
       }
     }
     if (why) {
       // Dead, firewalled or bot-protected: rebuild from the Wayback Machine instead, under the robots.txt and terms it captured.
       status.phase = "archive";
       const snap = await findSnapshot(url);
-      if (!snap) throw new Error(`${why}. No Wayback Machine copy found either.`);
+      if (!snap) throw new Error(thin ? THIN : `${why}. No Wayback Machine copy found either.`);
       log({ type: "archive", timestamp: snap.timestamp, captures: snap.captures });
       const archived = await loadRobots(origin, snap.timestamp);
       if (archived.blocksSite) throw new Error(ROBOTS_BLOCKED);
       if (!termsChecked) await gate(archived, snap.timestamp);
-      await runCrawl(archived, snap.timestamp);
+      const a = await runCrawl(archived, snap.timestamp);
+      if (a.quality?.status === "insufficient") throw new Error(thin ? THIN : `${why}. The Wayback Machine copy has too little text to rebuild either (${a.quality.reasons[0]}).`);
     }
     if (!termsChecked) console.warn("[terms] could not be checked; see the terms events in status.json");
     status.phase = "build";
@@ -151,7 +164,7 @@ const log = (e: unknown) => { status.events.push({ t: Date.now(), ...(e as objec
   } catch (e) {
     status.error = (e as Error).message; status.phase = "error";
     status.refused = e instanceof TermsError ? { reason: "terms", quote: e.result.quote, urls: e.result.urls }
-      : status.error === ROBOTS_BLOCKED ? { reason: "robots" } : status.error === OPTED_OUT ? { reason: "optout" } : undefined;
+      : status.error === ROBOTS_BLOCKED ? { reason: "robots" } : status.error === OPTED_OUT ? { reason: "optout" } : status.error === THIN ? { reason: "insufficient" } : undefined;
     if (status.refused) log({ type: "refused", ...status.refused }); else console.error(e);
   }
   await flush(); await flushing;

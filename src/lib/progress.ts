@@ -2,9 +2,9 @@
 export const STEPS: { key: string; label: string; tool: string }[] = [
   { key: "crawl", label: "Crawl", tool: "Playwright" },
   { key: "archive", label: "Archive", tool: "Wayback Machine" },
+  { key: "segment", label: "Segment", tool: "SAM 3.1" },
   { key: "understand", label: "Understand", tool: "Muse Spark" },
   { key: "plan", label: "Plan", tool: "Muse Spark" },
-  { key: "segment", label: "Segment", tool: "SAM 3.1" },
   { key: "band", label: "Illustrate", tool: "Muse Image" },
   { key: "write", label: "Assemble", tool: "RE:GOV" },
   { key: "verify", label: "Self-check", tool: "Muse Spark" },
@@ -15,7 +15,7 @@ export const STEPS: { key: string; label: string; tool: string }[] = [
 ];
 
 // Share of a typical run spent in each step, for progress percentages.
-const WEIGHT: Record<string, number> = { crawl: 0.25, archive: 0.05, understand: 0.45, plan: 0.08, segment: 0.04, band: 0.12, write: 0.06, verify: 0.08, charter: 0.08, portraits: 0.05, evidence: 0.03, audit: 0.05 };
+const WEIGHT: Record<string, number> = { crawl: 0.25, archive: 0.05, understand: 0.45, plan: 0.08, segment: 0.06, band: 0.12, write: 0.06, verify: 0.08, charter: 0.08, portraits: 0.05, evidence: 0.03, audit: 0.05 };
 
 type Ev = { type: string; [k: string]: unknown };
 export function progressOf(status: { phase: string; done: boolean; events: Ev[] }) {
@@ -32,7 +32,7 @@ export function progressOf(status: { phase: string; done: boolean; events: Ev[] 
     : cur === "archive" ? "finding a snapshot"
     : cur === "understand" ? `${understood} of ${toUnderstand || "?"} pages`
     : cur === "plan" ? "site map and navigation"
-    : cur === "segment" ? "reading the old homepage"
+    : cur === "segment" ? "finding the seal and the images that hold text"
     : cur === "band" ? "painting the header"
     : cur === "verify" ? "comparing every page with its original"
     : cur === "charter" ? "reading Citizen's Charter PDFs"
