@@ -128,6 +128,21 @@ square corners, ruled sections, numbered indexes, a stronger hero, service-first
 sticky header with search, WCAG AA contrast and semantic structure. Kapwa's React components
 (Button, Card, Banner, OfficialBiography…) are not used yet.
 
+## Build your own
+
+The design system is documented as a Claude Code skill in
+[`.claude/skills/regov-design-system`](.claude/skills/regov-design-system/SKILL.md) and rendered
+live at `/design-system`. Run `npm run sample` and `npm run dev`, then open
+http://localhost:3000/design-system to see every component with real and sample data.
+
+- **Fork the app.** Every site it generates already uses the design system and carries the
+  unofficial-concept labels. Claude Code loads the skill automatically inside this repo.
+- **Use only the rules.** Copy the skill folder into your own project's `.claude/skills/`. It
+  explains how to install the Kapwa tokens and which source files to copy from.
+
+Whichever you choose, keep generated sites labelled as unofficial concepts and invent nothing:
+every fact keeps its source.
+
 ## Contributing
 
 Issues and pull requests are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md): it covers

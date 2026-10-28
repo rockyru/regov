@@ -113,7 +113,7 @@ export async function TransparencySection({ site, n }: { site: SiteModel; n: num
   );
 }
 
-function HotlineTable({ rows, showArea }: { rows: Hotline[]; showArea?: boolean }) {
+export function HotlineTable({ rows, showArea }: { rows: Hotline[]; showArea?: boolean }) {
   return (
     <ul className="border-t border-neutral-900 grid sm:grid-cols-2 xl:grid-cols-3 gap-x-10">
       {rows.map((h, i) => (
