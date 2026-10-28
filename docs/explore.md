@@ -42,9 +42,9 @@ tools read the same thing.
   from Filipino hand-painted signs, and LGU tourism sites already use it (tourism.baler.gov.ph
   sets its headings in it). It has capitals, figures, Ñ and ₱ only, so it is set in uppercase
   and never for running text. Inter for everything else.
-  - The font file is not committed until its terms of use are confirmed in writing; the
-    original release site is offline and no licence text has been found. Until then the kit
-    falls back to an open-licence display face.
+  - The font file is committed at `public/fonts/barabara.otf`. Its licence text has not been
+    found (the original release site is offline), so anyone reusing the kit should check its
+    terms before shipping it.
   - Because it is the DOT's campaign lettering, a portal set in it must keep the concept band
     visible so it is never mistaken for DOT or LGU material.
 - **Colour:** each portal takes its palette from the place (the sea at Baler, the sandstone
