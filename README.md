@@ -1,4 +1,4 @@
-<p><img src="public/brand/logo.svg" alt="RE:GOV. Reimagine Government." width="360"></p>
+<p><img src="public/brand/logo-readme.svg" alt="RE:GOV. Reimagine Government." width="360"></p>
 
 # RE:GOV — Reimagine Government
 

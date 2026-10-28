@@ -32,6 +32,25 @@ open one with the "Idea" template.
 - Better Filipino and regional-language handling
 - Per-model providers, and a segmentation adapter so SAM is not Meta-only
 - Exporters for a Next.js project, Payload CMS and WordPress
+- Emergency mode: hotlines, evacuation centres and advisories pinned to the top of a rebuilt
+  LGU site, and kept usable on slow mobile data
+- Rebuilt sites that load fast on 3G and keep hotlines and offices readable offline
+
+## Tourism: a "Visit" section for every LGU
+
+Most towns and provinces have a tourism page, and most of them are a gallery, a paragraph and a
+list of links. Rebuilds should give visitors what they come for, using only what the original
+site says. The full plan is in [docs/tourism.md](docs/tourism.md).
+
+- Recognise tourism content (LGU tourism offices, provincial tourism pages, DOT regional
+  offices) and give it a "Visit" hub: places, festivals, getting there, travel advisories and
+  the tourism office
+- Places and festivals as structured data in the site model, with the source page for each
+- A festival calendar with dates checked against the year they were published, and an .ics file
+- A map of places, only for those the source locates; nothing is placed by guesswork
+- schema.org markup on rebuilt tourism pages so search engines can read them
+- Visitor languages beyond English and Filipino, labelled as machine translation
+- A "Visit" collection on the showcase
 
 ## Later: the wider picture
 
@@ -39,5 +58,7 @@ open one with the "Idea" template.
   Philippine government sites, with no rebuild needed
 - Kapwa components and patterns found missing by the case study, proposed upstream to BetterGov
 - Deeper WikiBayan integration
+- A public read-only API for published site models
+- A tourism view of the observatory: which towns have a usable visitor page at all
 - Funding and governance: who pays for model calls on the public service, more maintainers, and
   a lightweight proposal process for big changes
