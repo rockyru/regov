@@ -9,6 +9,7 @@ import { join } from "node:path";
 import { JOBS_ROOT } from "@/lib/jobs";
 import { loadUsage } from "@/lib/usage";
 import { usd, totalOf } from "@/lib/usageLabels";
+import { listFeedback } from "@/lib/feedback";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Operator | RE:GOV", robots: { index: false, follow: false } };
@@ -41,6 +42,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const count = (st: string) => all.filter((r) => r.state === st).length;
   const unchecked = all.filter((r) => r.state === "done" && r.design === "not checked").length;
   const q = runQueue.snapshot();
+  const feedback = await listFeedback(50);
   // Model usage across every site, from each site's usage.json (sites built before Oct 28 report build tokens only).
   const usages = await Promise.all(jobs.map(async (j) => ({ j, u: await loadUsage(join(JOBS_ROOT, j.id)) })));
   const days = new Map<string, { calls: number; tokens: number }>();
@@ -106,6 +108,16 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
               </tbody>
             </table></div>
           </form>
+
+          <section className="mt-12">
+            <h2 className={`${eyebrow} text-neutral-600`}>Feedback <span className="tabular-nums">{feedback.length}</span></h2>
+            {feedback.length ? <ol className="mt-3 divide-y divide-neutral-200 border-y border-neutral-200">{feedback.map((f) => (
+              <li key={f.id} className="py-3 text-sm">
+                <p className="whitespace-pre-wrap text-neutral-900">{f.message}</p>
+                <p className="mt-1 text-[13px] text-neutral-500">{f.email ? <a href={`mailto:${f.email}`} className="underline">{f.email}</a> : "anonymous"}{f.page && <> · <Link href={f.page} className="underline">{f.page}</Link></>} · {new Date(f.at).toLocaleString("en-PH", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Manila" })}{!f.emailed && " · not emailed"}</p>
+              </li>
+            ))}</ol> : <p className="mt-2 text-sm text-neutral-600">No comments yet.</p>}
+          </section>
         </div>
       </main>
       <AppFooter />
