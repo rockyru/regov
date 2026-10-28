@@ -132,13 +132,16 @@ sticky header with search, WCAG AA contrast and semantic structure. Kapwa's Reac
 
 The design system is documented as a Claude Code skill in
 [`.claude/skills/regov-design-system`](.claude/skills/regov-design-system/SKILL.md) and rendered
-live at `/design-system`. Run `npm run sample` and `npm run dev`, then open
-http://localhost:3000/design-system to see every component with real and sample data.
+live at [regov.app/design-system](https://regov.app/design-system). To run it locally, use
+`npm run sample` and `npm run dev`, then open http://localhost:3000/design-system.
 
 - **Fork the app.** Every site it generates already uses the design system and carries the
   unofficial-concept labels. Claude Code loads the skill automatically inside this repo.
 - **Use only the rules.** Copy the skill folder into your own project's `.claude/skills/`. It
   explains how to install the Kapwa tokens and which source files to copy from.
+
+[docs/design-system.md](docs/design-system.md) shows how to use the skill with Claude Code,
+Cursor, Copilot or a chat assistant, with example prompts.
 
 Whichever you choose, keep generated sites labelled as unofficial concepts and invent nothing:
 every fact keeps its source.
