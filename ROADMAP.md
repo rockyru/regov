@@ -51,6 +51,9 @@ site says. The full plan is in [docs/tourism.md](docs/tourism.md).
 - schema.org markup on rebuilt tourism pages so search engines can read them
 - Visitor languages beyond English and Filipino, labelled as machine translation
 - A "Visit" collection on the showcase
+- **RE:GOV Explore:** curated tourism portals for LGUs with the richest tourism material,
+  told as a story of the place, with destinations, festivals, food and lodging, built on a
+  dedicated Explore kit. Baler first, then Miagao. See [docs/explore.md](docs/explore.md)
 
 ## Later: the wider picture
 
