@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { isGovernmentHost, normalizeSiteUrl } from "@/lib/govdomain";
+import { Turnstile } from "./Turnstile";
 
 const INITIAL: Record<string, (url: string, wait: number) => string> = {
   notgov: (u) => `${u} is not a government domain.`,
@@ -10,13 +11,23 @@ const INITIAL: Record<string, (url: string, wait: number) => string> = {
   quota: () => "Today's batch of rebuilds is used up. The agent takes new sites again at 8:00 AM Philippine time. Browse the showcase meanwhile.",
   robots: (u) => `${u} asks crawlers not to visit it in its robots.txt, so RE:GOV will not rebuild it.`,
   optout: (u) => `${u} is on RE:GOV's do-not-crawl list (its owner asked, or its terms forbid it), so it will not be rebuilt.`,
+  verify: () => "We couldn't confirm you're a person. Please try again.",
   paused: () => "New runs are paused for now while the current batch finishes. Browse the showcase meanwhile, or check back later.",
 };
 
-export function ReimagineBox({ initialError = "", initialUrl = "", initialWait = 0 }: { initialError?: string; initialUrl?: string; initialWait?: number }) {
+/** With a Turnstile sitekey, the form waits for Cloudflare's token (sent as cf-turnstile-response) before it posts. */
+export function ReimagineBox({ initialError = "", initialUrl = "", initialWait = 0, sitekey = "" }: { initialError?: string; initialUrl?: string; initialWait?: number; sitekey?: string }) {
   const [url, setUrl] = useState(["ratelimit", "busy", "paused", "quota", "robots", "optout"].includes(initialError) ? "" : initialUrl);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(INITIAL[initialError]?.(initialUrl, initialWait) ?? "");
+  const human = useRef("");
+  const waiting = useRef(false);
+  const form = useRef<HTMLFormElement>(null);
+  // Submitted before Cloudflare answered: send as soon as the token arrives.
+  const onToken = (t: string) => {
+    human.current = t;
+    if (t && waiting.current) { waiting.current = false; form.current?.requestSubmit(); }
+  };
   const check = (v: string) => {
     const u = normalizeSiteUrl(v);
     if (!u) return "That doesn't look like a website address.";
@@ -24,7 +35,7 @@ export function ReimagineBox({ initialError = "", initialUrl = "", initialWait =
     return "";
   };
   return (
-    <form id="reimagine" action="/api/run" method="post" onSubmit={(e) => { const err = check(url); if (err) { e.preventDefault(); setError(err); return; } setBusy(true); }} className="w-full">
+    <form ref={form} id="reimagine" action="/api/run" method="post" onSubmit={(e) => { const err = check(url); if (err) { e.preventDefault(); setError(err); return; } if (sitekey && !human.current) { e.preventDefault(); waiting.current = true; setBusy(true); return; } setBusy(true); }} className="w-full">
       <label htmlFor="url" className="sr-only">Government website</label>
       <div className={`flex border-2 bg-white ${error ? "border-kapwa-red-600" : "border-kapwa-brand-900 focus-within:border-kapwa-brand-900"}`}>
         <input
@@ -37,6 +48,7 @@ export function ReimagineBox({ initialError = "", initialUrl = "", initialWait =
         </button>
         <input type="hidden" name="max" value="30" />
       </div>
+      {sitekey && <Turnstile sitekey={sitekey} action="reimagine" onToken={onToken} className="mt-3 flex justify-center empty:hidden" />}
       {error && <p id="url-error" role="alert" className="mt-2 text-center text-sm font-medium text-kapwa-red-700">{error}</p>}
     </form>
   );
