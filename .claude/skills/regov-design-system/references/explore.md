@@ -1,6 +1,8 @@
 # Explore kit (`/explore/<portal>`)
 
-A tourism portal per LGU, built only from the LGU's own pages. Route: `src/app/explore/[slug]/…`. Components: `src/components/explore/`. Styles: `src/app/explore/explore.css`, imported by the Explore routes. Content model: `src/lib/explore/types.ts`; portals in `src/lib/explore/<slug>.ts`, registered in `src/lib/explore/index.ts`; plan in `docs/tourism.md`.
+A tourism portal per LGU, built only from the LGU's own pages. Route: `src/app/explore/[slug]/…`. Components: `src/components/explore/`. Styles: `src/app/explore/explore.css`, imported by the Explore routes. Content model: `src/lib/explore/types.ts`; portals in `src/lib/explore/<slug>.ts`, registered in `src/lib/explore/index.ts`; plan in `docs/tourism.md`; step-by-step guide in `docs/design-system.md` (section 5).
+
+Portals are written by hand, not generated. Maps come from `npm run explore:maps -- <slug> --province "<name>" --bbox w,s,e,n` (Natural Earth and OpenStreetMap), which writes `src/lib/explore/maps/<slug>.ts` exporting `country`, `province` and `town`. Components must not hard-code a town: anything town-specific (section heads, `islandGroup`, footer `picks`) belongs in the portal data.
 
 It is the one deliberate exception to the editorial look. Keep it contained: all its CSS sits in `@layer explore` and is scoped to `.xp` and prefixed classes (`ih-`, `pl-`, `cm-`, `geo-`, `xf`, `pp-`…). The layer outranks the global square-corner reset, which is why its capsules can be round. Don't leak these styles into app or site pages.
 
@@ -8,7 +10,7 @@ It is the one deliberate exception to the editorial look. Keep it contained: all
 
 - Canvas `.xp`: background `#0b0c0e`, white text, `min-height: 100dvh`, `overflow-x: clip`.
 - Palette: night `#0b0c0e`, land `#1b1d21`, ink on glass `#16181c`, sea `#0e3a44`, gold `#ffd27a` (active pin, pulse; hover text `#b07a00`), paper `#e8e6e1`. Lines are white at fixed opacities (0.42 grid, 0.45 coast, 0.22 roads, 0.12 rivers).
-- Type: `.xp-display` uses Barabara (`public/fonts/barabara.otf`), uppercase, weight 400, line-height 1, for display lines (`portal.title`). The masthead letters are Inter 700 at -0.04em, sized from the grid (`--fs`). Body is Inter.
+- Type: `.xp-display` uses Barabara (`public/fonts/barabara.otf`; the Department of Tourism's free 2022 typeface, licence text not yet found), uppercase, weight 400, line-height 1, for display lines (`portal.title`). The masthead letters are Inter 700 at -0.04em, sized from the grid (`--fs`). Body is Inter.
 - The ruled grid: the hero is 8 × 5 cells of 42% white hairlines over one viewport of photograph (4 × 6 on phones). Letters, links and notes are placed in cells.
 - Focus: a 2px white outline offset 4px. Motion is choreographed (letters rising, roads drawing, pins dropping) and all of it stops under `prefers-reduced-motion`.
 

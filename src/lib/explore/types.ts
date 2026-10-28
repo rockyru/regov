@@ -51,11 +51,14 @@ export type Happening = {
   source: Source;
 };
 
+export type Head = { kicker: string; lines: [string, string]; outline: string };
+
 export type Portal = {
   slug: string;
   town: string;
   province: string;
   region: string;
+  islandGroup: "Luzon" | "Visayas" | "Mindanao";
   /** Display lines for the masthead, set in Barabara (capitals only). */
   title: string[];
   promise: string;
@@ -69,6 +72,10 @@ export type Portal = {
   palette: { accent: string; ink: string; canvas: string };
   story: { kicker: string; chapters: Chapter[] };
   places: Place[];
+  /** Section heads in the town's own terms: two lines, then a phrase set in outline. */
+  heads: { places: Head; plan: Head };
+  /** Slugs of up to three places with photos for the footer; the first three with photos otherwise. */
+  picks?: string[];
   feature: { kicker: string; title: string[]; body: string[]; photo: Photo; source: Source };
   events: Happening[];
   gettingThere: {

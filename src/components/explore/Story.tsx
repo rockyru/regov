@@ -138,7 +138,7 @@ export function Story({ kicker, chapters, map, children }: { kicker: string; cha
         <div aria-hidden className="st-late st-caption">
           {chapters.map((c, i) => c.photo && (
             <p key={i} className={i === active ? "is-on" : ""}>
-              <span>Fig. {num(i)}</span>{c.photo.kind === "placeholder" ? "AI placeholder, not a photograph of Baler: " : ""}{c.photo.alt}
+              <span>Fig. {num(i)}</span>{c.photo.kind === "placeholder" ? `AI placeholder, not a photograph of ${map.town}: ` : ""}{c.photo.alt}
             </p>
           ))}
         </div>

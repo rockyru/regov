@@ -34,7 +34,7 @@ export default async function ExplorePage({ params }: { params: Promise<{ slug: 
       <SiteNav />
       <Hero portal={portal} />
       <Story kicker={portal.story.kicker} chapters={portal.story.chapters}
-        map={{ w: maps.country.w, h: maps.country.h, land: maps.country.land, x, y, town: portal.town, sub: `${portal.province}, Luzon` }}>
+        map={{ w: maps.country.w, h: maps.country.h, land: maps.country.land, x, y, town: portal.town, sub: `${portal.province}, ${portal.islandGroup}` }}>
         <PlacesWhere portal={portal} maps={maps} />
       </Story>
       <Places portal={portal} maps={maps} />

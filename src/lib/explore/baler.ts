@@ -23,6 +23,7 @@ export const baler: Portal = {
   town: "Baler",
   province: "Aurora",
   region: "Central Luzon",
+  islandGroup: "Luzon",
   title: ["THIS IS", "BALER"],
   promise: "Birthplace of Philippine surfing",
   lede: "Beaches, waterfalls, mountains and old landmarks on the Pacific coast of Aurora, where the country's longest-running surf community began.",
@@ -99,6 +100,11 @@ export const baler: Portal = {
       },
     ],
   },
+  heads: {
+    places: { kicker: "On the Pacific coast of Luzon", lines: ["Where Luzon", "meets"], outline: "the Pacific." },
+    plan: { kicker: "Getting there", lines: ["Manila to", "the"], outline: "Pacific." },
+  },
+  picks: ["sabang-beach", "ermita-hill", "dicasalarin-cove"],
   places: [
     { slug: "ermita-hill", name: "Ermita Hill", kind: "heritage", barangay: "Zabali", note: "Where survivors of the 1735 wave swam to safety; the Tromba Marina sculpture stands here.", photo: ph("ermita", "The view from a grassy hilltop over rooftops and palms to the bay"), at: { lat: 15.754473, lon: 121.581327, label: "Ermita Park", source: S.map }, source: S.history },
     { slug: "museo-de-baler", name: "Museo de Baler", kind: "museum", note: "Entrance is included in the eco-tourism fee.", photo: ph("museum", "Display cases and old photographs in a museum"), at: { lat: 15.760092, lon: 121.562079, label: "Museo de Baler and Quezon Park", address: "Quezon Street", source: S.map }, source: S.fee },

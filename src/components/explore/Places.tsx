@@ -18,8 +18,8 @@ export function PlacesWhere({ portal: x, maps }: { portal: Portal; maps: { provi
       <header className="pl-head"><p><b>02</b>Places</p><p>{x.province} · {x.region} · Philippines</p></header>
       <div className="pl-where">
         <div className="pl-copy">
-          <p className="pl-kicker">On the Pacific coast of Luzon</p>
-          <h2 id="places-title" className="pl-h">Where Luzon<br />meets <span className="pl-outline">the Pacific.</span></h2>
+          <p className="pl-kicker">{x.heads.places.kicker}</p>
+          <h2 id="places-title" className="pl-h">{x.heads.places.lines[0]}<br />{x.heads.places.lines[1]} <span className="pl-outline">{x.heads.places.outline}</span></h2>
           <p className="pl-lede">{x.lede}</p>
           <a href={x.gettingThere.source.url} className="pl-link" rel="noopener">How to get there <span aria-hidden>↗</span></a>
         </div>
