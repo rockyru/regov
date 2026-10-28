@@ -18,17 +18,20 @@ export default function HowItWorks() {
           <p>The same site is not rebuilt twice within a day; you are sent to the run that already exists. Model credits are limited, so there is a daily cap on new runs.</p>
         </> },
         { title: "Crawl", body: <>
-          <p>A real browser (Playwright) visits up to 30 pages on the same site at about one request a second, following robots.txt and Crawl-delay. Before any page is collected, Muse Spark reads the site&rsquo;s terms of use; if they forbid automated access or republishing, the run stops. <Link href="/bot">More about the crawler</Link>. For each page it keeps a full screenshot, the visible text, the links and any attached files. WordPress sites also give up their posts through the REST API.</p>
-          <p>If the site blocks crawlers or is down, the agent rebuilds from the <a href="https://web.archive.org">Wayback Machine</a> month with the most real pages, so even a dead site gets its content back.</p>
+          <p>A real browser (Playwright) visits up to 30 pages on the same site at about one request a second, following robots.txt and Crawl-delay. Before any page is collected, Muse Spark reads the site&rsquo;s terms of use; if they forbid automated access or republishing, the run stops. <Link href="/bot">More about the crawler</Link>. For each page it keeps a full screenshot, the visible text, the links and any attached files. WordPress sites also give up their posts through the REST API, and the site&rsquo;s sitemap fills in pages its menus hide.</p>
+          <p>If the site blocks crawlers or is down, the agent rebuilds from the <a href="https://web.archive.org">Wayback Machine</a> month with the most real pages, so even a dead site gets its content back. A homepage that comes back blank is treated the same way, and if neither copy has enough text to rebuild, the run stops instead of publishing an empty site. Every run is marked complete or partial, with what was left out and why.</p>
+        </> },
+        { title: "Segment", body: <>
+          <p><M>SAM 3.1</M> works on the old homepage before anything is rewritten. It maps the seal, search box and maps, and cuts the seal out cleanly to use as the new logo. <M>Muse Spark</M> spots the images whose words exist only inside the picture (a slideshow naming the mayor, an event poster, a payment banner), <M>SAM 3.1</M> locates each one, and the full-resolution crops go to the next step.</p>
         </> },
         { title: "Understand", body: <>
-          <p><M>Muse Spark 1.3</M> reads every page, screenshot and text together, and returns a strict, typed model of it: headings, people, steps, tables, contacts, FAQs, timelines. Text that only exists inside an image (a scanned notice, a poster) is transcribed. It also notes accessibility problems and anything a person should confirm.</p>
+          <p><M>Muse Spark 1.3</M> reads every page, screenshot and text together, and returns a strict, typed model of it: headings, people, steps, tables, contacts, FAQs, timelines. Text that only exists inside an image (a scanned notice, a poster) is transcribed; on the homepage it reads SAM&rsquo;s full-resolution crops, which a scaled-down screenshot would blur. It also notes accessibility problems and anything a person should confirm.</p>
         </> },
         { title: "Plan", body: <>
           <p><M>Muse Spark</M> then looks at all the pages at once and plans a citizen-first site: the navigation, the services people come for, the homepage sections, the footer, and a redirect from every old address to its new one.</p>
         </> },
-        { title: "Seal and header art", body: <>
-          <p><M>SAM 3.1</M> finds the agency&rsquo;s seal on the old homepage and cuts it out cleanly to use as the new logo. <M>Muse Spark</M> writes an art brief from the plan, and <M>Muse Image</M> paints a wide header illustration for that agency or town. It is labelled as AI-generated, never passed off as a photograph.</p>
+        { title: "Header art", body: <>
+          <p><M>Muse Spark</M> writes an art brief from the plan, and <M>Muse Image</M> paints a wide header illustration for that agency or town. It is labelled as AI-generated, never passed off as a photograph.</p>
         </> },
         { title: "Build on Kapwa", body: <>
           <p>The site is rendered live from the plan on <a href="https://github.com/bettergovph/kapwa">Kapwa</a>, the design system BetterGov.ph volunteers made for Philippine government portals: its colour tokens, type scale and base styles, with an editorial layout on top (square corners, ruled sections, numbered indexes) so it reads like a public document, not an app. <Link href="/case-study">How RE:GOV uses Kapwa →</Link></p>

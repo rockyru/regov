@@ -14,7 +14,8 @@ import { strictSchema } from "./schema";
 import { BLOCKED_TITLE, fromArchive, toArchive } from "./archive";
 import { UA, type Robots } from "./robots";
 
-const TERMS = /terms|conditions|legal|disclaimer|copyright|website[-_ ]?polic|acceptable[-_ ]use|data[-_ ]use/i;
+// "legal" not inside a word: "illegal" in a news slug is not a legal notice ("termsofuse" still matches).
+const TERMS = /terms|conditions|(?<![a-z])legal|disclaimer|copyright|website[-_ ]?polic|acceptable[-_ ]use|data[-_ ]use/i;
 const NOT_TERMS = /privacy|cookie/i;
 
 const Verdict = z.object({
@@ -70,7 +71,7 @@ export function termsLinks(anchors: { text: string; href: string }[], origin: st
     const hay = `${a.text.replace(/\s+/g, " ").trim()} ${u.pathname}`;
     if (!TERMS.test(hay) || NOT_TERMS.test(hay)) continue;
     u.hash = "";
-    out.push({ url: u.toString(), score: /terms|conditions/i.test(hay) ? 0 : /legal|copyright/i.test(hay) ? 1 : 2 });
+    out.push({ url: u.toString(), score: /terms|conditions/i.test(hay) ? 0 : /(?<![a-z])legal|copyright/i.test(hay) ? 1 : 2 });
   }
   return [...new Map(out.sort((a, b) => a.score - b.score).map((x) => [x.url, x])).keys()].slice(0, 2);
 }

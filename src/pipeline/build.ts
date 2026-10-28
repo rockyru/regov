@@ -6,6 +6,7 @@ import type { SiteModel, SitePage } from "./schema";
 import { understandPage } from "./understand";
 import { planSite } from "./plan";
 import { segmentHome } from "./segment";
+import { findImageText, regionImages, saveReads, type RegionsFile } from "./imageText";
 import { assessDesign, type Design } from "./assess";
 import { makeBand } from "./band";
 import { pmap } from "./cache";
@@ -16,6 +17,8 @@ export type BuildEvent =
   | { type: "page"; index: number; title: string; page_type: string; blocks: number; ms: number }
   | { type: "plan"; agency: string; nav: string[] }
   | { type: "segment"; regions: number; logo: boolean }
+  | { type: "regions"; spotted: number; located: number }
+  | { type: "image-text"; read: number; regions: number }
   | { type: "design"; mode: Design["mode"]; score: number; reason: string }
   | { type: "band"; brief: string }
   | { type: "built"; pages: number; tokens: number; ms: number };
@@ -30,14 +33,30 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
   const t0 = Date.now();
   let tokens = 0;
 
+  // SAM 3.1 first, so what it finds informs Muse Spark: the region map and seal, and the
+  // images on the homepage that hold text (Muse Spark spots them, SAM locates them, Muse Spark reads the crops).
+  onEvent({ type: "phase", phase: "segment" });
+  const [seg, regions] = await Promise.all([
+    step("segment", () => segmentHome(jobDir, crawl.pages[0].viewportShotFile)),
+    step("regions", () => findImageText(jobDir, crawl)).catch((e) => { console.warn("[regions] skipped:", (e as Error).message); return null as RegionsFile | null; }),
+  ]);
+  onEvent({ type: "segment", regions: seg.segments.length, logo: !!seg.logo });
+  if (regions) onEvent({ type: "regions", spotted: regions.spotted, located: regions.regions.length });
+  const crops = regions?.regions.length ? await regionImages(jobDir, regions) : [];
+
   onEvent({ type: "phase", phase: "understand", detail: `${crawl.pages.length} pages` });
   // (protected pages are skipped below)
   const usable = crawl.pages.filter((p) => !/^(Protected|Private):/i.test(p.title) && !/This content is password protected/i.test(p.text.slice(0, 2000)));
   const concurrency = Number(process.env.UNDERSTAND_CONCURRENCY ?? 3);
   const pages: SitePage[] = await pmap(usable, concurrency, async (p, i) => {
     const t = Date.now();
-    const { model, usage } = await step("understand", () => understandPage(jobDir, p, crawl.archive?.note ?? ""));
+    const home = p.url === crawl.pages[0].url;
+    const { model, usage, reads } = await step("understand", () => understandPage(jobDir, p, crawl.archive?.note ?? "", home ? crops : []));
     tokens += usage;
+    if (home && regions && crops.length) {
+      await saveReads(jobDir, regions, reads ?? []);
+      onEvent({ type: "image-text", read: (reads ?? []).filter((r) => r.text_found).length, regions: crops.length });
+    }
     onEvent({ type: "page", index: i, title: model.title, page_type: model.page_type, blocks: model.blocks.length, ms: Date.now() - t });
     return fixPage({ ...model, slug: slugOf(p.url), source_url: p.url, source_screenshot: p.screenshotFile });
   });
@@ -51,9 +70,6 @@ export async function buildSite(jobId: string, onEvent: (e: BuildEvent) => void 
   tokens += usage;
   onEvent({ type: "plan", agency: plan.agency.name, nav: plan.nav.map((n) => n.label) });
 
-  onEvent({ type: "phase", phase: "segment" });
-  const seg = await step("segment", () => segmentHome(jobDir, crawl.pages[0].viewportShotFile));
-  onEvent({ type: "segment", regions: seg.segments.length, logo: !!seg.logo });
   // Keep the old look and upgrade it, or replace it with ours (see assess.ts).
   let design: Design | undefined;
   try {

@@ -31,7 +31,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
         <QueueStrip initial={await queueStrip(all)} />
 
         {/* Masthead */}
-        <section className="relative flex min-h-[calc(100dvh-4rem)] flex-col overflow-hidden">
+        <section className="relative flex min-h-[calc(100dvh-5rem)] lg:min-h-[calc(100dvh-4rem)] flex-col overflow-hidden">
           {/* Muse Image: a Philippine civic panorama pinned to the bottom of the viewport (public/hero.jpg) */}
           <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[max(33.4vw,46%)] min-h-64">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -39,20 +39,19 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
             <div className="absolute inset-x-0 top-0 h-1/2 bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.75)_45%,rgba(255,255,255,0)_100%)]" />
           </div>
           <Reveal className="container-gov pt-14 pb-56 sm:pb-[22vw] lg:pt-20 text-center">
-          <p className={`${eyebrow} text-kapwa-brand-900`}>Autonomous civic technology</p>
-          <h1 className="mt-5 text-5xl sm:text-6xl xl:text-[84px] font-display font-normal tracking-tight leading-[0.95] text-neutral-900">Reimagine <span className="text-kapwa-brand-900">Government</span>.</h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-neutral-600 leading-snug">Public websites deserve a second life. Paste a Philippine government site and an agent crawls it, understands it, and rebuilds it on the BetterGov Kapwa standard.</p>
-          <div className="mx-auto mt-10 max-w-2xl">
-            <ReimagineBox done={jobs.map((j) => new URL(j.crawl!.origin).host.replace(/^www\./, ""))} initialError={error} initialUrl={url} initialWait={Number(wait) || 0} />
-          </div>
+          <h1 className="text-5xl sm:text-6xl xl:text-[84px] font-display font-normal tracking-tight leading-[0.95] text-neutral-900">Reimagine <span className="text-kapwa-brand-900">Government</span>.</h1>
           {/* Daily allowance notice: resets at 8:00 AM Manila (src/lib/runQueue.ts) */}
-          <p role="status" className="mx-auto mt-6 inline-flex max-w-2xl flex-wrap items-center justify-center gap-x-3 gap-y-1 border border-kapwa-brand-900/20 bg-white/80 px-4 py-2 text-sm text-neutral-700">
+          <p role="status" className="mx-auto mt-8 inline-flex max-w-2xl flex-wrap items-center justify-center gap-x-3 gap-y-1 border border-kapwa-brand-900/20 bg-white/80 px-4 py-2 text-sm text-neutral-700">
             <span className="font-semibold text-neutral-900">Up to {today.max} new sites a day</span>
             <span aria-hidden className="hidden text-neutral-400 sm:inline">·</span>
             <span>Resets daily at <span className="font-semibold text-neutral-900">8:00 AM</span> Philippine time</span>
             <span aria-hidden className="hidden text-neutral-400 sm:inline">·</span>
             <span className={left ? "font-semibold text-kapwa-green-800" : "font-semibold text-kapwa-red-700"}>{left ? `${left} left today` : "Used up until 8:00 AM"}</span>
           </p>
+          <div className="mx-auto mt-4 max-w-2xl">
+            <ReimagineBox initialError={error} initialUrl={url} initialWait={Number(wait) || 0} />
+          </div>
+          <p className="mx-auto mt-5 max-w-2xl text-lg sm:text-xl text-neutral-600 leading-snug">Public websites deserve a second life. Paste a Philippine government site and an agent crawls it, understands it, and rebuilds it on the BetterGov Kapwa standard.</p>
           <p className="mx-auto mt-4 max-w-2xl text-[13px] text-neutral-500">Government domains only: agencies, LGUs, state universities, hospitals. Sites behind bot protection are rebuilt from their Wayback Machine archive. Output is an unofficial concept.</p>
           </Reveal>
         </section>

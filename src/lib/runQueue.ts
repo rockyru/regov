@@ -8,7 +8,7 @@ import { existsSync, mkdirSync, openSync, readdirSync, readFileSync, statSync, w
 import { resolve } from "node:path";
 
 export interface QueueInfo { position: number; of: number; running: number }
-export type Refusal = { reason: "terms" | "robots" | "optout"; quote?: string; urls?: string[] };
+export type Refusal = { reason: "terms" | "robots" | "optout" | "insufficient"; quote?: string; urls?: string[] };
 export interface RunStatusFile { url: string; jobId: string; startedAt: string; phase: string; events: unknown[]; done: boolean; error: string; queue?: QueueInfo; refused?: Refusal }
 interface Job { jobId: string; url: string; host: string; max: string; enqueuedAt: number; ip: string }
 
@@ -117,7 +117,7 @@ class RunQueue {
       for (const id of readdirSync(JOBS)) {
         try {
           const s = JSON.parse(readFileSync(resolve(JOBS, id, "status.json"), "utf8")) as RunStatusFile;
-          // Runs the site's own rules refused (terms, robots.txt, opt-out) do not use up the allowance.
+          // Runs the site's own rules refused (terms, robots.txt, opt-out), or that found nothing to rebuild, do not use up the allowance.
           if (new Date(s.startedAt).getTime() >= start && !s.refused) n++;
         } catch { /* not a job */ }
       }
