@@ -12,6 +12,10 @@ problems were fixed.
 
 Built solo for the Meta Global AI Developer Hackathon 2026 (Indie track).
 
+**Build your own:** the design system behind every reimagined site is open source. See it at
+[regov.app/design-system](https://regov.app/design-system) and use it with AI tools by following
+[docs/design-system.md](docs/design-system.md), or jump to [Build your own](#build-your-own).
+
 ## Disclaimer
 
 Every site RE:GOV produces is an **unofficial, AI-generated concept** for demonstration. The
