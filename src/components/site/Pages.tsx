@@ -21,7 +21,7 @@ function newsTitle(raw: string): { kicker: string; title: string } {
 }
 
 /** Editorial section head: numbered eyebrow, heavy top rule, heading left, deck right. */
-function SectionHead({ n, title, deck, small }: { n: number; title: string; deck?: string; small?: boolean }) {
+export function SectionHead({ n, title, deck, small }: { n: number; title: string; deck?: string; small?: boolean }) {
   return (
     <div className="border-t-2 border-neutral-900 pt-5 grid gap-3 lg:grid-cols-[1fr_minmax(0,34rem)] lg:gap-12 items-end">
       <div>
@@ -34,7 +34,7 @@ function SectionHead({ n, title, deck, small }: { n: number; title: string; deck
 }
 
 /** Square "tag" list used for units, barangays and campuses. */
-function Tags({ items, jobId }: { items: { name: string; detail?: string; slug?: string }[]; jobId: string }) {
+export function Tags({ items, jobId }: { items: { name: string; detail?: string; slug?: string }[]; jobId: string }) {
   const cls = "inline-block border border-neutral-300 px-3.5 py-1.5 text-sm font-medium text-neutral-800 hover:border-neutral-900 hover:text-neutral-900";
   return (
     <ul className="mt-6 flex flex-wrap gap-2">
