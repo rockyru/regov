@@ -76,6 +76,7 @@ const FOOTER_COLS: { heading: string; links: { label: string; href: string; ext?
     { label: "How it works", href: "/how-it-works" },
     { label: "Case study", href: "/case-study" },
     { label: "Source code", href: "https://github.com/rockyru/regov", ext: true },
+    { label: "Discussions", href: "https://github.com/rockyru/regov/discussions", ext: true },
     { label: "Report an issue", href: "https://github.com/rockyru/regov/issues", ext: true },
     { label: "Privacy", href: "/privacy" },
     { label: "Terms of use", href: "/terms" },

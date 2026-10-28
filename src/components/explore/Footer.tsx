@@ -44,7 +44,7 @@ export function Footer({ portal: x, base = "" }: { portal: Portal; base?: string
       <div className="xf-rule" aria-hidden />
       <p className="xf-mark xp-display" aria-hidden>{x.town}</p>
       <nav className="xf-nav" aria-label="Sections">
-        {SECTIONS.map(([label, id]) => <a key={id} href={`${base}#${id}`} className={id === "top" ? "is-home" : ""}>{label}</a>)}
+        {SECTIONS.map(([label, id]) => <a key={id} href={`${base}#${id}`}>{label}</a>)}
       </nav>
       <p className="xf-legal">Unofficial concept by <Link href="/">RE:GOV</Link>. Not made by the LGU or the Department of Tourism. Photos are AI placeholders; illustrations made with Muse Image. Maps: Natural Earth; © OpenStreetMap contributors.</p>
     </footer>

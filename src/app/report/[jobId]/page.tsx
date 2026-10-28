@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { discussUrl } from "@/lib/discuss";
 import { notFound } from "next/navigation";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -540,6 +541,7 @@ export default async function Report({ params }: { params: Promise<{ jobId: stri
                 <a href={site.origin} target="_blank" rel="noreferrer" className={btn.ghost}>Original ↗</a>
                 <a href={`/api/jobs/${jobId}/export`} download className={btn.ghost}>Download the site (.zip)</a>
                 <a href={`/api/jobs/${jobId}/export?format=markdown`} download className={btn.ghost}>Content as Markdown (.zip)</a>
+                <a href={discussUrl(site)} target="_blank" rel="noreferrer" className={btn.ghost}>Discuss on GitHub ↗</a>
                 <PrintButton className={`${btn.ghost} border-neutral-300 text-neutral-600 hover:border-kapwa-brand-900`} />
               </div>
               <dl className="mt-8 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 text-sm sm:grid-cols-[auto_1fr_auto_1fr] print:mt-5 print:grid-cols-[auto_1fr_auto_1fr] print:text-[8.5pt]">

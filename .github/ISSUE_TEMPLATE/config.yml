@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Questions, ideas and ports
+    url: https://github.com/rockyru/regov/discussions
+    about: Ask, propose a block, claim a platform port or show what you built in Discussions.
   - name: An agency asking for a change or removal
     url: mailto:hello@regov.app
     about: Write to hello@regov.app. Removal requests from agencies are honoured without argument.

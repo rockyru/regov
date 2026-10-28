@@ -135,8 +135,9 @@ running the app without a model key, the checks CI runs (lint, types, unit tests
 axe-core accessibility gate) and good first contributions. [docs/architecture.md](docs/architecture.md)
 explains how the pieces fit. Generated output must stay clearly marked unofficial.
 
-Questions, or an agency asking for a change: use the Feedback button on regov.app or write to
-hello@regov.app. Security problems: see [SECURITY.md](SECURITY.md).
+Questions, ideas, new block types and ports to other platforms (WordPress, plain HTML and the
+rest) go in [Discussions](https://github.com/rockyru/regov/discussions). An agency asking for a
+change: use the Feedback button on regov.app or write to hello@regov.app. Security problems: see [SECURITY.md](SECURITY.md).
 
 ## License
 

@@ -1,0 +1,25 @@
+body:
+  - type: markdown
+    attributes:
+      value: Built something from a RE:GOV export, a port or the block renderers? Show it here.
+  - type: input
+    id: link
+    attributes:
+      label: Link
+      placeholder: https://…
+    validations:
+      required: true
+  - type: textarea
+    id: about
+    attributes:
+      label: What it is
+      description: What you built, from which RE:GOV concept or part, and what you changed.
+    validations:
+      required: true
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Ground rules
+      options:
+        - label: If it shows a government site's content, it is labelled unofficial unless the agency itself published it.
+          required: true
