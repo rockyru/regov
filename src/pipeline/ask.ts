@@ -49,7 +49,7 @@ export async function askSite(site: SiteModel, question: string, ip: string): Pr
   const full = top.map((h) => `### ${h.page.slug}: ${h.page.title}\n${pageText(h.page).slice(0, 3500)}`).join("\n\n");
   const hotlines = (site.entities ?? []).filter((e) => e.type === "hotline").map((e) => `- ${e.name}: ${e.detail}`).join("\n");
   const prompt = `Site: ${site.agency.name} (${new URL(site.origin).host})\n\nAll pages:\n${index}\n- hotlines: Emergency hotlines (national 911 and the numbers below)\n\nHotlines published on the site:\n${hotlines || "none"}\n\nFull text of the most relevant pages:\n${full || "(no keyword matches)"}\n\nQuestion: ${q}`;
-  const out = await cached(join(JOBS_ROOT, site.jobId), ["ask-v2", MUSE, site.generated_at, q.toLowerCase()], async () => {
+  const out = await cached(join(JOBS_ROOT, site.jobId), ["ask-v2", MUSE, site.generated_at, ...(site.edited_at ? [site.edited_at] : []), q.toLowerCase()], async () => {
     admit(ip);
     const r = await withUsage(join(JOBS_ROOT, site.jobId), "on_demand", "ask", () => meta.responses.create({
       model: MUSE,

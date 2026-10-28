@@ -74,7 +74,7 @@ export function MobileNav({ nav, jobId, lang }: { nav: SiteModel["nav"]; jobId: 
   }, [open]);
 
   const tabBase = "relative flex flex-1 flex-col items-center justify-center gap-1 h-16 min-w-0 px-1 text-[11px] font-semibold tracking-wide";
-  const tab = (active: boolean) => `${tabBase} ${active ? "text-white bg-white/10" : "text-white/70 hover:text-white"}`;
+  const tab = (active: boolean) => `${tabBase} ${active ? "text-white bg-white/10" : "text-white/90 hover:text-white"}`;
   const bar = (active: boolean) => active && <span aria-hidden className="absolute inset-x-3 top-0 h-[3px] bg-kapwa-yellow-400" />;
 
   return (

@@ -81,27 +81,61 @@ export const SitePlan = z.object({
 });
 export type SitePlan = z.infer<typeof SitePlan>;
 
-export interface SitePage extends PageModel {
-  slug: string;
-  source_url: string;
-  source_screenshot: string;
-  /** Set on pages built from a linked document (a Citizen's Charter PDF) rather than a crawled page. */
-  document?: string;
-}
-export interface SiteModel extends SitePlan {
-  jobId: string;
-  origin: string;
-  generated_at: string;
-  pages: SitePage[];
-  news: { title: string; date: string; excerpt: string; href: string }[];
-  assets: { logo: string; logo_box: number[]; band?: string; cover?: string; band_brief?: string };
-  /** From assess.ts. Missing on sites built before the design check: treated as redesign. */
-  design?: { mode: "redesign" | "refine"; score: number; reason: string; primary: string; hero?: string; art?: import("./artDirect").ArtDirection };
-  tokens?: number;
-  /** Officials' photos found by SAM 3.1 and named by Muse Spark (src/pipeline/portraits.ts), keyed by personKey; added by loadSite. */
-  portraits?: Record<string, { src: string; alt: string }>;
+/**
+ * site.json: the open format every rebuild is stored in, and what exporters and other tools read.
+ * Published as JSON Schema at /schema/site-model.v1.json (scripts/schema.ts); docs/site-model.md
+ * explains it. Changes must stay backwards compatible within v1: add optional fields only.
+ */
+export const SITE_MODEL_VERSION = "1";
+
+export const SitePage = PageModel.extend({
+  slug: z.string().describe("path of the page in the rebuilt site; \"home\" for the homepage"),
+  source_url: z.string().describe("the original page this one was rebuilt from"),
+  source_screenshot: z.string().describe("screenshot of the original page, relative to the job folder"),
+  document: z.string().optional().describe("set on pages built from a linked document (a Citizen's Charter PDF) rather than a crawled page"),
+});
+export type SitePage = z.infer<typeof SitePage>;
+
+export const SiteModel = SitePlan.extend({
+  jobId: z.string(),
+  origin: z.string().describe("origin of the original site, e.g. https://www.example.gov.ph"),
+  generated_at: z.string().describe("ISO time the rebuild was generated"),
+  pages: z.array(SitePage),
+  news: z.array(z.object({ title: z.string(), date: z.string(), excerpt: z.string(), href: z.string() })),
+  assets: z.object({
+    logo: z.string().describe("the agency's seal or logo, relative to the job folder"),
+    logo_box: z.array(z.number()).describe("logo width and height in px"),
+    band: z.string().optional().describe("header illustration"),
+    cover: z.string().optional(),
+    band_brief: z.string().optional().describe("the art brief the illustration was painted from"),
+  }),
+  design: z.object({
+    mode: z.enum(["redesign", "refine"]).describe("refine keeps a modern site's identity; redesign uses the Kapwa look"),
+    score: z.number(),
+    reason: z.string(),
+    primary: z.string().describe("the original site's primary colour"),
+    hero: z.string().optional(),
+    art: z.custom<import("./artDirect").ArtDirection>().optional().describe("art-directed homepage (src/pipeline/artDirect.ts)"),
+  }).optional().describe("from assess.ts; missing on sites built before the design check, treated as redesign"),
+  tokens: z.number().optional().describe("model tokens the rebuild used"),
+  edited_at: z.string().optional().describe("ISO time a person last edited this file in the review editor"),
+  reviewed: z.record(z.string(), z.string()).optional().describe("page slug → ISO time a person marked the page as checked against the original"),
+  /** Added by loadSite, never stored. */
+  portraits: z.record(z.string(), z.object({ src: z.string(), alt: z.string() })).optional().describe("officials' photos keyed by personKey; added at load time, not stored"),
   /** Set at render time on the Filipino edition (src/pipeline/translate.ts). */
-  lang?: "en" | "fil";
+  lang: z.enum(["en", "fil"]).optional().describe("set at render time on the Filipino edition, not stored"),
+});
+export type SiteModel = z.infer<typeof SiteModel>;
+
+/** The published JSON Schema for site.json. */
+export function siteModelJsonSchema(): Record<string, unknown> {
+  return {
+    $schema: "https://json-schema.org/draft/2020-12/schema",
+    $id: `https://regov.app/schema/site-model.v${SITE_MODEL_VERSION}.json`,
+    title: "RE:GOV site model",
+    description: "A rebuilt government website: its information architecture, every page as typed content blocks, and where each came from. Every site in this format is an unofficial concept.",
+    ...z.toJSONSchema(SiteModel, { target: "draft-2020-12", io: "input", unrepresentable: "any" }),
+  };
 }
 
 /** zod → strict JSON schema acceptable to the Responses API. */
@@ -114,7 +148,10 @@ export function strictSchema(schema: z.ZodType): Record<string, unknown> {
       o.additionalProperties = false;
       o.required = Object.keys(o.properties as object);
     }
-    for (const v of Object.values(o)) Array.isArray(v) ? v.forEach(walk) : walk(v);
+    for (const v of Object.values(o)) {
+      if (Array.isArray(v)) v.forEach(walk);
+      else walk(v);
+    }
   };
   walk(js);
   delete js.$schema;

@@ -1,0 +1,11 @@
+name: Idea
+description: A feature or change, ideally linked to the roadmap
+labels: [idea]
+body:
+  - type: textarea
+    id: problem
+    attributes: { label: The problem, description: Who has it, and why it matters. }
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes: { label: What you propose }

@@ -1,0 +1,18 @@
+name: A site RE:GOV got wrong
+description: The agent failed, missed content, or rebuilt something incorrectly
+labels: [site]
+body:
+  - type: input
+    id: url
+    attributes: { label: Site address, placeholder: https://example.gov.ph }
+    validations: { required: true }
+  - type: input
+    id: job
+    attributes: { label: Job or report link, description: "From regov.app, e.g. https://regov.app/report/…" }
+  - type: textarea
+    id: what
+    attributes: { label: What went wrong, description: "Missing pages, wrong officials or numbers, broken layout, the run failed…" }
+    validations: { required: true }
+  - type: textarea
+    id: log
+    attributes: { label: Agent log, description: The last lines of the job page's log, if the run failed., render: text }

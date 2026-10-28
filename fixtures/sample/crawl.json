@@ -1,0 +1,213 @@
+{
+  "jobId": "sample",
+  "startUrl": "https://halimbawa.example/",
+  "origin": "https://halimbawa.example",
+  "startedAt": "2026-10-28T00:00:00.000Z",
+  "finishedAt": "2026-10-28T00:00:00.000Z",
+  "pages": [
+    {
+      "url": "https://halimbawa.example/",
+      "path": "/",
+      "depth": 0,
+      "status": 200,
+      "title": "Municipality of Halimbawa",
+      "description": "Services, offices and news for the people of Halimbawa, a fictional town used to test RE:GOV.",
+      "htmlFile": "html/000.html",
+      "screenshotFile": "shots/000.png",
+      "viewportShotFile": "shots/000.viewport.png",
+      "text": "Municipality of Halimbawa\nServices, offices and news for the people of Halimbawa, a fictional town used to test RE:GOV.\nServices residents use most\n\nBusiness permit Apply for or renew a business permit at the Business One-Stop Shop.\nElected officials Your mayor, vice mayor and Sangguniang Bayan members.\nContact the municipal hall Address, hours and hotlines.\nThis is a fictional sample\nBayan ng Halimbawa does not exist. Its pages ship with RE:GOV so contributors can run the app, the report and the exports without a model key or a real government site.\n",
+      "headings": [
+        {
+          "level": 1,
+          "text": "Municipality of Halimbawa"
+        }
+      ],
+      "links": [
+        "https://halimbawa.example/",
+        "https://halimbawa.example/about/",
+        "https://halimbawa.example/services/business-permit/",
+        "https://halimbawa.example/officials/",
+        "https://halimbawa.example/contact/",
+        "https://halimbawa.example/news/flood-drill-2026/"
+      ],
+      "attachments": [],
+      "navLinks": [],
+      "fetchedAt": "2026-10-28T00:00:00.000Z",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "url": "https://halimbawa.example/about/",
+      "path": "/about/",
+      "depth": 1,
+      "status": 200,
+      "title": "About Halimbawa",
+      "description": "A short history of the town, and its vision and mission.",
+      "htmlFile": "html/001.html",
+      "screenshotFile": "shots/001.png",
+      "viewportShotFile": "shots/001.viewport.png",
+      "text": "About Halimbawa\nA short history of the town, and its vision and mission.\nHistory\nHalimbawa began as a fishing village at the mouth of the Ilog Halimbawa. It became a municipality in **1950** and today has 12 barangays and about 38,000 residents.\n\nAll of this is invented for testing.\n\nMilestones\n\nFounded as a municipality Separated from its neighbouring town.\nNew municipal hall Built on the town plaza.\nBusiness One-Stop Shop opens Permits in one visit.\nVision\nA safe, clean and prosperous Halimbawa where every resident is served well.\n",
+      "headings": [
+        {
+          "level": 1,
+          "text": "About Halimbawa"
+        }
+      ],
+      "links": [
+        "https://halimbawa.example/",
+        "https://halimbawa.example/about/",
+        "https://halimbawa.example/services/business-permit/",
+        "https://halimbawa.example/officials/",
+        "https://halimbawa.example/contact/",
+        "https://halimbawa.example/news/flood-drill-2026/"
+      ],
+      "attachments": [],
+      "navLinks": [],
+      "fetchedAt": "2026-10-28T00:00:00.000Z",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "url": "https://halimbawa.example/services/business-permit/",
+      "path": "/services/business-permit/",
+      "depth": 1,
+      "status": 200,
+      "title": "Business permit",
+      "description": "How to apply for or renew a business permit, what to bring, and the fees.",
+      "htmlFile": "html/002.html",
+      "screenshotFile": "shots/002.png",
+      "viewportShotFile": "shots/002.viewport.png",
+      "text": "Business permit\nHow to apply for or renew a business permit, what to bring, and the fees.\nHow to apply\n\nFill in the unified form Get it at the Business One-Stop Shop or download it.\nSubmit your requirements Bring the documents listed below.\nPay and claim your permit Pay at the Treasurer's Office window 3. Most permits are released the same day.\nWhat to bring\n\nBarangay business clearance \nDTI, SEC or CDA registration \nContract of lease or proof of ownership of the place of business \nCommunity Tax Certificate \nFees\n| Business | Fee |\n|---|---|\n| Sari-sari store | ₱500 |\n| Restaurant | ₱1,500 |\n| Other | Assessed at the window |\n\nQuestions\n\nWhen must I renew? On or before January 20 of each year.\nCan I apply online? Not yet. The form can be downloaded, but submission is in person.",
+      "headings": [
+        {
+          "level": 1,
+          "text": "Business permit"
+        }
+      ],
+      "links": [
+        "https://halimbawa.example/",
+        "https://halimbawa.example/about/",
+        "https://halimbawa.example/services/business-permit/",
+        "https://halimbawa.example/officials/",
+        "https://halimbawa.example/contact/",
+        "https://halimbawa.example/news/flood-drill-2026/"
+      ],
+      "attachments": [],
+      "navLinks": [],
+      "fetchedAt": "2026-10-28T00:00:00.000Z",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "url": "https://halimbawa.example/officials/",
+      "path": "/officials/",
+      "depth": 1,
+      "status": 200,
+      "title": "Elected officials",
+      "description": "The mayor, vice mayor and members of the Sangguniang Bayan.",
+      "htmlFile": "html/003.html",
+      "screenshotFile": "shots/003.png",
+      "viewportShotFile": "shots/003.viewport.png",
+      "text": "Elected officials\nThe mayor, vice mayor and members of the Sangguniang Bayan.\nExecutive\n\nMaria Santos Dela Cruz \nJose Reyes Bautista \nSangguniang Bayan\n\nAna Lim Garcia \nPedro Cruz Ramos \nLiza Tan Mendoza ",
+      "headings": [
+        {
+          "level": 1,
+          "text": "Elected officials"
+        }
+      ],
+      "links": [
+        "https://halimbawa.example/",
+        "https://halimbawa.example/about/",
+        "https://halimbawa.example/services/business-permit/",
+        "https://halimbawa.example/officials/",
+        "https://halimbawa.example/contact/",
+        "https://halimbawa.example/news/flood-drill-2026/"
+      ],
+      "attachments": [],
+      "navLinks": [],
+      "fetchedAt": "2026-10-28T00:00:00.000Z",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "url": "https://halimbawa.example/contact/",
+      "path": "/contact/",
+      "depth": 1,
+      "status": 200,
+      "title": "Contact the municipal hall",
+      "description": "Address, office hours and phone numbers.",
+      "htmlFile": "html/004.html",
+      "screenshotFile": "shots/004.png",
+      "viewportShotFile": "shots/004.viewport.png",
+      "text": "Contact the municipal hall\nAddress, office hours and phone numbers.\nMunicipal hall\nTown Plaza, Poblacion, Halimbawa, Province of Sample\nPhone \nEmail \nHotlines\n\nMDRRMO Disaster response\nRural Health Unit Health emergencies",
+      "headings": [
+        {
+          "level": 1,
+          "text": "Contact the municipal hall"
+        }
+      ],
+      "links": [
+        "https://halimbawa.example/",
+        "https://halimbawa.example/about/",
+        "https://halimbawa.example/services/business-permit/",
+        "https://halimbawa.example/officials/",
+        "https://halimbawa.example/contact/",
+        "https://halimbawa.example/news/flood-drill-2026/"
+      ],
+      "attachments": [],
+      "navLinks": [],
+      "fetchedAt": "2026-10-28T00:00:00.000Z",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "url": "https://halimbawa.example/news/flood-drill-2026/",
+      "path": "/news/flood-drill-2026/",
+      "depth": 1,
+      "status": 200,
+      "title": "Town-wide flood drill on November 5",
+      "description": "All 12 barangays take part in a flood evacuation drill.",
+      "htmlFile": "html/005.html",
+      "screenshotFile": "shots/005.png",
+      "viewportShotFile": "shots/005.viewport.png",
+      "text": "Town-wide flood drill on November 5\nAll 12 barangays take part in a flood evacuation drill.\n\nThe Municipal Disaster Risk Reduction and Management Office will hold a flood evacuation drill in all 12 barangays on **November 5, 2026**, starting at 9:00 AM. Sirens will sound for one minute.\n\nResidents near the river should follow their barangay's evacuation route.\n",
+      "headings": [
+        {
+          "level": 1,
+          "text": "Town-wide flood drill on November 5"
+        }
+      ],
+      "links": [
+        "https://halimbawa.example/",
+        "https://halimbawa.example/about/",
+        "https://halimbawa.example/services/business-permit/",
+        "https://halimbawa.example/officials/",
+        "https://halimbawa.example/contact/",
+        "https://halimbawa.example/news/flood-drill-2026/"
+      ],
+      "attachments": [],
+      "navLinks": [],
+      "fetchedAt": "2026-10-28T00:00:00.000Z",
+      "width": 1280,
+      "height": 900
+    }
+  ],
+  "skipped": [],
+  "coverage": {
+    "limit": 30,
+    "discovered": 6,
+    "sitemap": 0,
+    "sitemaps": [],
+    "crawled": 6,
+    "robots": 0,
+    "duplicate": 0,
+    "empty": 0,
+    "failed": 0,
+    "not_reached": 0
+  },
+  "quality": {
+    "status": "complete",
+    "reasons": [],
+    "chars": 2672
+  }
+}

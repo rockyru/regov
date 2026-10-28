@@ -1,9 +1,9 @@
 node_modules
 .next
+.git
 jobs
+scratchpad
 .env
 .env.*
-.git
-.wrangler
-worker
-*.png
+!.env.example
+*.tsbuildinfo

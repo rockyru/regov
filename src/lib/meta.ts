@@ -2,8 +2,10 @@ import OpenAI from "openai";
 import { recordUsage } from "./usage";
 
 /**
- * One client for every Meta Model API model: Muse Spark, SAM 3.1, Muse Image.
+ * One OpenAI-compatible client for every model: Muse Spark, SAM 3.1, Muse Image by default.
  * Created lazily so importing pipeline code never needs the key at build time.
+ * MODEL_API_BASE points it at another OpenAI-compatible provider; the model names below are
+ * overridable too (docs/models.md lists what each step needs from its model).
  */
 let client: OpenAI | null = null;
 function get(): OpenAI {
@@ -47,6 +49,9 @@ export const meta = new Proxy({} as OpenAI, {
   },
 });
 
-export const MUSE = process.env.MUSE_MODEL ?? "muse-spark-1.3";
-export const SAM = "sam-3.1";
-export const MUSE_IMAGE = "muse-image-1.0";
+/** Text and vision with strict JSON output: understanding, planning, terms, translation, Ask. */
+export const MUSE = process.env.MUSE_MODEL || "muse-spark-1.3";
+/** Promptable segmentation (masks and boxes from a noun phrase): seals, portraits, text in images. */
+export const SAM = process.env.SAM_MODEL || "sam-3.1";
+/** Image generation: each site's header illustration. */
+export const MUSE_IMAGE = process.env.IMAGE_MODEL || "muse-image-1.0";

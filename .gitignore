@@ -50,3 +50,6 @@ next-env.d.ts
 # session scratch
 /scratchpad/
 
+
+# the example env is documentation, not secrets
+!.env.example

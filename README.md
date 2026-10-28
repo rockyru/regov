@@ -52,18 +52,30 @@ After the rebuild:
 - **Before and after.** Both homepages are loaded in a fresh browser, and the report and showcase compare speed, page weight, requests and axe-core WCAG errors (`src/pipeline/scores.ts`, backfill with `scripts/score.ts`).
 - **Filipino edition.** The language switch in the top strip asks Muse Spark to translate each page the first time someone reads it in Filipino. The translation is cached and streams in over the English page (`src/pipeline/translate.ts`).
 - **Ask this site.** The search box answers questions with Muse Spark, using only the site's own pages, and cites them. It is rate-limited (`src/pipeline/ask.ts`).
-- **Handoff export.** "Download the site (.zip)" gives static HTML that runs without JavaScript, plus assets, `site.json`, an old-to-new redirect map and a README for the agency (`src/lib/exportSite.ts`).
+- **Review.** An operator opens `/edit/<job>` to correct names, positions, numbers and fees, and ticks each page once it matches the original. The agent's version is kept and can be restored (`src/components/SiteEditor.tsx`).
+- **Handoff export.** "Download the site (.zip)" gives static HTML that runs without JavaScript, plus assets, `site.json`, an old-to-new redirect map and a README for the agency (`src/lib/exportSite.ts`). "Content as Markdown" gives one Markdown file per page with front matter, for any static site generator or CMS (`src/lib/exportMarkdown.ts`).
+- **Open format.** Every rebuild is one `site.json`, published as versioned JSON Schema at [regov.app/schema/site-model.v1.json](https://regov.app/schema/site-model.v1.json) ([docs/site-model.md](docs/site-model.md)).
 
 Sites behind bot protection (Cloudflare challenges) fall back to the Wayback Machine: the crawler picks the archive month with the most real pages and rebuilds from that. Dead sites get a second life literally.
 
-Every model response is cached on disk under `jobs/<id>/models`, so reruns are free and demos are deterministic.
+Every model response is cached on disk under `jobs/<id>/models`, so reruns are free and deterministic. `MODEL_CACHE=replay` rebuilds a saved job from those answers only. Model names and the provider are configurable ([docs/models.md](docs/models.md)).
 
 ## Run it
+
+Without a model key, using the fictional sample site:
 
 ```bash
 npm install
 npx playwright install chromium
-cp .env.example .env            # add MODEL_API_KEY from dev.meta.ai
+cp .env.example .env
+npm run sample                   # installs Bayan ng Halimbawa as job "sample"
+npm run dev                      # http://localhost:3000/preview/sample and /report/sample
+```
+
+With a key, on a real site:
+
+```bash
+# add MODEL_API_KEY from dev.meta.ai to .env
 npx tsx --env-file=.env scripts/smoke.ts          # proves Spark text, Spark vision+JSON, SAM 3.1 work
 
 # one shot: crawl + build
@@ -89,7 +101,9 @@ through environment variables:
 | `RUN_STALL_MIN` | `20` | A run whose status has not changed for this long is killed and reported as stalled, freeing its slot. |
 | `RUN_DEDUPE_HOURS` | `24` | A host that is running, waiting, or finished within this window is not rebuilt again; the visitor is sent to that run. |
 
-`GET /api/run` reports the live counts. To stop accepting new runs without a deploy, set the Worker variable `SUBMISSIONS` to `paused` in the Cloudflare dashboard (Workers > regov > Settings > Variables); the edge answers the form with a friendly notice while runs in flight finish. Set it back to `open` to resume.
+`GET /api/run` reports the live counts. To stop accepting new runs, set `SUBMISSIONS=paused` in `.env` and restart; the form answers with a friendly notice while runs in flight finish. Remove it to resume.
+
+To host your own copy, see [docs/self-hosting.md](docs/self-hosting.md) (Docker Compose, or a plain server the way regov.app runs).
 
 ## Layout
 
@@ -98,7 +112,10 @@ src/pipeline/   crawl · segment · understand · plan · build · schema (zod �
 src/lib/        meta.ts (one OpenAI-compatible client for api.meta.ai) · jobs.ts
 src/components/site/  Shell (GOVPH strip, header, footer) · Pages (home, content) · Blocks
 src/app/        / dashboard · /jobs/[id] progress · /preview/[id]/[...slug] · /report/[id] · /api/run
-scripts/        smoke · crawl · run · pipeline · sam-probe
+scripts/        pipeline · smoke · sample · schema · a11y · vps/ (deploy, hardening)
+fixtures/sample/  a fictional site for development and CI
+test/           unit tests (node:test via tsx)
+docs/           architecture · models · site model · self-hosting
 jobs/           per-job artifacts (gitignored)
 ```
 
@@ -113,17 +130,19 @@ sticky header with search, WCAG AA contrast and semantic structure. Kapwa's Reac
 
 ## Contributing
 
-Issues and pull requests are welcome at [github.com/rockyru/regov](https://github.com/rockyru/regov/issues).
-Good first contributions: new government-domain patterns in `src/lib/govdomain.ts`, Kapwa
-block renderers in `src/components/site/Blocks.tsx`, and crawl fixes for sites the agent
-mishandles (open an issue with the address and the job's agent log). Run `npm run lint` and
-`npx tsc --noEmit` before opening a PR. Generated output must stay clearly marked unofficial.
+Issues and pull requests are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md): it covers
+running the app without a model key, the checks CI runs (lint, types, unit tests, build, and an
+axe-core accessibility gate) and good first contributions. [docs/architecture.md](docs/architecture.md)
+explains how the pieces fit. Generated output must stay clearly marked unofficial.
+
+Questions, or an agency asking for a change: use the Feedback button on regov.app or write to
+hello@regov.app. Security problems: see [SECURITY.md](SECURITY.md).
 
 ## License
 
 [MIT](./LICENSE). Generated sites remain unofficial concepts; agency names, seals and content
 belong to their respective institutions.
 
-## Status
+## Roadmap
 
-See `PLAN.md` for the schedule and what is left before the Nov 4 deadline.
+See [ROADMAP.md](ROADMAP.md).

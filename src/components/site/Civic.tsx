@@ -86,25 +86,25 @@ export async function TransparencySection({ site, n }: { site: SiteModel; n: num
       </div>
       <div className="mt-8 grid gap-10 lg:grid-cols-3">
         <div className="lg:col-span-1">
-          <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{site.lang === "fil" ? `Inilathala ng ${site.agency.short_name || "tanggapang ito"}` : `Published by ${site.agency.short_name || "this office"}`}</h3>
+          <h3 className={`${eyebrow} text-neutral-600 border-b border-neutral-900 pb-2`}>{site.lang === "fil" ? `Inilathala ng ${site.agency.short_name || "tanggapang ito"}` : `Published by ${site.agency.short_name || "this office"}`}</h3>
           {pages.length > 0 ? (
             <ol className="divide-y divide-neutral-200">
-              {pages.map((p, i) => <li key={p.slug}><Link href={navHref(site.jobId, p.slug)} className="flex gap-3 py-3 font-medium text-neutral-900 hover:text-kapwa-brand-900"><span className="text-xs font-semibold tabular-nums text-neutral-500 pt-1">{nn(i)}</span>{p.label}</Link></li>)}
+              {pages.map((p, i) => <li key={p.slug}><Link href={navHref(site.jobId, p.slug)} className="flex gap-3 py-3 font-medium text-neutral-900 hover:text-kapwa-brand-900"><span className="text-xs font-semibold tabular-nums text-neutral-600 pt-1">{nn(i)}</span>{p.label}</Link></li>)}
             </ol>
           ) : (
-            <p className="py-3 text-sm text-neutral-500">The agent found no transparency pages on the original site. Under the Transparency Seal every agency should publish its mandate, officials, budget, procurement plan and reports.</p>
+            <p className="py-3 text-sm text-neutral-600">The agent found no transparency pages on the original site. Under the Transparency Seal every agency should publish its mandate, officials, budget, procurement plan and reports.</p>
           )}
         </div>
         <div>
-          <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{t(site.lang, "Check nationally")}</h3>
+          <h3 className={`${eyebrow} text-neutral-600 border-b border-neutral-900 pb-2`}>{t(site.lang, "Check nationally")}</h3>
           <ul className="divide-y divide-neutral-200">
-            {TRANSPARENCY_EXTERNAL.map((l) => <li key={l.href}><a href={l.href} target="_blank" rel="noreferrer" className="block py-3 hover:text-kapwa-brand-900"><span className="font-medium text-neutral-900">{l.label} <span aria-hidden className="text-neutral-500">↗</span></span>{l.note && <span className="block text-sm text-neutral-500">{l.note}</span>}</a></li>)}
+            {TRANSPARENCY_EXTERNAL.map((l) => <li key={l.href}><a href={l.href} target="_blank" rel="noreferrer" className="block py-3 hover:text-kapwa-brand-900"><span className="font-medium text-neutral-900">{l.label} <span aria-hidden className="text-neutral-600">↗</span></span>{l.note && <span className="block text-sm text-neutral-600">{l.note}</span>}</a></li>)}
           </ul>
         </div>
         <div>
-          <h3 className={`${eyebrow} text-neutral-500 border-b border-neutral-900 pb-2`}>{t(site.lang, lgu ? "For residents" : site.site_kind === "university" || site.site_kind === "school" ? "For students" : site.site_kind === "hospital" ? "For patients" : "Related portals")}</h3>
+          <h3 className={`${eyebrow} text-neutral-600 border-b border-neutral-900 pb-2`}>{t(site.lang, lgu ? "For residents" : site.site_kind === "university" || site.site_kind === "school" ? "For students" : site.site_kind === "hospital" ? "For patients" : "Related portals")}</h3>
           <ul className="divide-y divide-neutral-200">
-            {ext.map((l) => <li key={l.href}><a href={l.href} target={l.href.startsWith("tel:") ? undefined : "_blank"} rel="noreferrer" className="block py-3 hover:text-kapwa-brand-900"><span className="font-medium text-neutral-900">{l.label} <span aria-hidden className="text-neutral-500">↗</span></span>{l.note && <span className="block text-sm text-neutral-500">{l.note}</span>}</a></li>)}
+            {ext.map((l) => <li key={l.href}><a href={l.href} target={l.href.startsWith("tel:") ? undefined : "_blank"} rel="noreferrer" className="block py-3 hover:text-kapwa-brand-900"><span className="font-medium text-neutral-900">{l.label} <span aria-hidden className="text-neutral-600">↗</span></span>{l.note && <span className="block text-sm text-neutral-600">{l.note}</span>}</a></li>)}
           </ul>
         </div>
       </div>
@@ -119,7 +119,7 @@ function HotlineTable({ rows, showArea }: { rows: Hotline[]; showArea?: boolean 
       {rows.map((h, i) => (
         <li key={h.number + h.name + i} className="border-b border-neutral-200">
           <a href={telHref(h.number)} className="group flex items-baseline justify-between gap-4 py-3 hover:text-kapwa-brand-900">
-            <span className="min-w-0"><span className="block font-medium text-neutral-900 leading-snug">{h.name}</span>{(showArea && h.area) || h.alt?.length ? <span className="block text-xs text-neutral-500">{[showArea ? h.area : "", ...(h.alt ?? [])].filter(Boolean).join(" · ")}</span> : null}</span>
+            <span className="min-w-0"><span className="block font-medium text-neutral-900 leading-snug">{h.name}</span>{(showArea && h.area) || h.alt?.length ? <span className="block text-xs text-neutral-600">{[showArea ? h.area : "", ...(h.alt ?? [])].filter(Boolean).join(" · ")}</span> : null}</span>
             <span className="shrink-0 font-semibold tabular-nums tracking-tight text-kapwa-brand-900 group-hover:underline">{h.number}</span>
           </a>
         </li>
@@ -152,7 +152,7 @@ export function HotlinesPage({ site }: { site: SiteModel }) {
     <>
       <div className="border-b-2 border-neutral-900 bg-white">
         <div className="container-gov py-10 lg:py-14">
-          <nav aria-label="Breadcrumb" className={`${eyebrow} text-neutral-500 flex gap-2`}><Link href={navHref(site.jobId, "home")} className="hover:text-kapwa-brand-900">Home</Link><span className="text-neutral-300">/</span><span className="text-neutral-900">Hotlines</span></nav>
+          <nav aria-label="Breadcrumb" className={`${eyebrow} text-neutral-600 flex gap-2`}><Link href={navHref(site.jobId, "home")} className="hover:text-kapwa-brand-900">Home</Link><span className="text-neutral-300">/</span><span className="text-neutral-900">Hotlines</span></nav>
           <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_minmax(0,32rem)] lg:gap-16 items-end">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-[-0.02em] leading-[1.0] text-neutral-900">Emergency hotlines</h1>
             <p className="text-lg leading-relaxed text-neutral-600 lg:border-l lg:border-neutral-300 lg:pl-6">Numbers for {[loc.city, loc.province].filter(Boolean).join(", ") || "the Philippines"}: this office, nearby responders, and the national lines that work anywhere. Tap a number to call.</p>
@@ -162,7 +162,7 @@ export function HotlinesPage({ site }: { site: SiteModel }) {
       <div className="container-gov">
         <a href="tel:911" className="mt-10 flex flex-wrap items-center justify-between gap-6 bg-kapwa-red-700 text-white p-6 sm:p-8 hover:bg-kapwa-red-800">
           <span><span className={`${eyebrow} text-white`}>Life-threatening emergency</span><span className="block mt-1 text-5xl sm:text-6xl font-extrabold tracking-tight leading-none">911</span></span>
-          <span className="max-w-md text-[15px] leading-relaxed text-white/85">The national emergency hotline, free from any phone, 24 hours a day. For police, fire, medical and rescue, call 911 first and then the local responder.</span>
+          <span className="max-w-md text-[15px] leading-relaxed text-white">The national emergency hotline, free from any phone, 24 hours a day. For police, fire, medical and rescue, call 911 first and then the local responder.</span>
         </a>
         {groups.map((g) => (
           <section key={g.title} className="py-12">
@@ -173,7 +173,7 @@ export function HotlinesPage({ site }: { site: SiteModel }) {
             <div className="mt-6 space-y-8">
               {byCategory(g.rows).map((c) => (
                 <div key={c.category}>
-                  {byCategory(g.rows).length > 1 && <h3 className={`${eyebrow} text-neutral-500 mb-2`}>{CATEGORY_LABEL[c.category]}</h3>}
+                  {byCategory(g.rows).length > 1 && <h3 className={`${eyebrow} text-neutral-600 mb-2`}>{CATEGORY_LABEL[c.category]}</h3>}
                   <HotlineTable rows={c.rows} showArea={g.area} />
                 </div>
               ))}
@@ -187,7 +187,7 @@ export function HotlinesPage({ site }: { site: SiteModel }) {
           </div>
           <div className="mt-6"><HotlineTable rows={NATIONAL_HOTLINES} /></div>
         </section>
-        <p className="pb-6 text-sm text-neutral-500">Local numbers come from the open <a className="underline" href="https://bettergov.ph/data/hotlines" target="_blank" rel="noreferrer">BetterGov.ph hotlines dataset</a> and from the original website. Numbers change; if one fails, call 911.</p>
+        <p className="pb-6 text-sm text-neutral-600">Local numbers come from the open <a className="underline" href="https://bettergov.ph/data/hotlines" target="_blank" rel="noreferrer">BetterGov.ph hotlines dataset</a> and from the original website. Numbers change; if one fails, call 911.</p>
       </div>
     </>
   );
