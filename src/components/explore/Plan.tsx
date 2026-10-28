@@ -21,8 +21,8 @@ export function Plan({ portal: x }: { portal: Portal }) {
 
       <div className="tp-intro" data-room={g.art?.src}>
         <div>
-          <p className="pl-kicker">Getting there</p>
-          <h2 id="plan-title" className="pl-h">Manila to<br />the <span className="pl-outline">Pacific.</span></h2>
+          <p className="pl-kicker">{x.heads.plan.kicker}</p>
+          <h2 id="plan-title" className="pl-h">{x.heads.plan.lines[0]}<br />{x.heads.plan.lines[1]} <span className="pl-outline">{x.heads.plan.outline}</span></h2>
         </div>
         <dl className="ev-sum">
           {x.facts.slice(2).map((t) => <div key={t.label}><dt>{t.label}</dt><dd>{t.value}</dd></div>)}

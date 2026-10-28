@@ -8,11 +8,10 @@ import type { Portal } from "@/lib/explore/types";
  * wordmark, the sections, and the unofficial-concept line. Styles: .xf-* in explore.css.
  */
 const SECTIONS = [["Home", "top"], ["Story", "story"], ["Places", "places"], ["Events", "events"], ["Plan", "plan"]];
-const PICKS = ["sabang-beach", "ermita-hill", "dicasalarin-cove"];
 
 export function Footer({ portal: x, base = "" }: { portal: Portal; base?: string }) {
   const sites = [...new Map(x.sources.map((s) => { const u = new URL(s.url); return [u.host, `${u.protocol}//${u.host}/`]; })).entries()];
-  const picks = PICKS.map((slug) => x.places.find((p) => p.slug === slug)).filter((p) => p?.photo);
+  const picks = (x.picks ? x.picks.map((slug) => x.places.find((p) => p.slug === slug)) : x.places).filter((p) => p?.photo).slice(0, 3);
   return (
     <footer className="xf">
       <img src={x.hero.src} alt="" className="xf-bg" loading="lazy" />

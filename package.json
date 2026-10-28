@@ -13,6 +13,7 @@
     "schema": "tsx scripts/schema.ts",
     "sample": "tsx scripts/sample.ts",
     "a11y": "tsx scripts/a11y.ts",
+    "explore:maps": "tsx scripts/explore-maps.ts",
     "deploy:vps": "ssh root@72.62.255.82 'bash -s' < scripts/vps/deploy.sh"
   },
   "dependencies": {
