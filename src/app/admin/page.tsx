@@ -10,6 +10,7 @@ import { JOBS_ROOT } from "@/lib/jobs";
 import { loadUsage } from "@/lib/usage";
 import { usd, totalOf } from "@/lib/usageLabels";
 import { listFeedback } from "@/lib/feedback";
+import { topicLabel } from "@/lib/feedbackTopics";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Operator | RE:GOV", robots: { index: false, follow: false } };
@@ -113,6 +114,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             <h2 className={`${eyebrow} text-neutral-600`}>Feedback <span className="tabular-nums">{feedback.length}</span></h2>
             {feedback.length ? <ol className="mt-3 divide-y divide-neutral-200 border-y border-neutral-200">{feedback.map((f) => (
               <li key={f.id} className="py-3 text-sm">
+                {f.topic && <p className={`${eyebrow} text-kapwa-brand-900`}>{topicLabel(f.topic)}</p>}
                 <p className="whitespace-pre-wrap text-neutral-900">{f.message}</p>
                 <p className="mt-1 text-[13px] text-neutral-500">{f.email ? <a href={`mailto:${f.email}`} className="underline">{f.email}</a> : "anonymous"}{f.page && <> · <Link href={f.page} className="underline">{f.page}</Link></>} · {new Date(f.at).toLocaleString("en-PH", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Manila" })}{!f.emailed && " · not emailed"}</p>
               </li>

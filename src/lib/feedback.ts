@@ -15,11 +15,12 @@ import { randomUUID } from "node:crypto";
 import { appendFile, mkdir, readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { JOBS_ROOT } from "./jobs";
+import { FEEDBACK_TOPICS, MAX_MESSAGE, topicLabel, type FeedbackTopic } from "./feedbackTopics";
 
-export type Feedback = { id: string; at: string; message: string; email: string; page: string; emailed: boolean };
+export type Feedback = { id: string; at: string; topic?: FeedbackTopic; message: string; email: string; page: string; emailed: boolean };
+export { MAX_MESSAGE };
 
 const DIR = join(JOBS_ROOT, ".feedback");
-export const MAX_MESSAGE = 4000;
 const EMAIL = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 
 const num = (k: string, d: number) => { const n = Number(process.env[k]); return Number.isFinite(n) && n > 0 ? n : d; };
@@ -46,7 +47,8 @@ export function feedbackRateLimit(ip: string, now = Date.now()): number {
 /** Strip control characters other than newline and tab. */
 const plain = (s: string) => s.replace(/[\u0000-\u0008\u000b-\u001f\u007f\u200b-\u200f\u2028\u2029\u202a-\u202e]/g, "");
 
-export function cleanFeedback(body: { message?: unknown; email?: unknown; page?: unknown }): { message: string; email: string; page: string } | string {
+export function cleanFeedback(body: { topic?: unknown; message?: unknown; email?: unknown; page?: unknown }): { topic: FeedbackTopic; message: string; email: string; page: string } | string {
+  const topic = FEEDBACK_TOPICS.find((t) => t.id === body.topic)?.id ?? "idea";
   const message = plain(String(body.message ?? "").replace(/\r\n?/g, "\n")).replace(/\n{4,}/g, "\n\n\n").trim();
   const email = plain(String(body.email ?? "")).trim();
   const rawPage = String(body.page ?? "");
@@ -55,7 +57,7 @@ export function cleanFeedback(body: { message?: unknown; email?: unknown; page?:
   if (message.length > MAX_MESSAGE) return `Keep it under ${MAX_MESSAGE.toLocaleString("en-PH")} characters.`;
   if ((message.match(/https?:\/\/|www\./gi) ?? []).length > 3) return "Please include at most three links.";
   if (email && (email.length > 200 || !EMAIL.test(email))) return "That email address doesn't look right. Leave it empty to stay anonymous.";
-  return { message, email, page };
+  return { topic, message, email, page };
 }
 
 /** Today's budget and duplicate check. "drop": a repeat, accepted silently; "full": the daily cap is reached. */
@@ -69,7 +71,7 @@ export function feedbackAdmit(message: string): "ok" | "drop" | "full" {
   return "ok";
 }
 
-export async function saveFeedback(input: { message: string; email: string; page: string }): Promise<Feedback> {
+export async function saveFeedback(input: { topic: FeedbackTopic; message: string; email: string; page: string }): Promise<Feedback> {
   const at = new Date().toISOString();
   const fb: Feedback = { id: randomUUID(), at, ...input, emailed: false };
   const mayEmail = day.emailed < num("FEEDBACK_EMAIL_DAILY_MAX", 50);
@@ -85,7 +87,7 @@ async function emailFeedback(fb: Feedback): Promise<boolean> {
   const { FEEDBACK_TO: to, FEEDBACK_FROM: from, CLOUDFLARE_EMAIL_TOKEN: token, CLOUDFLARE_ACCOUNT_ID: account } = process.env;
   if (!to || !from || !token || !account) return false;
   const pub = process.env.PUBLIC_ORIGIN ?? "https://regov.app";
-  const text = `${fb.message}\n\n— ${fb.email || "anonymous"}${fb.page ? `, on ${pub}${fb.page}` : ""}\n${fb.at}`;
+  const text = `${topicLabel(fb.topic ?? "idea")}\n\n${fb.message}\n\n— ${fb.email || "anonymous"}${fb.page ? `, on ${pub}${fb.page}` : ""}\n${fb.at}`;
   const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/email/sending/send`, {
     method: "POST",
     headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
@@ -93,7 +95,7 @@ async function emailFeedback(fb: Feedback): Promise<boolean> {
       from: { address: from, name: "RE:GOV feedback" },
       to: [to],
       ...(fb.email ? { reply_to: fb.email } : {}),
-      subject: `RE:GOV feedback: ${fb.message.replace(/\s+/g, " ").slice(0, 60)}${fb.message.length > 60 ? "…" : ""}`, // one line: no header injection
+      subject: `RE:GOV feedback (${topicLabel(fb.topic ?? "idea").toLowerCase()}): ${fb.message.replace(/\s+/g, " ").slice(0, 60)}${fb.message.length > 60 ? "…" : ""}`, // one line: no header injection
       text,
     }),
     signal: AbortSignal.timeout(10_000),
