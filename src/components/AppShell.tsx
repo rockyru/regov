@@ -45,6 +45,12 @@ export function AppHeader({ crumb }: { crumb?: string }) {
       <div className="container-gov h-16 flex items-center justify-between gap-6">
         <div className="flex items-center gap-4 min-w-0">
           <Wordmark className="h-12 sm:h-[52px] translate-y-1" />
+          {/* RE:GOV Explore, the newest part: beside the logo on every page and screen size */}
+          <Link href="/explore" className="group inline-flex h-9 shrink-0 items-center gap-2 bg-[#F5B62A] pl-1.5 pr-3 text-sm font-semibold text-neutral-900 transition-colors hover:bg-[#FFC94A]">
+            <span className="bg-neutral-900 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">New</span>
+            Explore
+            <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
+          </Link>
           {crumb && <span className="hidden lg:flex items-center gap-4 min-w-0 text-sm text-neutral-500"><span className="h-5 w-px bg-neutral-300" /><span className="truncate">{crumb}</span></span>}
         </div>
         <nav aria-label="RE:GOV" className="hidden lg:flex items-center gap-5 text-sm font-semibold">
@@ -65,6 +71,7 @@ const FOOTER_COLS: { heading: string; links: { label: string; href: string; ext?
   { heading: "RE:GOV", links: [
     { label: "Home", href: "/" },
     { label: "Reimagine a site", href: "/#reimagine" },
+    { label: "Explore", href: "/explore" },
     { label: "Showcase", href: "/showcase" },
     { label: "How it works", href: "/how-it-works" },
     { label: "Case study", href: "/case-study" },
