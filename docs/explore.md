@@ -37,7 +37,16 @@ tools read the same thing.
 
 ### Foundations
 
-- **Type:** a display serif for chapter titles and place names, Inter for everything else.
+- **Type:** Barabara for display: portal titles, chapter titles, place names and section
+  labels. It is the free tourism typeface the Department of Tourism released in 2022, drawn
+  from Filipino hand-painted signs, and LGU tourism sites already use it (tourism.baler.gov.ph
+  sets its headings in it). It has capitals, figures, Ñ and ₱ only, so it is set in uppercase
+  and never for running text. Inter for everything else.
+  - The font file is not committed until its terms of use are confirmed in writing; the
+    original release site is offline and no licence text has been found. Until then the kit
+    falls back to an open-licence display face.
+  - Because it is the DOT's campaign lettering, a portal set in it must keep the concept band
+    visible so it is never mistaken for DOT or LGU material.
 - **Colour:** each portal takes its palette from the place (the sea at Baler, the sandstone
   of Miagao Church), checked for WCAG AA contrast before use.
 - **Photography first.** Full-bleed images with a caption and credit on every one.
