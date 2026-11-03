@@ -2,7 +2,8 @@
 // container, so an in-memory queue is authoritative: at most RUN_CONCURRENCY pipelines run at
 // once, the rest wait in order, and the queue refuses new work past RUN_QUEUE_MAX. Each visitor
 // (by IP) gets RUN_RATE_LIMIT submissions per RUN_RATE_WINDOW_MIN minutes. A host that is running,
-// queued, or finished within RUN_DEDUPE_HOURS is not rebuilt again; callers redirect to that job.
+// queued, or already finished is not rebuilt again; callers redirect to that job. Set RUN_DEDUPE_HOURS to
+// let a finished site be rebuilt after that many hours; operators can always rerun from /admin.
 import { spawn, type ChildProcess } from "node:child_process";
 import { existsSync, mkdirSync, openSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -18,7 +19,7 @@ export const LIMITS = {
   queueMax: num("RUN_QUEUE_MAX", 8),
   perIp: num("RUN_RATE_LIMIT", 3),
   windowMs: num("RUN_RATE_WINDOW_MIN", 10) * 60_000,
-  dedupeMs: num("RUN_DEDUPE_HOURS", 24) * 3_600_000,
+  dedupeMs: num("RUN_DEDUPE_HOURS", Infinity) * 3_600_000,
   stallMs: num("RUN_STALL_MIN", 20) * 60_000,
   dailyMax: num("RUN_DAILY_MAX", 7),
 };
@@ -88,7 +89,7 @@ class RunQueue {
     return 0;
   }
 
-  /** Job id of a run for this host that is in flight, waiting, or finished recently. */
+  /** Job id of a run for this host that is in flight, waiting, or finished (within RUN_DEDUPE_HOURS when set). */
   existing(host: string): { jobId: string; state: "running" | "queued" | "done" } | null {
     const key = hostKey(host);
     for (const { job } of this.running.values()) if (hostKey(job.host) === key) return { jobId: job.jobId, state: "running" };

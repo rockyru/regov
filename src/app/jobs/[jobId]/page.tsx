@@ -92,7 +92,7 @@ export default async function JobStatus({ params, searchParams }: { params: Prom
   const waitMs = queued ? (Math.ceil(queued.position / LIMITS.concurrency) - 0.5) * typical : 0;
   const refused = status?.refused;
   const state = queued ? "Waiting in line" : live ? "Reimagining" : refused ? "Not rebuilt" : status?.error ? "Stopped" : "Reimagined";
-  const existingNote = existing === "done" ? "This site was reimagined recently, so the agent is showing that run instead of starting another."
+  const existingNote = existing === "done" ? "This site has already been reimagined, so the agent is showing that run instead of starting another."
     : existing === "running" ? "The agent is already working on this site. You are watching that run."
     : existing === "queued" ? "This site is already in the queue. You are watching that run." : "";
   let n = 1;
