@@ -103,7 +103,7 @@ through environment variables:
 | `RUN_RATE_LIMIT` / `RUN_RATE_WINDOW_MIN` | `3` / `10` | Submissions per visitor IP per window. |
 | `RUN_DAILY_MAX` | `7` | Runs accepted per day, resetting at 8:00 AM Asia/Manila, counted from job status files so it survives restarts. Protects the Meta credit balance. |
 | `RUN_STALL_MIN` | `20` | A run whose status has not changed for this long is killed and reported as stalled, freeing its slot. |
-| `RUN_DEDUPE_HOURS` | `24` | A host that is running, waiting, or finished within this window is not rebuilt again; the visitor is sent to that run. |
+| `RUN_DEDUPE_HOURS` | none | A host that is running, waiting, or already finished is not rebuilt again; the visitor is sent to that run. Set this to allow a rebuild once the last one is that many hours old. Operators can always rerun from `/admin`. |
 
 `GET /api/run` reports the live counts. To stop accepting new runs, set `SUBMISSIONS=paused` in `.env` and restart; the form answers with a friendly notice while runs in flight finish. Remove it to resume.
 

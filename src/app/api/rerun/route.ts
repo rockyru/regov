@@ -8,7 +8,7 @@ import { assessing, applyDesignCheck } from "@/lib/designCheck";
 
 /**
  * Operator actions on existing runs (token required).
- * - rerun: full pipeline again. Skips the daily quota, per-visitor limit, queue cap and 24-hour
+ * - rerun: full pipeline again. Skips the daily quota, per-visitor limit, queue cap and host
  *   dedupe that /api/run applies. Sites already running or waiting are left alone.
  * - assess: run only the design check on a finished build and patch its site.json (cheap).
  */
